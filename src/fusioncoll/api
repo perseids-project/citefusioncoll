@@ -1,0 +1,75 @@
+import java.text.SimpleDateFormat
+import groovy.xml.MarkupBuilder
+// Google data APIs:
+import com.google.gdata.client.GoogleService;
+import com.google.gdata.client.Service.GDataRequest;
+import com.google.gdata.client.Service.GDataRequest.RequestType;
+import com.google.gdata.util.ContentType;
+
+response.setContentType("text/xml; charset=UTF-8")
+request.setCharacterEncoding("UTF-8")
+
+// Constants:
+String SERVICE_URL = "https://www.google.com/fusiontables/api/query"
+String F1K_LEXENT_UUID = "uri:uuid:21e0eb8c-1a52-4451-b83b-a5d32af51b99"
+String F1K_LEXENT_GOOGLE_TAB = "835743" // READ FROM CONFIG
+String CLIENT_APP  = "shot.holycross.edu-fusioncoll-0.1"
+
+def currPage = 1
+if (params["page"]?.toInteger()) {
+    currPage = params["page"].toInteger()
+}
+int entries_per_page = 20
+if (params["pagesize"]?.toInteger()) {
+    entries_per_page = params["pagesize"].toInteger()
+}
+
+int offset_entries = (currPage - 1) * entries_per_page
+
+
+
+
+
+String baseQuery = "SELECT URN, Sequence from ${F1K_LEXENT_GOOGLE_TAB}"
+String selectQuery = "${baseQuery} OFFSET ${offset_entries} LIMIT ${entries_per_page}"
+
+URL url = new URL(SERVICE_URL + "?sql=" + URLEncoder.encode(selectQuery, "UTF-8"));
+
+GDataRequest grequest = new GoogleService("fusiontables", CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, url, ContentType.TEXT_PLAIN)
+grequest.execute()
+
+StringWriter writer = new StringWriter();
+MarkupBuilder xml = new MarkupBuilder(writer);
+
+def replyStr = grequest.requestUrl.getText('UTF-8')
+
+xml.feed(xmlns:'http://www.w3.org/2005/Atom') {
+    title("Greek lexical entitites:  page ${currPage}")
+    subtitle("${entries_per_page} entries per page. From the Free Greek project.")
+    id("${F1K_LEXENT_UUID}")
+    link(href:"http://www.google.com/fusiontables/DataSource?dsrcid=${F1K_LEXENT_GOOGLE_TAB}")
+    link(href:"./home",  rel : "related", title : "Data from the F1K project")
+    link(rel : "first", href:"./lexent?page=1")
+    link(rel : "next", href:"./lexent?page=${currPage + 1}")
+
+    author {
+        name("Neel Smith")
+    }
+
+    def lineCount = 0
+    replyStr.eachLine { l ->
+        if (lineCount > 0) {
+            def cols = l.split(/,/)
+            entry {
+                title "${cols[1]}"
+                id "${cols[0]}"
+                summary "${cols[0]}: ${cols[1]}"
+            }
+        }
+        lineCount++;
+    }
+}
+
+println writer.toString()
+
+
