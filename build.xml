@@ -1,0 +1,67 @@
+<project name="fusioncoll" default="usage">
+
+  <property file="local.properties"/>
+
+  <target name="usage"
+	  description="Lists suggested tasks">
+    <echo message="coll      Build CITE Collection servlet"/>
+    <echo message="run-coll  Run servlet in jetty container"/>
+
+  </target>
+
+  <target name="clean"
+	  description="Creates empty directory structure in ${builddir}"
+	  >
+    <delete dir="${builddir}"/>
+    <mkdir dir="${builddir}"/>
+    <mkdir dir="${builddir}/lib"/>
+    <mkdir dir="${builddir}/classes"/>
+  </target>
+
+
+  <target name="war" 
+	  depends="coll">
+    <jar destfile="${builddir}/citecoll.war" basedir="${builddir}/jetty/webapps/citecoll"/>
+  </target>
+
+  <target name="coll"  
+	  description="Builds CITE Collection servlet in included jetty container">
+    <!-- Copy main servlet structure -->
+    <copy todir="${builddir}">
+      <fileset dir="src" includes="fusioncoll/**" />
+    </copy>
+    <copy todir="${builddir}/fusioncoll/WEB-INF/lib"
+	  file="lib/groovy-all-1.7.8.jar"/>
+
+    <copy todir="${builddir}/fusioncoll/WEB-INF/lib"
+	  file="lib/fuse.jar"/>
+
+    <copy todir="${builddir}/fusioncoll/WEB-INF/lib"
+	  file="lib/gdata-core-1.0.jar"/>
+
+    <copy todir="${builddir}/fusioncoll/WEB-INF/lib"
+	  file="lib/guava-r09.jar"/>
+
+    <copy  todir="${builddir}/jetty">
+      <fileset dir="${JETTYSRC}"/>
+    </copy>
+
+    <copy todir="${builddir}/jetty/webapps/citecoll">
+      <fileset dir="${builddir}/fusioncoll"/>
+    </copy>
+
+  </target>
+
+  <target name="run-coll" 
+	  depends="coll"
+	  description="Run jetty container with CITE Collection service">
+    <echo message="Starting service on http://localhost:${SERVLETPORT}"/>
+    <java dir="${builddir}/jetty" fork="true" jar="${builddir}/jetty/start.jar">
+      <env key="jetty.port" value="${SERVLETPORT}"/>
+      <sysproperty key="jetty.port" value="${SERVLETPORT}"/>
+    </java>
+  </target>
+
+
+
+</project>
