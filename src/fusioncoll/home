@@ -14,23 +14,12 @@ home.html {
         div {
             h1("CITE Collections interface to data in Google Fusion Tables")
             p("Supply your own home page here.")
-            p("Links: ")
+            
             p("Help/how-to-configure:  TO BE ADDED")
+
             p {
-                mkp.yield "The standard "
-                a (href : "api", "CITE API")
-            }
-            p ("Requests:")
-            ul {
-                li("GetCapabilities")
-                li("GetObject")
-                li("OrderedBy")
-                li("GetFirst")
-                li("GetLast")
-                li("GetNext")
-                li("GetPrev")
-                li("GetValidIds")
-                li("GetCollectionSize")
+                mkp.yield "Page of forms to test the "
+                a (href : "testPage", "CITE Collections API")
             }
         }
     }
