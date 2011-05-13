@@ -15,7 +15,11 @@ home.html {
             h1("CITE Collections interface to data in Google Fusion Tables")
             p("Supply your own home page here.")
             
-            p("Help/how-to-configure:  TO BE ADDED")
+            p {
+                mkp.yield     "Quick README including "
+                a(href : "README.txt", "how to configure and run")
+                mkp.yield " this service."
+            }
 
             p {
                 mkp.yield "Page of forms to test the "

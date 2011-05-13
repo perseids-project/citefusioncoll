@@ -87,6 +87,8 @@
       <fileset dir="configs"/>
     </copy>
 
+    <copy file="README.txt" todir="${builddir}/jetty/webapps/citecoll"/>
+
   </target>
 
   <target name="run-coll" 
