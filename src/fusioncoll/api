@@ -171,7 +171,7 @@ if (!(checkReq == "OK")) {
 
         case 'GetNext':
             if (params['urn']) {
-            println cs.getNextReply("${reqUrn}")
+            println cs.getNextReply(params['urn'])
         } else {
             println cs.getNextReply(params['collection'], params['id'])
         }

@@ -47,8 +47,6 @@ class CollectionService {
 
 
 
-
-
     String getSizeReply(String requestUrn, String collectionId) {
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn(requestUrn)
@@ -68,6 +66,90 @@ class CollectionService {
         replyBuff.append("\n<size>${getSize(citeUrn)}</size>\n</reply>\n</GetCollectionSize>\n")
         return replyBuff.toString()
     }
+
+
+    String getNextReply(String requestUrn) {
+        CiteUrn citeUrn = new CiteUrn(requestUrn)
+        def collConf = this.citeConfig[citeUrn.getCollection()]
+
+        StringBuffer replyBuff = new StringBuffer("<GetNext xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n${getNextObject(requestUrn)}\n</reply>\n</GetNext>\n")
+        return replyBuff.toString()
+    }
+
+    String getNextReply(String collection, String obj) {
+        def collConf = this.citeConfig[collectionId]
+        def urnStr = "urn:cite:${collConf['nsabbr']}:${collection}.${obj}"
+
+        StringBuffer replyBuff = new StringBuffer("<GetNext xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collection}</collection>\n<id>${obj}</id>\n</request>\n")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n${getNextObject(urnStr)}\n</reply>\n</GetNext>\n")
+        return replyBuff.toString()
+    }
+
+
+
+    // two-step:  get object, then get object + 1 based on seq...
+    String getNextObject(String urnStr) {
+        CiteUrn citeUrn = new CiteUrn (urnStr)
+        def collectionId = citeUrn.getCollection()
+        def collConf = this.citeConfig[collectionId]
+        if (!collConf['orderedBy']) {
+            return null
+        }
+        // Get index of orderedBy
+        def propList = collConf['properties']
+        def orderingPropIndex
+        propList.eachWithIndex { p, i ->
+            if (p['name'] == collConf['orderedBy']) {
+                orderingPropIndex =  i
+            }
+        }
+        def orderingProp = propList[orderingPropIndex]['name']
+        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
+        if (collConf['groupProperty']) {
+            qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+
+
+        def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
+        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
+        grequest.execute()
+        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
+        // Look for 1 more than the this object's sequence number.
+        // Test for end of line!
+        def seqNum = Integer.parseInt(replyLines[1],10) + 1
+
+
+        // simplify syntax:
+        def props = collConf['properties']
+        StringBuffer propNames =  new StringBuffer()
+        props.eachWithIndex { p, i ->
+            if (i != 0) {
+                propNames.append(", ${p['name']}")
+            } else {
+                propNames.append(p['name'])
+            }
+        }
+
+        StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${orderingProp} = ${seqNum}")
+        if (collConf['groupProperty']) {
+            objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+
+
+        def objQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(objQuery.toString(), "UTF-8"));
+        GDataRequest objrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, objQueryUrl, ContentType.TEXT_PLAIN)
+        objrequest.execute()
+        def objReplyLines= objrequest.requestUrl.getText('UTF-8').readLines()
+
+        if (objReplyLines.size() != 2) {
+            return ""
+        }
+        return rowToXml(objReplyLines[1],citeUrn.toString())
+    }
+
 
 
     String getLastReply(String requestUrn, String collectionId) {
