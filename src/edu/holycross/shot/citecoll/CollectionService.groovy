@@ -78,7 +78,7 @@ class CollectionService {
     }
 
     String getPrevReply(String collection, String obj) {
-        def collConf = this.citeConfig[collectionId]
+        def collConf = this.citeConfig[collection]
         def urnStr = "urn:cite:${collConf['nsabbr']}:${collection}.${obj}"
 
         StringBuffer replyBuff = new StringBuffer("<GetPrev xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collection}</collection>\n<id>${obj}</id>\n</request>\n")
@@ -99,7 +99,7 @@ class CollectionService {
     }
 
     String getNextReply(String collection, String obj) {
-        def collConf = this.citeConfig[collectionId]
+        def collConf = this.citeConfig[collection]
         def urnStr = "urn:cite:${collConf['nsabbr']}:${collection}.${obj}"
 
         StringBuffer replyBuff = new StringBuffer("<GetNext xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collection}</collection>\n<id>${obj}</id>\n</request>\n")

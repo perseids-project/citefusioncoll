@@ -104,6 +104,7 @@ home.html {
 
 
             h2 ("GetNext")
+            p("Applies to ordered collections only.")
             p ("Two possible forms:")
             p ("1. Identify object by  URN")
             form(action : "api", method : "GET")  {
@@ -122,6 +123,7 @@ home.html {
             }
 
             h2 ("GetPrev")
+            p("Applies to ordered collections only.")
             p ("Two possible forms:")
             p ("1. Identify object by  URN")
             form(action : "api", method : "GET")  {

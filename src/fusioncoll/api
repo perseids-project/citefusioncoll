@@ -141,7 +141,7 @@ if (!(checkReq == "OK")) {
             CiteUrn reqUrn = new CiteUrn(params['urn'])
             println cs.getFirstReply("${reqUrn}", reqUrn.getCollection())
         } else {
-            println cs.getFirstReply(params['urn'])
+            println cs.getFirstReply(params['collection'])
         }
             
 
@@ -153,7 +153,7 @@ if (!(checkReq == "OK")) {
             CiteUrn reqUrn = new CiteUrn(params['urn'])
             println cs.getLastReply("${reqUrn}", reqUrn.getCollection())
         } else {
-            println cs.getLastReply(params['urn'])
+            println cs.getLastReply(params['collection'])
         }
         break
 
