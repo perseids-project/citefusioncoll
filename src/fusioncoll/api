@@ -1,4 +1,11 @@
-import java.text.SimpleDateFormat
+// HORRIFIC error in groovy:  parameter named 'request'
+// is lost!
+//
+// Possibly add paging for queries that can return multiples
+
+
+import edu.holycross.shot.citecoll.CollectionService
+import edu.harvard.chs.cite.CiteUrn
 import groovy.xml.MarkupBuilder
 // Google data APIs:
 import com.google.gdata.client.GoogleService;
@@ -9,67 +16,269 @@ import com.google.gdata.util.ContentType;
 response.setContentType("text/xml; charset=UTF-8")
 request.setCharacterEncoding("UTF-8")
 
-// Constants:
-String SERVICE_URL = "https://www.google.com/fusiontables/api/query"
-String F1K_LEXENT_UUID = "uri:uuid:21e0eb8c-1a52-4451-b83b-a5d32af51b99"
-String F1K_LEXENT_GOOGLE_TAB = "835743" // READ FROM CONFIG
-String CLIENT_APP  = "shot.holycross.edu-fusioncoll-0.1"
-
-def currPage = 1
-if (params["page"]?.toInteger()) {
-    currPage = params["page"].toInteger()
-}
-int entries_per_page = 20
-if (params["pagesize"]?.toInteger()) {
-    entries_per_page = params["pagesize"].toInteger()
+/*
+String serviceUrl()  {
+    return "https://www.google.com/fusiontables/api/query"
 }
 
-int offset_entries = (currPage - 1) * entries_per_page
+
+String clientApp()  {
+    return "shot.holycross.edu-fusioncoll-0.1"
+}
+*/
+
+boolean urnSyntaxOk(String urn) {
+    def components = urn.split(/:/)
+    if (components.size() != 4) {
+        return false
+    }
+    if (components[0] != 'urn') {
+        return false
+    }
+    if (components[1] != 'cite') {
+        return false
+    }
+    return true
+}
+
+def errorMsg =  { msg ->
+    StringWriter writer = new StringWriter()
+    MarkupBuilder xml = new MarkupBuilder(writer)
+    xml.CiteError {
+        errorCode("1")
+        description("${msg}")
+    }
+    println writer.toString()    
+}
 
 
-
-
-
-String baseQuery = "SELECT URN, Sequence from ${F1K_LEXENT_GOOGLE_TAB}"
-String selectQuery = "${baseQuery} OFFSET ${offset_entries} LIMIT ${entries_per_page}"
-
-URL url = new URL(SERVICE_URL + "?sql=" + URLEncoder.encode(selectQuery, "UTF-8"));
-
-GDataRequest grequest = new GoogleService("fusiontables", CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, url, ContentType.TEXT_PLAIN)
-grequest.execute()
-
-StringWriter writer = new StringWriter();
-MarkupBuilder xml = new MarkupBuilder(writer);
-
-def replyStr = grequest.requestUrl.getText('UTF-8')
-
-xml.feed(xmlns:'http://www.w3.org/2005/Atom') {
-    title("Greek lexical entitites:  page ${currPage}")
-    subtitle("${entries_per_page} entries per page. From the Free Greek project.")
-    id("${F1K_LEXENT_UUID}")
-    link(href:"http://www.google.com/fusiontables/DataSource?dsrcid=${F1K_LEXENT_GOOGLE_TAB}")
-    link(href:"./home",  rel : "related", title : "Data from the F1K project")
-    link(rel : "first", href:"./lexent?page=1")
-    link(rel : "next", href:"./lexent?page=${currPage + 1}")
-
-    author {
-        name("Neel Smith")
+String checkRequest() {
+    params.keySet().each { paramKey ->
+        def paramList = params[paramKey]
+        if (paramList.size() > 1) {
+            return "Bad parameter set:  duplicated parameter ${paramKey}"
+        }
+    }
+    // Must include a 'req' parameter:
+    if (!params['req']) {
+        return  "No 'req' parameter given."
+    }
+    if (params['req'] == "GetCapabilities") {
+        // no other params needed
+        return "OK"
     }
 
-    def lineCount = 0
-    replyStr.eachLine { l ->
-        if (lineCount > 0) {
-            def cols = l.split(/,/)
-            entry {
-                title "${cols[1]}"
-                id "${cols[0]}"
-                summary "${cols[0]}: ${cols[1]}"
+    switch (params['req']) {
+        case "GetObject":
+            
+            if (params['urn']) {
+            if (!urnSyntaxOk(params['urn'])) {
+                return "Invalid urn syntax '" + params['urn'] + "'."
+            }
+            def components = params['urn'].split(/:/)
+            def idparts = components[3].split(/\./)
+
+            if (idparts.size() != 2) {
+                return "Invalid urn ${params['urn']}:  id component ${components[3]} must include collection and object id."
+            }
+            return "OK"
+        }
+        if ((params['collection']) && (params['id'])) {
+            return "OK"
+        }
+    
+        return "${params['req']} request requires either a 'urn' parameter or a combination of a 'collection' and an 'id' parameter for a validly configured collection."
+        break
+
+        default:
+            return "Unrecognized or unimplemented request '" +  params['req'] + "'"
+        break
+    }
+}
+
+
+// get capabilities File
+File getCapsFile() {
+    def confDir = context.getRealPath("/configs")
+    def capsFileName = "capabilities.xml"
+    def capsFile = new File(confDir + "/" + capsFileName)
+    return capsFile
+}
+
+// Creates query that can be submitted as the
+// sql parameter to Fusion for a given urn
+String getObjectQuery(String urn) {
+    def citeUrn = new CiteUrn(urn)
+    def coll = citeUrn.getCollection()
+    def obj = citeUrn.getObjectId()
+    return getObjectQuery(coll,obj)
+
+}
+
+
+// Creates query that can be submitted as the
+// sql parameter to Fusion for a
+// given a collId and objId
+String getObjectQuery(String coll, String obj) {
+    File capsFile = getCapsFile()
+    def parserObject = new XmlParser()
+    def capsRoot = parserObject.parse(capsFile)
+
+    String citeString = "http://chs.harvard.edu/xmlns/cite"
+    def citens = new groovy.xml.Namespace("${citeString}")
+
+    def flds = []
+    // test for group property.
+    def collConfig = capsRoot[citens.collectionService][citens.citeCollection].find {it.'@name' == coll}
+    if (!collConfig) { return null }
+    def idField = collConfig.'@canonicalId'
+    def ns = collConfig[citens.namespaceMapping][0].'@abbr'
+    def constructedUrn = "${ns}:${coll}.${obj}"
+
+
+    collConfig[citens.citeProperty].each {
+        flds.add("${it.'@name'}")
+    }
+    def fldList = ""
+    flds.eachWithIndex { f,count ->
+        if (count < (flds.size() - 1)) {
+            fldList += f + ", "
+        } else {
+            fldList += f
+        }
+    }
+
+    return "SELECT ${fldList} FROM " + collConfig.'@class' + " WHERE " + idField + " = '" + constructedUrn + "'" //collConfig
+
+}
+
+/*
+// Reply to GetCapabilities request.
+def getCaps = {
+    File capsFile = getCapsFile()
+    if (capsFile) {
+        println capsFile.getText()
+    }
+}
+*/
+
+// Reply to GetObject request.
+// need a getconfig method ...
+def getObj =  { 
+    CiteUrn citeUrn
+    URL url
+    if (params['urn']) {
+        citeUrn = new CiteUrn(params['urn'])
+        def q = getObjectQuery(params['urn'])
+        url = new URL(serviceUrl() + "?sql=" + URLEncoder.encode(q, "UTF-8"));
+    } else {
+        //
+        def q = getObjectQuery(params['collection'], params['id'])
+        url = new URL(serviceUrl() + "?sql=" + URLEncoder.encode(q, "UTF-8"));
+    }
+
+    GDataRequest grequest = new GoogleService("fusiontables", clientApp()).getRequestFactory().getRequest(RequestType.QUERY, url, ContentType.TEXT_PLAIN)
+    grequest.execute()
+
+    def replyStr = grequest.requestUrl.getText('UTF-8')
+    StringWriter writer = new StringWriter()
+    MarkupBuilder xml = new MarkupBuilder(writer)
+    xml.GetObject(xmlns: "http://chs.harvard.edu/xmlns/cite") {
+        request {
+            urn("${url}")
+        }
+        reply(datans: "${citeUrn?.getNs()}", datansuri : "URI GOES HERE") {
+            def nameList = []
+            def replyCount = 0
+            System.err.println "REPLYSTR: " + replyStr
+            replyStr.eachLine { l ->
+                // temp hack:  split on commas
+                // replace with full csv parse ...
+                if (replyCount == 0) {
+                    def cols = l.split(/,/)
+                    cols.each {
+                        nameList.add(it)
+                    }
+                    replyCount++
+                } else {
+                    def cols = l.split(/,/)
+                    citeObject(urn : "GET VALUE OF ID FIELD NAMED IN CONFIG") {
+                        cols.eachWithIndex { c, i ->
+                            citeProperty(name : "${nameList[i]}", "${c}")
+                        }
+                    }
+                }
             }
         }
-        lineCount++;
+    }
+    println writer.toString()    
+
+} // GetObj
+
+
+
+
+
+
+// 1. Validate request form.
+def checkReq = checkRequest()
+if (!(checkReq == "OK")) {
+    errorMsg(checkReq)
+} else {
+
+    CollectionService cs = new CollectionService(getCapsFile())
+
+
+    def citeReq = params['req']
+    switch (citeReq) {
+        case 'GetCapabilities':
+            //getCaps()
+            println cs.getCapsReply()
+        break
+
+        case 'GetObject':
+            // 2 legitimate forms of request:
+            if (params['urn']) {
+            println cs.getObjReply(params['urn']) 
+        }  else {
+            println cs.getObjReply(params['collection'], params['id']) 
+        }
+        break
+
+/*
+        case 'OrderedBy':
+            return orderedBy(params, config)
+        break
+*/
+
+        case 'GetFirst':
+             getFirst()
+        break
+
+
+        case 'GetLast':
+             getLast()
+        break
+
+
+        case 'GetNext':
+             getNext()
+        break
+
+        case 'GetPrev':
+             getPrev()
+        break
+
+            /*
+        case 'GetValidIds':
+            return getIds(params,config)
+        break
+*/
+
+        case 'GetCollectionSize':
+            getCollSize()
+        break
+
     }
 }
-
-println writer.toString()
-
 

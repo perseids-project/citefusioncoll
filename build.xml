@@ -1,6 +1,16 @@
 <project name="fusioncoll" default="usage">
 
   <property file="local.properties"/>
+  <import file="${sdk.dir}/config/user/ant-macros.xml" />
+
+
+  <path id="common.classpath"> 
+    <fileset dir="${builddir}/lib"
+	     includes="**/*.jar"/>
+    <fileset dir="lib/"
+	     includes="**/*.jar"/> 
+    <pathelement location="${builddir}/classes"/>
+  </path>
 
   <target name="usage"
 	  description="Lists suggested tasks">
@@ -8,6 +18,22 @@
     <echo message="run-coll  Run servlet in jetty container"/>
 
   </target>
+
+
+  <target name="jar"
+	  description="Compiles and jars CiteService">
+    <taskdef name="groovyc"
+	     classname="org.codehaus.groovy.ant.Groovyc"
+	     classpathref="common.classpath"/>
+    <groovyc destdir="${builddir}/classes"
+	     srcdir="src"
+	     classpathref="common.classpath"/>
+
+    <jar destfile="${builddir}/lib/collsvc.jar" 
+	 basedir="${builddir}/classes"
+	 includes="edu/holycross/shot/citecoll/*"/>
+  </target>
+
 
   <target name="clean"
 	  description="Creates empty directory structure in ${builddir}"
@@ -25,13 +51,20 @@
   </target>
 
   <target name="coll"  
+	  depends="jar"
 	  description="Builds CITE Collection servlet in included jetty container">
     <!-- Copy main servlet structure -->
     <copy todir="${builddir}">
       <fileset dir="src" includes="fusioncoll/**" />
     </copy>
     <copy todir="${builddir}/fusioncoll/WEB-INF/lib"
+	  file="${builddir}/lib/collsvc.jar"/>
+
+    <copy todir="${builddir}/fusioncoll/WEB-INF/lib"
 	  file="lib/groovy-all-1.7.8.jar"/>
+
+    <copy todir="${builddir}/fusioncoll/WEB-INF/lib"
+	  file="lib/cite.jar"/>
 
     <copy todir="${builddir}/fusioncoll/WEB-INF/lib"
 	  file="lib/fuse.jar"/>
@@ -48,6 +81,10 @@
 
     <copy todir="${builddir}/jetty/webapps/citecoll">
       <fileset dir="${builddir}/fusioncoll"/>
+    </copy>
+
+    <copy todir="${builddir}/jetty/webapps/citecoll/configs">
+      <fileset dir="configs"/>
     </copy>
 
   </target>

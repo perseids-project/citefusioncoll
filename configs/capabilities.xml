@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GetCapabilities
+    xmlns="http://chs.harvard.edu/xmlns/cite"
+    xmlns:cite="http://chs.harvard.edu/xmlns/cite">
+    <collectionService>
+        <citeCollection
+            canonicalId="codexId"
+            class="835352"
+            name="Codex">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <citeProperty
+                label="codexId"
+                name="codexId"
+                type="string"/>
+            <citeProperty
+                label="descr"
+                name="descr"
+                type="string"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="835743"
+            groupProperty="Siglum"
+            name="msA">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
+                label="Page ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Page label"
+                name="Label"
+                type="string"/>
+            <citeProperty
+                label="MS siglum"
+                name="Siglum"
+                type="string"/>
+          
+            <citeProperty
+                label="Internal sequence number"
+                name="Sequence"
+                type="unrecognized"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="835743"
+            groupProperty="Siglum"
+            name="msB">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
+                label="Page ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Page label"
+                name="Label"
+                type="string"/>
+            <citeProperty
+                label="MS siglum"
+                name="Siglum"
+                type="string"/>
+           
+            <citeProperty
+                label="Internal sequence number"
+                name="Sequence"
+                type="unrecognized"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="835743"
+            groupProperty="Siglum"
+            name="u4">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
+                label="Page ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Page label"
+                name="Label"
+                type="string"/>
+            <citeProperty
+                label="MS siglum"
+                name="Siglum"
+                type="string"/>
+            
+            <citeProperty
+                label="Internal sequence number"
+                name="Sequence"
+                type="unrecognized"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="835743"
+            groupProperty="Siglum"
+            name="e3">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
+                label="Page ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Page label"
+                name="Label"
+                type="string"/>
+            <citeProperty
+                label="MS siglum"
+                name="Siglum"
+                type="string"/>
+            
+            <citeProperty
+                label="Internal sequence number"
+                name="Sequence"
+                type="unrecognized"/>
+        </citeCollection>
+    </collectionService>
+</GetCapabilities>
