@@ -31,7 +31,7 @@ home.html {
             }
 
 
-            p ("2. Identify object by  collection ID")
+            p ("2. Identify collection by  collection ID")
             form(action : "api", method : "GET")  {
                 input (type : "hidden", name : "req", value : "GetCollectionSize")
                 input(name : "collection", value : "msA")
@@ -51,7 +51,7 @@ home.html {
             }
 
 
-            p ("2. Identify object by  collection ID")
+            p ("2. Identify collection by  collection ID")
             form(action : "api", method : "GET")  {
                 input (type : "hidden", name : "req", value : "GetFirst")
                 input(name : "collection", value : "msA")
@@ -71,7 +71,7 @@ home.html {
             }
 
 
-            p ("2. Identify object by  collection ID")
+            p ("2. Identify collection by  collection ID")
             form(action : "api", method : "GET")  {
                 input (type : "hidden", name : "req", value : "GetLast")
                 input(name : "collection", value : "msA")
