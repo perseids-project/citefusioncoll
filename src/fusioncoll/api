@@ -181,23 +181,28 @@ if (!(checkReq == "OK")) {
 
 
         case 'GetPrev':
-//             getPrev()
+            if (params['urn']) {
+            println cs.getPrevReply(params['urn'])
+        } else {
+            println cs.getPrevReply(params['collection'], params['id'])
+        }
+
         break
 
 
 
-/*
+        /*
         case 'OrderedBy':
             return orderedBy(params, config)
         break
-*/
+        */
 
 
-            /*
+        /*
         case 'GetValidIds':
             return getIds(params,config)
         break
-*/
+        */
 
     }
 }
