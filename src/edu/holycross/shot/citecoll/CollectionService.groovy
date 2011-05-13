@@ -1,7 +1,4 @@
 package edu.holycross.shot.citecoll
-
-// BUGS/TBD:  row formatting is not really parsing csv, just splitting on commas!
-// 
 //
 // Possibly add paging for queries that can return multiples
 //
@@ -9,6 +6,9 @@ package edu.holycross.shot.citecoll
 
 import edu.harvard.chs.cite.CiteUrn
 import groovy.xml.MarkupBuilder
+import java.util.regex.Pattern
+import java.util.regex.MatchResult
+
 // Google data APIs:
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.client.Service.GDataRequest;
@@ -20,6 +20,11 @@ class CollectionService {
     static String SERVICE_URL = "https://www.google.com/fusiontables/api/query"
     static String CLIENT_APP = "shot.holycross.edu-fusioncoll-0.1"
     static String CITE_NS = "http://chs.harvard.edu/xmlns/cite"
+    // Thanks, google, for the awesome regexp!  
+    // Ripped off from http://code.google.com/apis/fusiontables/docs/samples/java.html 
+    static Pattern CSV_VALUE_PATTERN = Pattern.compile("([^,\\r\\n\"]*|\"(([^\"]*\"\")*[^\"]*)\")(,|\\r?\\n)")
+    
+
 
     groovy.xml.Namespace citens = new groovy.xml.Namespace(CITE_NS)
 
@@ -43,8 +48,6 @@ class CollectionService {
     String getCapsReply() {
         return this.capabilitiesFile.getText()
     }
-
-
 
 
     String getSizeReply(String requestUrn, String collectionId) {
@@ -535,8 +538,22 @@ class CollectionService {
             }
         }
         
-        // This is naive and needs to be fixed:
-        def cols = row.split(/,/)
+        // Parse CSV results, and store in a groovy list:
+        def cols = []
+        Scanner scanner = new Scanner("${row}\n");
+        def count = 0
+        while (scanner.hasNextLine()) {
+            count++
+            scanner.findWithinHorizon(CollectionService.CSV_VALUE_PATTERN, 0)
+            MatchResult match = scanner.match()
+            String quotedString = match.group(2)
+            if (quotedString) {
+                cols.add(quotedString.replaceFirst(/[,\s]+$/,""))
+            } else {
+                cols.add(match.group().replaceFirst(/[,\s]+$/,""))
+            }
+        }
+        
         StringWriter writer = new StringWriter()
         MarkupBuilder xml = new MarkupBuilder(writer)
         
