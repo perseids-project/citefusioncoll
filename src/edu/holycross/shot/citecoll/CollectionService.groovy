@@ -45,6 +45,28 @@ class CollectionService {
     }
 
 
+
+    String getLastReply(String requestUrn, String collectionId) {
+        def collConf = this.citeConfig[collectionId]
+        CiteUrn citeUrn = new CiteUrn(requestUrn)
+
+        StringBuffer replyBuff = new StringBuffer("<GetLast xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n${getLastObject(citeUrn)}\n</reply>\n</GetLast>\n")
+        return replyBuff.toString()
+
+    }
+    String getLastReply(String collectionId) {
+        def collConf = this.citeConfig[collectionId]
+        CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
+
+        StringBuffer replyBuff = new StringBuffer("<GetLast xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n</request>\n")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n${getLastObject(citeUrn)}</reply>\n</GetLast>\n")
+        return replyBuff.toString()
+    }
+
+
     /** Creates a string with valid XML reply to the
     * CITE Collection GetFirst request when the collection
     * is identified by a collection identifier and a requesting URN.
@@ -60,7 +82,7 @@ class CollectionService {
         CiteUrn citeUrn = new CiteUrn(requestUrn)
 
         StringBuffer replyBuff = new StringBuffer("<GetFirst xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
-        replyBuff.append("<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
         replyBuff.append("\n${getFirstObject(citeUrn)}\n</reply>\n</GetFirst>\n")
         return replyBuff.toString()
     }
@@ -79,11 +101,58 @@ class CollectionService {
         CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
 
         StringBuffer replyBuff = new StringBuffer("<GetFirst xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n</request>\n")
-        replyBuff.append("<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
         replyBuff.append("\n${getFirstObject(citeUrn)}</reply>\n</GetFirst>\n")
         return replyBuff.toString()
     }
 
+
+    String getLastObject(CiteUrn requestUrn) {
+        def collectionId = requestUrn.getCollection()
+        def collConf = this.citeConfig[collectionId]
+        if (!collConf['orderedBy']) {
+            return null
+        }
+        
+        // test for ordering field...
+        StringBuffer qBuff = new StringBuffer("SELECT MAXIMUM(${collConf['orderedBy']}) FROM ${collConf['className']}" )
+        if (collConf['groupProperty']) {
+            qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+
+        def maxQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
+        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, maxQueryUrl, ContentType.TEXT_PLAIN)
+        grequest.execute()
+        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
+        def maxVal = replyLines[1]
+
+        // simplify syntax:
+        def props = collConf['properties']
+        StringBuffer propNames =  new StringBuffer()
+        props.eachWithIndex { p, i ->
+            if (i != 0) {
+                propNames.append(", ${p['name']}")
+            } else {
+                propNames.append(p['name'])
+            }
+        }
+
+        StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['orderedBy']} = ${maxVal}")
+        if (collConf['groupProperty']) {
+            objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+
+        def objQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(objQuery.toString(), "UTF-8"));
+        GDataRequest objrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, objQueryUrl, ContentType.TEXT_PLAIN)
+        objrequest.execute()
+        def objReplyLines= objrequest.requestUrl.getText('UTF-8').readLines()
+
+        return rowToXml(objReplyLines[1],requestUrn.toString())
+
+    }
+    String getLastObject(String urnStr) {
+        return getLastObject(new CiteUrn(urnStr))
+    }
 
     /** Creates an XML serialization of the first object
     * in an ordered collection.  This requires two hits on
@@ -166,7 +235,7 @@ class CollectionService {
         CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}.${objectId}")
 
         StringBuffer replyBuff = new StringBuffer("<GetObject xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n<id>${objectId}</id>\n</request>\n")
-        replyBuff.append("<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
         replyBuff.append("\n${getObjectData(citeUrn)}</reply>\n</GetObject>\n")
         return replyBuff.toString()
     }
@@ -181,7 +250,7 @@ class CollectionService {
         CiteUrn citeUrn = new CiteUrn(requestUrn)
         def collConf = this.citeConfig[citeUrn.getCollection()]
         StringBuffer replyBuff = new StringBuffer("<GetObject xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
-        replyBuff.append("<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
         replyBuff.append("\n${getObjectData(requestUrn)}</reply>\n</GetObject>\n")
     }
 

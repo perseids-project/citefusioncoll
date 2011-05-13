@@ -78,7 +78,7 @@ String checkRequest() {
         return "${params['req']} request requires either a 'urn' parameter or a combination of a 'collection' and an 'id' parameter for a validly configured collection."
         break
         
-
+        case "GetLast":
         case "GetFirst":
             if (params['urn']) {
             if (!urnSyntaxOk(params['urn'])) {
@@ -134,14 +134,21 @@ if (!(checkReq == "OK")) {
             if (params['urn']) {
             CiteUrn reqUrn = new CiteUrn(params['urn'])
             println cs.getFirstReply("${reqUrn}", reqUrn.getCollection())
+        } else {
+            println cs.getFirstReply(params['urn'])
         }
             
-//             getFirst()
+
         break
 
 
         case 'GetLast':
-//             getLast()
+            if (params['urn']) {
+            CiteUrn reqUrn = new CiteUrn(params['urn'])
+            println cs.getLastReply("${reqUrn}", reqUrn.getCollection())
+        } else {
+            println cs.getLastReply(params['urn'])
+        }
         break
 
 
