@@ -1,4 +1,7 @@
 package edu.holycross.shot.citecoll
+
+// BUGS/TBD:  row formatting is not really parsing csv, just splitting on commas!
+// 
 //
 // Possibly add paging for queries that can return multiples
 //
@@ -42,6 +45,16 @@ class CollectionService {
     }
 
 
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetFirst request when the collection
+    * is identified by a collection identifier and a requesting URN.
+    * @param collectionId CITE identifier for the collection.
+    * @param requestUrn Source URN that this collection ID was
+    * derived from.
+    * @returns A well-formed XML string representing the first
+    * object in the collection, or null if the collection is not
+    * a configured, ordered collection.
+    */
     String getFirstReply(String requestUrn, String collectionId) {
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn(requestUrn)
@@ -53,8 +66,14 @@ class CollectionService {
     }
 
 
-
-
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetFirst request when the collection
+    * is identified by a collection identifier.
+    * @param collectionId CITE identifier for the collection.
+    * @returns A well-formed XML string representing the first
+    * object in the collection, or null if the collection is not
+    * a configured, ordered collection.
+    */
     String getFirstReply(String collectionId) {
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
@@ -65,7 +84,19 @@ class CollectionService {
         return replyBuff.toString()
     }
 
-    // return null if not an ordered collection
+
+    /** Creates an XML serialization of the first object
+    * in an ordered collection.  This requires two hits on
+    * Fusion:  first to find the minimum value in the property
+    * configured with sequencing data, then a retrieval to 
+    * get the object with the minimum sequence value.
+    * Queries check the collection's configuration to account
+    * for a grouping property defining a CITE Collection within a single 
+    * table.
+    * @param requestUrn A CITE URN identifying an ordered collection.
+    * @returns An XML serialization of the first object in the collection,
+    * or null if it is not a configured, ordered collection.
+    */
     String getFirstObject(CiteUrn requestUrn) {
         def collectionId = requestUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
@@ -109,6 +140,15 @@ class CollectionService {
         return rowToXml(objReplyLines[1],requestUrn.toString())
     }
 
+
+
+    /** Creates an XML serialization of the first object
+    * in an ordered collection by passing along request to
+    * implementation with overloaded signature using a CITE URN.
+    * @param urnSTr A CITE URN, as a String, identifying an ordered collection.
+    * @returns An XML serialization of the first object in the collection,
+    * or null if it is not a configured, ordered collection.
+    */
     String getFirstObject(String urnStr) {
         return getFirstObject(new CiteUrn(urnStr))
     }
@@ -174,8 +214,15 @@ class CollectionService {
         return rowToXml(replyLines[1],requestUrn)
     }
 
-    String rowToXml(String row, String requestUrn) {
 
+    /** Creates a well-formed fragment of XML in the
+    * CITE namespace representing a single row of data
+    * corresponding to a given URN.
+    * @param row A row of data in csv format as returned by Fusion.
+    * @param requestUrn The URN identifying this object.
+    * @return A String with an XML serialization of the data.
+    */
+    String rowToXml(String row, String requestUrn) {
         def CiteUrn citeUrn = new CiteUrn(requestUrn)
         def collConf = this.citeConfig[citeUrn.getCollection()]
         def propList = collConf['properties']
@@ -297,78 +344,3 @@ class CollectionService {
 
 
 }
-
-
-/*
-// Do these belon in this class or calling servlet wrapper?
-
-boolean urnSyntaxOk(String urn) {
-    def components = urn.split(/:/)
-    if (components.size() != 4) {
-        return false
-    }
-    if (components[0] != 'urn') {
-        return false
-    }
-    if (components[1] != 'cite') {
-        return false
-    }
-    return true
-}
-
-def errorMsg =  { msg ->
-    StringWriter writer = new StringWriter()
-    MarkupBuilder xml = new MarkupBuilder(writer)
-    xml.CiteError {
-        errorCode("1")
-        description("${msg}")
-    }
-    println writer.toString()    
-}
-
-
-String checkRequest() {
-    params.keySet().each { paramKey ->
-        def paramList = params[paramKey]
-        if (paramList.size() > 1) {
-            return "Bad parameter set:  duplicated parameter ${paramKey}"
-        }
-    }
-    // Must include a 'req' parameter:
-    if (!params['req']) {
-        return  "No 'req' parameter given."
-    }
-    if (params['req'] == "GetCapabilities") {
-        // no other params needed
-        return "OK"
-    }
-
-    switch (params['req']) {
-        case "GetObject":
-            
-            if (params['urn']) {
-            if (!urnSyntaxOk(params['urn'])) {
-                return "Invalid urn syntax '" + params['urn'] + "'."
-            }
-            def components = params['urn'].split(/:/)
-            def idparts = components[3].split(/\./)
-
-            if (idparts.size() != 2) {
-                return "Invalid urn ${params['urn']}:  id component ${components[3]} must include collection and object id."
-            }
-            return "OK"
-        }
-        if ((params['collection']) && (params['id'])) {
-            return "OK"
-        }
-    
-        return "${params['req']} request requires either a 'urn' parameter or a combination of a 'collection' and an 'id' parameter for a validly configured collection."
-        break
-
-        default:
-            return "Unrecognized or unimplemented request '" +  params['req'] + "'"
-        break
-    }
-}
-
-*/

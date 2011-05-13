@@ -31,3 +31,15 @@ to build a .war file you can drop into any servlet container.
    ant clean
 to empty the build directory.
 
+
+TBD/BUGS:
+* need to implement full csv parser
+* need to add groovydocs generation to build file
+* need to decide how to deal with groovy bug handling HTTP parameters
+named 'request'!
+* need to implement the following requests:
+- GetLast
+- GetNext
+- GetPrev
+- GetCollectionSize
+- perhaps GetValidIds?
