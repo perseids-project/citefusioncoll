@@ -46,6 +46,30 @@ class CollectionService {
 
 
 
+
+
+
+    String getSizeReply(String requestUrn, String collectionId) {
+        def collConf = this.citeConfig[collectionId]
+        CiteUrn citeUrn = new CiteUrn(requestUrn)
+        StringBuffer replyBuff = new StringBuffer("<GetCollectionSize xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n<size>${getSize(citeUrn)}</size>\n</reply>\n</GetCollectionSize>\n")
+        return replyBuff.toString()
+
+    }
+
+    String getSizeReply(String collectionId) {
+        def collConf = this.citeConfig[collectionId]
+        CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
+
+        StringBuffer replyBuff = new StringBuffer("<GetCollectionSize xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n</request>\n")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n<size>${getSize(citeUrn)}</size>\n</reply>\n</GetCollectionSize>\n")
+        return replyBuff.toString()
+    }
+
+
     String getLastReply(String requestUrn, String collectionId) {
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn(requestUrn)
@@ -107,6 +131,26 @@ class CollectionService {
     }
 
 
+    String getSize(CiteUrn requestUrn) {
+        def collectionId = requestUrn.getCollection()
+        def collConf = this.citeConfig[collectionId]
+        StringBuffer qBuff = new StringBuffer("SELECT COUNT() FROM ${collConf['className']}" )
+        if (collConf['groupProperty']) {
+            qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+
+
+        def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
+
+
+        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
+        grequest.execute()
+        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
+        return(replyLines[1])
+
+    } 
+    // end getSize
+
     String getLastObject(CiteUrn requestUrn) {
         def collectionId = requestUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
@@ -114,7 +158,6 @@ class CollectionService {
             return null
         }
         
-        // test for ordering field...
         StringBuffer qBuff = new StringBuffer("SELECT MAXIMUM(${collConf['orderedBy']}) FROM ${collConf['className']}" )
         if (collConf['groupProperty']) {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
