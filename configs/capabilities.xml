@@ -34,8 +34,8 @@
                 name="URN"
                 type="string"/>
             <citeProperty
-                label="Page label"
-                name="Label"
+                label="MS label"
+                name="MS"
                 type="string"/>
             <citeProperty
                 label="MS siglum"
@@ -45,7 +45,7 @@
             <citeProperty
                 label="Internal sequence number"
                 name="Sequence"
-                type="unrecognized"/>
+                type="number"/>
         </citeCollection>
         <citeCollection
             canonicalId="URN"
@@ -62,8 +62,8 @@
                 name="URN"
                 type="string"/>
             <citeProperty
-                label="Page label"
-                name="Label"
+                label="MS label"
+                name="MS"
                 type="string"/>
             <citeProperty
                 label="MS siglum"
@@ -73,7 +73,7 @@
             <citeProperty
                 label="Internal sequence number"
                 name="Sequence"
-                type="unrecognized"/>
+                type="number"/>
         </citeCollection>
         <citeCollection
             canonicalId="URN"
@@ -90,8 +90,8 @@
                 name="URN"
                 type="string"/>
             <citeProperty
-                label="Page label"
-                name="Label"
+                label="MS label"
+                name="MS"
                 type="string"/>
             <citeProperty
                 label="MS siglum"
@@ -101,7 +101,7 @@
             <citeProperty
                 label="Internal sequence number"
                 name="Sequence"
-                type="unrecognized"/>
+                type="number"/>
         </citeCollection>
         <citeCollection
             canonicalId="URN"
@@ -118,8 +118,8 @@
                 name="URN"
                 type="string"/>
             <citeProperty
-                label="Page label"
-                name="Label"
+                label="MS label"
+                name="MS"
                 type="string"/>
             <citeProperty
                 label="MS siglum"
@@ -129,7 +129,7 @@
             <citeProperty
                 label="Internal sequence number"
                 name="Sequence"
-                type="unrecognized"/>
+                type="number"/>
         </citeCollection>
     </collectionService>
 </GetCapabilities>

@@ -42,6 +42,78 @@ class CollectionService {
     }
 
 
+    String getFirstReply(String requestUrn, String collectionId) {
+        def collConf = this.citeConfig[collectionId]
+        CiteUrn citeUrn = new CiteUrn(requestUrn)
+
+        StringBuffer replyBuff = new StringBuffer("<GetFirst xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
+        replyBuff.append("<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n${getFirstObject(citeUrn)}\n</reply>\n</GetFirst>\n")
+        return replyBuff.toString()
+    }
+
+
+
+
+    String getFirstReply(String collectionId) {
+        def collConf = this.citeConfig[collectionId]
+        CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
+
+        StringBuffer replyBuff = new StringBuffer("<GetFirst xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n</request>\n")
+        replyBuff.append("<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n${getFirstObject(citeUrn)}</reply>\n</GetFirst>\n")
+        return replyBuff.toString()
+    }
+
+    // return null if not an ordered collection
+    String getFirstObject(CiteUrn requestUrn) {
+        def collectionId = requestUrn.getCollection()
+        def collConf = this.citeConfig[collectionId]
+        if (!collConf['orderedBy']) {
+            return null
+        }
+        
+        // test for ordering field...
+        StringBuffer qBuff = new StringBuffer("SELECT MINIMUM(${collConf['orderedBy']}) FROM ${collConf['className']}" )
+        if (collConf['groupProperty']) {
+            qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+
+        def minQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
+        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, minQueryUrl, ContentType.TEXT_PLAIN)
+        grequest.execute()
+        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
+        def minVal = replyLines[1]
+
+        // simplify syntax:
+        def props = collConf['properties']
+        StringBuffer propNames =  new StringBuffer()
+        props.eachWithIndex { p, i ->
+            if (i != 0) {
+                propNames.append(", ${p['name']}")
+            } else {
+                propNames.append(p['name'])
+            }
+        }
+
+        StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['orderedBy']} = ${minVal}")
+        if (collConf['groupProperty']) {
+            objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+
+        def objQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(objQuery.toString(), "UTF-8"));
+        GDataRequest objrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, objQueryUrl, ContentType.TEXT_PLAIN)
+        objrequest.execute()
+        def objReplyLines= objrequest.requestUrl.getText('UTF-8').readLines()
+
+        return rowToXml(objReplyLines[1],requestUrn.toString())
+    }
+
+    String getFirstObject(String urnStr) {
+        return getFirstObject(new CiteUrn(urnStr))
+    }
+
+
     /** Creates a string with valid XML reply to the
     * CITE Collection GetObject request when the object
     * is identified by a collection identifier and an
@@ -55,7 +127,7 @@ class CollectionService {
 
         StringBuffer replyBuff = new StringBuffer("<GetObject xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n<id>${objectId}</id>\n</request>\n")
         replyBuff.append("<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("${getObjectData(citeUrn)}</reply>\n</GetObject>\n")
+        replyBuff.append("\n${getObjectData(citeUrn)}</reply>\n</GetObject>\n")
         return replyBuff.toString()
     }
 
@@ -70,7 +142,7 @@ class CollectionService {
         def collConf = this.citeConfig[citeUrn.getCollection()]
         StringBuffer replyBuff = new StringBuffer("<GetObject xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
         replyBuff.append("<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("${getObjectData(requestUrn)}</reply>\n</GetObject>\n")
+        replyBuff.append("\n${getObjectData(requestUrn)}</reply>\n</GetObject>\n")
     }
 
 
@@ -92,12 +164,6 @@ class CollectionService {
     String getObjectData(String requestUrn) {
         def q =  getObjectQuery(requestUrn)
         def url = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(q, "UTF-8"));
-        
-        def CiteUrn citeUrn = new CiteUrn(requestUrn)
-        def collConf = this.citeConfig[citeUrn.getCollection()]
-        def idProp = collConf['canonicalId']
-        def propList = collConf['properties']
-
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, url, ContentType.TEXT_PLAIN)
         grequest.execute()
 
@@ -105,24 +171,36 @@ class CollectionService {
         if (replyLines.size() != 2) {
             // exception:  should be a header and one record
         }
+        return rowToXml(replyLines[1],requestUrn)
+    }
 
+    String rowToXml(String row, String requestUrn) {
+
+        def CiteUrn citeUrn = new CiteUrn(requestUrn)
+        def collConf = this.citeConfig[citeUrn.getCollection()]
+        def propList = collConf['properties']
+        def canonicalIndex
+        propList.eachWithIndex { p, i ->
+            if (p['name'] == collConf['canonicalId']) {
+                canonicalIndex =  i
+            }
+        }
+        
         // This is naive and needs to be fixed:
-        def cols = replyLines[1].split(/,/)
+        def cols = row.split(/,/)
         StringWriter writer = new StringWriter()
         MarkupBuilder xml = new MarkupBuilder(writer)
-
-        xml.citeObject("urn" : "${requestUrn}") {
+        
+        xml.citeObject("urn" : "urn:cite:${cols[canonicalIndex]}") {
             cols.eachWithIndex { c, i ->
                 def currProp = propList[i]
                 if (currProp['name'] != collConf['canonicalId']) {
-                    citeProperty(name : "${currProp['name']}", "${c}")
+                    citeProperty(name : "${currProp['name']}", label : "${currProp['label']}", type : "${currProp['type']}" ,"${c}")
                 }
             }
         }
-        return writer.toString()    
+        return writer.toString()     
     }
-
-
 
     /** Creates a map of the configuration data 
     * in an XML capabilities file.

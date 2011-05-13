@@ -7,25 +7,14 @@
 import edu.holycross.shot.citecoll.CollectionService
 import edu.harvard.chs.cite.CiteUrn
 import groovy.xml.MarkupBuilder
-// Google data APIs:
-import com.google.gdata.client.GoogleService;
-import com.google.gdata.client.Service.GDataRequest;
-import com.google.gdata.client.Service.GDataRequest.RequestType;
-import com.google.gdata.util.ContentType;
 
 response.setContentType("text/xml; charset=UTF-8")
 request.setCharacterEncoding("UTF-8")
 
-/*
-String serviceUrl()  {
-    return "https://www.google.com/fusiontables/api/query"
+def getCapsFile = {
+    def capsFile = new File(context.getRealPath("/configs") + "/capabilities.xml" )
+    capsFile
 }
-
-
-String clientApp()  {
-    return "shot.holycross.edu-fusioncoll-0.1"
-}
-*/
 
 boolean urnSyntaxOk(String urn) {
     def components = urn.split(/:/)
@@ -70,7 +59,6 @@ String checkRequest() {
 
     switch (params['req']) {
         case "GetObject":
-            
             if (params['urn']) {
             if (!urnSyntaxOk(params['urn'])) {
                 return "Invalid urn syntax '" + params['urn'] + "'."
@@ -89,135 +77,33 @@ String checkRequest() {
     
         return "${params['req']} request requires either a 'urn' parameter or a combination of a 'collection' and an 'id' parameter for a validly configured collection."
         break
+        
+
+        case "GetFirst":
+            if (params['urn']) {
+            if (!urnSyntaxOk(params['urn'])) {
+                return "Invalid urn syntax '" + params['urn'] + "'."
+            }
+            def components = params['urn'].split(/:/)
+            if (components.size() < 4) {
+                return "Invalid urn ${params['urn']}:  must include collection component."
+            }
+            return "OK"
+
+        } else {
+            if (params['collection']) {
+                return "OK"
+            } else {
+                return "${params['req']} request requires either a 'urn' parameter of a 'collection' parameter for a validly configured collection.}"
+            }
+        }
+        break
 
         default:
             return "Unrecognized or unimplemented request '" +  params['req'] + "'"
         break
     }
 }
-
-
-// get capabilities File
-File getCapsFile() {
-    def confDir = context.getRealPath("/configs")
-    def capsFileName = "capabilities.xml"
-    def capsFile = new File(confDir + "/" + capsFileName)
-    return capsFile
-}
-
-// Creates query that can be submitted as the
-// sql parameter to Fusion for a given urn
-String getObjectQuery(String urn) {
-    def citeUrn = new CiteUrn(urn)
-    def coll = citeUrn.getCollection()
-    def obj = citeUrn.getObjectId()
-    return getObjectQuery(coll,obj)
-
-}
-
-
-// Creates query that can be submitted as the
-// sql parameter to Fusion for a
-// given a collId and objId
-String getObjectQuery(String coll, String obj) {
-    File capsFile = getCapsFile()
-    def parserObject = new XmlParser()
-    def capsRoot = parserObject.parse(capsFile)
-
-    String citeString = "http://chs.harvard.edu/xmlns/cite"
-    def citens = new groovy.xml.Namespace("${citeString}")
-
-    def flds = []
-    // test for group property.
-    def collConfig = capsRoot[citens.collectionService][citens.citeCollection].find {it.'@name' == coll}
-    if (!collConfig) { return null }
-    def idField = collConfig.'@canonicalId'
-    def ns = collConfig[citens.namespaceMapping][0].'@abbr'
-    def constructedUrn = "${ns}:${coll}.${obj}"
-
-
-    collConfig[citens.citeProperty].each {
-        flds.add("${it.'@name'}")
-    }
-    def fldList = ""
-    flds.eachWithIndex { f,count ->
-        if (count < (flds.size() - 1)) {
-            fldList += f + ", "
-        } else {
-            fldList += f
-        }
-    }
-
-    return "SELECT ${fldList} FROM " + collConfig.'@class' + " WHERE " + idField + " = '" + constructedUrn + "'" //collConfig
-
-}
-
-/*
-// Reply to GetCapabilities request.
-def getCaps = {
-    File capsFile = getCapsFile()
-    if (capsFile) {
-        println capsFile.getText()
-    }
-}
-*/
-
-// Reply to GetObject request.
-// need a getconfig method ...
-def getObj =  { 
-    CiteUrn citeUrn
-    URL url
-    if (params['urn']) {
-        citeUrn = new CiteUrn(params['urn'])
-        def q = getObjectQuery(params['urn'])
-        url = new URL(serviceUrl() + "?sql=" + URLEncoder.encode(q, "UTF-8"));
-    } else {
-        //
-        def q = getObjectQuery(params['collection'], params['id'])
-        url = new URL(serviceUrl() + "?sql=" + URLEncoder.encode(q, "UTF-8"));
-    }
-
-    GDataRequest grequest = new GoogleService("fusiontables", clientApp()).getRequestFactory().getRequest(RequestType.QUERY, url, ContentType.TEXT_PLAIN)
-    grequest.execute()
-
-    def replyStr = grequest.requestUrl.getText('UTF-8')
-    StringWriter writer = new StringWriter()
-    MarkupBuilder xml = new MarkupBuilder(writer)
-    xml.GetObject(xmlns: "http://chs.harvard.edu/xmlns/cite") {
-        request {
-            urn("${url}")
-        }
-        reply(datans: "${citeUrn?.getNs()}", datansuri : "URI GOES HERE") {
-            def nameList = []
-            def replyCount = 0
-            System.err.println "REPLYSTR: " + replyStr
-            replyStr.eachLine { l ->
-                // temp hack:  split on commas
-                // replace with full csv parse ...
-                if (replyCount == 0) {
-                    def cols = l.split(/,/)
-                    cols.each {
-                        nameList.add(it)
-                    }
-                    replyCount++
-                } else {
-                    def cols = l.split(/,/)
-                    citeObject(urn : "GET VALUE OF ID FIELD NAMED IN CONFIG") {
-                        cols.eachWithIndex { c, i ->
-                            citeProperty(name : "${nameList[i]}", "${c}")
-                        }
-                    }
-                }
-            }
-        }
-    }
-    println writer.toString()    
-
-} // GetObj
-
-
-
-
 
 
 // 1. Validate request form.
@@ -232,7 +118,6 @@ if (!(checkReq == "OK")) {
     def citeReq = params['req']
     switch (citeReq) {
         case 'GetCapabilities':
-            //getCaps()
             println cs.getCapsReply()
         break
 
@@ -245,40 +130,48 @@ if (!(checkReq == "OK")) {
         }
         break
 
+        case 'GetFirst':
+            if (params['urn']) {
+            CiteUrn reqUrn = new CiteUrn(params['urn'])
+            println cs.getFirstReply("${reqUrn}", reqUrn.getCollection())
+        }
+            
+//             getFirst()
+        break
+
+
+        case 'GetLast':
+//             getLast()
+        break
+
+
+        case 'GetNext':
+//             getNext()
+        break
+
+        case 'GetPrev':
+//             getPrev()
+        break
+
+
+
 /*
         case 'OrderedBy':
             return orderedBy(params, config)
         break
 */
 
-        case 'GetFirst':
-             getFirst()
-        break
-
-
-        case 'GetLast':
-             getLast()
-        break
-
-
-        case 'GetNext':
-             getNext()
-        break
-
-        case 'GetPrev':
-             getPrev()
-        break
 
             /*
         case 'GetValidIds':
             return getIds(params,config)
         break
-*/
+
 
         case 'GetCollectionSize':
             getCollSize()
         break
-
+*/
     }
 }
 
