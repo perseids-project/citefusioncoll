@@ -7,7 +7,10 @@ home.html {
     head {
         title("CITE Collections service")
         link(type : "text/css", rel : "stylesheet", href : "cts.css", title : "CSS stylesheet")
-        p('class' : "menu", "CITE")
+        p('class' : "menu") {
+              mkp.yield "CITE Collections: "
+              a (href : "home", "home")
+          }
     }
     body {
         div(id : "header") 

@@ -1,13 +1,22 @@
-An implementation of the CITE Collections API for data stored in
-a Google fusion table.
+OVERVIEW:
+An implementation of the CITE Collections API for data stored in 
+one or more Google fusion table(s).
+
+src/fusioncoll/api is a groovlet (a servlet written in Groovy) fields
+CITE Collections requests.  It's a wrapper for the real work that is
+done by the edu.holycross.shot.citecoll.CollectionService class.
+For details of that class, see the groovydocs.
+
+LICENSE:
+All source code in this project is (c) 2011 Neel Smith and is made
+available under the terms of the GNU General Public License, version 3.
+See the included file gpl-3.0.txt for details.
 
 PREREQUISITES:
-* an installed AppEngine java SDK
 * an internet connection.  Obviously, this is only usable if you a
 can connect to Google Fusion.
 
 CONFIGURATION:
-* Edit local.properties with the correct location of your AppEngine SDK
 * Edit  configs/capabilities.xml with information about the Google Fusion
 data set you want to serve.
 
@@ -31,6 +40,9 @@ to build a .war file you can drop into any servlet container.
    ant clean
 to empty the build directory.
 
+   ant doc
+to generate groovy docs (javadoc-like API documentation
+for groovy source of the  edu.holycross.shot.citecoll package).
 
 TBD/BUGS:
 * need to add groovydocs generation to build file

@@ -17,22 +17,27 @@ import com.google.gdata.util.ContentType;
 
 class CollectionService {
 
+    // Constants:
+    /** URL for Google Fusion API */
     static String SERVICE_URL = "https://www.google.com/fusiontables/api/query"
+    /** Identifier to Google of this application */
     static String CLIENT_APP = "shot.holycross.edu-fusioncoll-0.1"
+    /** XML namespace for all CITE Collection replies */
     static String CITE_NS = "http://chs.harvard.edu/xmlns/cite"
-    // Thanks, google, for the awesome regexp!  
-    // Ripped off from http://code.google.com/apis/fusiontables/docs/samples/java.html 
-    static Pattern CSV_VALUE_PATTERN = Pattern.compile("([^,\\r\\n\"]*|\"(([^\"]*\"\")*[^\"]*)\")(,|\\r?\\n)")
-    
 
 
+    /** Groovy Namespace object for use in parsing capabilities document. */
     groovy.xml.Namespace citens = new groovy.xml.Namespace(CITE_NS)
-
-
     /** Capabilities file for this service */
     File capabilitiesFile
     /** A map representing the data in the capabilities file */
     LinkedHashMap citeConfig
+
+
+    /** Pattern for parsing CSV data.
+    * Ripped off from http://code.google.com/apis/fusiontables/docs/samples/java.html.  Thanks to Google for the awesome reg.exp.!     */
+    static Pattern CSV_VALUE_PATTERN = Pattern.compile("([^,\\r\\n\"]*|\"(([^\"]*\"\")*[^\"]*)\")(,|\\r?\\n)")
+    
 
     /** Constructor parses capabilities file */
     CollectionService(File capsFile) {
@@ -44,12 +49,19 @@ class CollectionService {
 
     /** Creates a string with valid XML reply to the
     * CITE Collection GetCapabilities request.
+    * @returns The XML reply, as a String.
     */
     String getCapsReply() {
         return this.capabilitiesFile.getText()
     }
 
-
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetCollectionSize request.
+    * @param collectionId CITE identifier for the collection.
+    * @param requestUrn Source URN that this collection ID was
+    * derived from.
+    * @returns The XML reply, as a String.
+    */
     String getSizeReply(String requestUrn, String collectionId) {
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn(requestUrn)
@@ -60,6 +72,11 @@ class CollectionService {
 
     }
 
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetCollectionSize request.
+    * @param collection CITE identifier for the collection.
+    * @returns The XML reply, as a String.
+    */
     String getSizeReply(String collectionId) {
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
@@ -70,6 +87,14 @@ class CollectionService {
         return replyBuff.toString()
     }
 
+
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetPrevNextUrn request when the object
+    * is identified by a CITE URN.
+    * @param requestUrn CITE URN identifying the object.
+    * @returns The XML reply, as a String, or null if the collection is not
+    * a configured, ordered collection.
+    */
     String getPrevNextReply(String requestUrn) {
         CiteUrn citeUrn = new CiteUrn(requestUrn)
         def collConf = this.citeConfig[citeUrn.getCollection()]
@@ -80,6 +105,16 @@ class CollectionService {
         return replyBuff.toString()
     }
 
+
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetPrevNextUrn request when the object
+    * is identified by a collection identifier and an
+    * an object identifier.
+    * @param collection CITE identifier for the collection.
+    * @param obj CITE identifier for the object within the collection.
+    * @returns The XML reply, as a String, or null if the collection is not
+    * a configured, ordered collection.
+    */
     String getPrevNextReply(String collection, String obj) {
         def collConf = this.citeConfig[collection]
         def urnStr = "urn:cite:${collConf['nsabbr']}:${collection}.${obj}"
@@ -92,6 +127,14 @@ class CollectionService {
 
 
 
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetPrev request when the object
+    * is identified by a CITE URN.
+    * @param requestUrn CITE URN identifying the object.
+    * @returns A well-formed XML string representing the previous
+    * object in the collection, or null if the collection is not
+    * a configured, ordered collection.
+    */
     String getPrevReply(String requestUrn) {
         CiteUrn citeUrn = new CiteUrn(requestUrn)
         def collConf = this.citeConfig[citeUrn.getCollection()]
@@ -102,6 +145,16 @@ class CollectionService {
         return replyBuff.toString()
     }
 
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetPrev request when the object
+    * is identified by a collection identifier and an
+    * an object identifier.
+    * @param collection CITE identifier for the collection.
+    * @param obj CITE identifier for the object within the collection.
+    * @returns A well-formed XML string representing the previous
+    * object in the collection, or null if the collection is not
+    * a configured, ordered collection.
+    */
     String getPrevReply(String collection, String obj) {
         def collConf = this.citeConfig[collection]
         def urnStr = "urn:cite:${collConf['nsabbr']}:${collection}.${obj}"
@@ -112,7 +165,14 @@ class CollectionService {
         return replyBuff.toString()
     }
 
-
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetNext request when the object
+    * is identified by a CITE URN.
+    * @param requestUrn CITE URN identifying the object.
+    * @returns A well-formed XML string representing the next
+    * object in the collection, or null if the collection is not
+    * a configured, ordered collection.
+    */
     String getNextReply(String requestUrn) {
         CiteUrn citeUrn = new CiteUrn(requestUrn)
         def collConf = this.citeConfig[citeUrn.getCollection()]
@@ -123,6 +183,16 @@ class CollectionService {
         return replyBuff.toString()
     }
 
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetNext request when the object
+    * is identified by a collection identifier and an
+    * an object identifier.
+    * @param collection CITE identifier for the collection.
+    * @param obj CITE identifier for the object within the collection.
+    * @returns A well-formed XML string representing the next
+    * object in the collection, or null if the collection is not
+    * a configured, ordered collection.
+    */
     String getNextReply(String collection, String obj) {
         def collConf = this.citeConfig[collection]
         def urnStr = "urn:cite:${collConf['nsabbr']}:${collection}.${obj}"
@@ -135,7 +205,19 @@ class CollectionService {
 
 
 
-    // two-step:  get object, then get object + 1 based on seq...
+    /** Creates an XML serialization of the following object
+    * in an ordered collection.  This requires two hits on
+    * Fusion:  first to find the sequence number of the 
+    * identified object, then a retrieval to 
+    * get the object with the next sequence value.
+    * Queries check the collection's configuration to account
+    * for a grouping property defining a CITE Collection within a single 
+    * table.
+    * @param requestUrn A CITE URN, as a String, identifying an object
+    * in an ordered collection.
+    * @returns An XML serialization of the next object in the collection,
+    * or null if it is not a configured, ordered collection.
+    */
     String getNextObject(String urnStr) {
         CiteUrn citeUrn = new CiteUrn (urnStr)
         def collectionId = citeUrn.getCollection()
@@ -196,7 +278,16 @@ class CollectionService {
     }
 
 
-
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetLast request when the collection
+    * is identified by a collection identifier and a requesting URN.
+    * @param collectionId CITE identifier for the collection.
+    * @param requestUrn Source URN that this collection ID was
+    * derived from.
+    * @returns A well-formed XML string representing the last
+    * object in the collection, or null if the collection is not
+    * a configured, ordered collection.
+    */
     String getLastReply(String requestUrn, String collectionId) {
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn(requestUrn)
@@ -207,6 +298,16 @@ class CollectionService {
         return replyBuff.toString()
 
     }
+
+
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetLast request when the collection
+    * is identified by a collection identifier.
+    * @param collectionId CITE identifier for the collection.
+    * @returns A well-formed XML string representing the last
+    * object in the collection, or null if the collection is not
+    * a configured, ordered collection.
+    */
     String getLastReply(String collectionId) {
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
@@ -219,9 +320,12 @@ class CollectionService {
 
 
 
-
-
-
+    /** Creates a well-formed fragment of a CITE reply
+    * giving URNs of preceding and following objects in
+    * an ordered collection .
+    * @param requestUrn The CITE URN identifying the object.
+    * @returns A String of well-formed XML
+    */
     String getPrevNextUrn(String urnStr) {
         CiteUrn citeUrn = new CiteUrn (urnStr)
         def collectionId = citeUrn.getCollection()
@@ -231,7 +335,6 @@ class CollectionService {
         }
 
         StringBuffer replyBuff = new StringBuffer("<prevnext>")
-
 
         // Get index of orderedBy property
         def propList = collConf['properties']
@@ -295,10 +398,19 @@ class CollectionService {
     }
 
 
-
-
-
-
+    /** Creates an XML serialization of the preceding object
+    * in an ordered collection.  This requires two hits on
+    * Fusion:  first to find the sequence number of the 
+    * identified object, then a retrieval to 
+    * get the object with the next sequence value.
+    * Queries check the collection's configuration to account
+    * for a grouping property defining a CITE Collection within a single 
+    * table.
+    * @param requestUrn A CITE URN, as a String, identifying an object
+    * in an ordered collection.
+    * @returns An XML serialization of the previous object in the collection,
+    * or null if it is not a configured, ordered collection.
+    */
     String getPrevObject(String urnStr) {
         CiteUrn citeUrn = new CiteUrn (urnStr)
         def collectionId = citeUrn.getCollection()
@@ -358,38 +470,14 @@ class CollectionService {
     }
 
 
-/*
-    String getLastReply(String requestUrn, String collectionId) {
-        def collConf = this.citeConfig[collectionId]
-        CiteUrn citeUrn = new CiteUrn(requestUrn)
-
-        StringBuffer replyBuff = new StringBuffer("<GetLast xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getLastObject(citeUrn)}\n</reply>\n</GetLast>\n")
-        return replyBuff.toString()
-
-    }
-
-    String getLastReply(String collectionId) {
-        def collConf = this.citeConfig[collectionId]
-        CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
-
-        StringBuffer replyBuff = new StringBuffer("<GetLast xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getLastObject(citeUrn)}</reply>\n</GetLast>\n")
-        return replyBuff.toString()
-    }
-*/
-
     /** Creates a string with valid XML reply to the
     * CITE Collection GetFirst request when the collection
     * is identified by a collection identifier and a requesting URN.
     * @param collectionId CITE identifier for the collection.
     * @param requestUrn Source URN that this collection ID was
     * derived from.
-    * @returns A well-formed XML string representing the first
-    * object in the collection, or null if the collection is not
-    * a configured, ordered collection.
+    * @returns The XML reply, as a String, or null if the collection 
+    * is not a configured, ordered collection.
     */
     String getFirstReply(String requestUrn, String collectionId) {
         def collConf = this.citeConfig[collectionId]
@@ -406,9 +494,8 @@ class CollectionService {
     * CITE Collection GetFirst request when the collection
     * is identified by a collection identifier.
     * @param collectionId CITE identifier for the collection.
-    * @returns A well-formed XML string representing the first
-    * object in the collection, or null if the collection is not
-    * a configured, ordered collection.
+    * @returns The XML reply, as a String, or null if the collection 
+    * is not a configured, ordered collection.
     */
     String getFirstReply(String collectionId) {
         def collConf = this.citeConfig[collectionId]
@@ -420,7 +507,13 @@ class CollectionService {
         return replyBuff.toString()
     }
 
-
+    /** Finds the number of objects in a CITE Collection
+    * identified by CITE URN.
+    * @param requestUrn CITE URN identifying the Collection.
+    * @returns A String representation of the number of
+    * objects in the requested Collection, or null if the
+    * query to Fusion did not succeed.
+    */
     String getSize(CiteUrn requestUrn) {
         def collectionId = requestUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
@@ -428,19 +521,31 @@ class CollectionService {
         if (collConf['groupProperty']) {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
-
-
         def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
-
-
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
         grequest.execute()
         def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
-        return(replyLines[1])
-
+        if (replyLines.size() != 2) {
+            return null
+        } else {
+            return(replyLines[1])
+        }
     } 
     // end getSize
 
+
+    /** Creates an XML serialization of the last object
+    * in an ordered collection.  This requires two hits on
+    * Fusion:  first to find the maximum value in the property
+    * configured with sequencing data, then a retrieval to 
+    * get the object with the maximum sequence value.
+    * Queries check the collection's configuration to account
+    * for a grouping property defining a CITE Collection within a single 
+    * table.
+    * @param requestUrn A CITE URN identifying an ordered collection.
+    * @returns An XML serialization of the last object in the collection,
+    * or null if it is not a configured, ordered collection.
+    */
     String getLastObject(CiteUrn requestUrn) {
         def collectionId = requestUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
@@ -483,6 +588,14 @@ class CollectionService {
         return rowToXml(objReplyLines[1],requestUrn.toString())
 
     }
+
+    /** Creates an XML serialization of the last object
+    * in an ordered collection by passing along request to
+    * implementation with overloaded signature using a CITE URN.
+    * @param urnStr A CITE URN, as a String, identifying an ordered collection.
+    * @returns An XML serialization of the last object in the collection,
+    * or null if it is not a configured, ordered collection.
+    */
     String getLastObject(String urnStr) {
         return getLastObject(new CiteUrn(urnStr))
     }
@@ -547,7 +660,7 @@ class CollectionService {
     /** Creates an XML serialization of the first object
     * in an ordered collection by passing along request to
     * implementation with overloaded signature using a CITE URN.
-    * @param urnSTr A CITE URN, as a String, identifying an ordered collection.
+    * @param urnStr A CITE URN, as a String, identifying an ordered collection.
     * @returns An XML serialization of the first object in the collection,
     * or null if it is not a configured, ordered collection.
     */

@@ -1,8 +1,6 @@
 <project name="fusioncoll" default="usage">
 
   <property file="local.properties"/>
-  <import file="${sdk.dir}/config/user/ant-macros.xml" />
-
 
   <path id="common.classpath"> 
     <fileset dir="${builddir}/lib"
@@ -14,11 +12,27 @@
 
   <target name="usage"
 	  description="Lists suggested tasks">
-    <echo message="coll      Build CITE Collection servlet"/>
-    <echo message="run-coll  Run servlet in jetty container"/>
+    <echo message="coll      Builds CITE Collection servlet"/>
+    <echo message="run-coll  Runs servlet in jetty container"/>
+    <echo message="war       Builds .war file of servlet"/>
+    <echo message="doc       Generates groovydocs"/>
+    <echo message="clean     Cleans out build directory"/>
 
   </target>
 
+
+  <target name="doc">
+    <taskdef name="Groovydoc" classname="org.codehaus.groovy.ant.Groovydoc">
+      <classpath refid="common.classpath"/>
+  </taskdef>
+  <Groovydoc 
+	destdir="${builddir}/gapi"
+	sourcepath="src" 
+	packagenames="edu.holycross.shot.citecoll" 
+	use="true"
+	windowtitle="Groovydoc" 
+	private="false"/>
+  </target>
 
   <target name="jar"
 	  description="Compiles and jars CiteService">
@@ -88,6 +102,8 @@
     </copy>
 
     <copy file="README.txt" todir="${builddir}/jetty/webapps/citecoll"/>
+
+    <copy file="gpl-3.0.txt" todir="${builddir}/jetty/webapps/citecoll"/>
 
   </target>
 
