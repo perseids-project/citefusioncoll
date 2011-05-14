@@ -70,6 +70,28 @@ class CollectionService {
         return replyBuff.toString()
     }
 
+    String getPrevNextReply(String requestUrn) {
+        CiteUrn citeUrn = new CiteUrn(requestUrn)
+        def collConf = this.citeConfig[citeUrn.getCollection()]
+
+        StringBuffer replyBuff = new StringBuffer("<GetPrevNextUrn xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n${getPrevNextUrn(requestUrn)}\n</reply>\n</GetPrevNextUrn>\n")
+        return replyBuff.toString()
+    }
+
+    String getPrevNextReply(String collection, String obj) {
+        def collConf = this.citeConfig[collection]
+        def urnStr = "urn:cite:${collConf['nsabbr']}:${collection}.${obj}"
+
+        StringBuffer replyBuff = new StringBuffer("<GetPrevNextUrn xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collection}</collection>\n<id>${obj}</id>\n</request>\n")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n${getPrevNextUrn(urnStr)}\n</reply>\n</GetPrevNextUrn>\n")
+        return replyBuff.toString()
+    }
+
+
+
     String getPrevReply(String requestUrn) {
         CiteUrn citeUrn = new CiteUrn(requestUrn)
         def collConf = this.citeConfig[citeUrn.getCollection()]
@@ -196,6 +218,81 @@ class CollectionService {
     }
 
 
+
+
+
+
+    String getPrevNextUrn(String urnStr) {
+        CiteUrn citeUrn = new CiteUrn (urnStr)
+        def collectionId = citeUrn.getCollection()
+        def collConf = this.citeConfig[collectionId]
+        if (!collConf['orderedBy']) {
+            return null
+        }
+
+        StringBuffer replyBuff = new StringBuffer("<prevnext>")
+
+
+        // Get index of orderedBy property
+        def propList = collConf['properties']
+        def orderingPropIndex
+        propList.eachWithIndex { p, i ->
+            if (p['name'] == collConf['orderedBy']) {
+                orderingPropIndex =  i
+            }
+        }
+        def orderingProp = propList[orderingPropIndex]['name']
+        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
+        if (collConf['groupProperty']) {
+            qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+
+
+        def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
+        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
+        grequest.execute()
+        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
+        
+        def prevSeq =  Integer.parseInt(replyLines[1],10) - 1
+        def nextSeq =  Integer.parseInt(replyLines[1],10) + 1
+
+
+        StringBuffer prevQuery = new StringBuffer("SELECT ${collConf['canonicalId']} FROM ${collConf['className']} WHERE ${orderingProp} = ${prevSeq}")
+        if (collConf['groupProperty']) {
+            prevQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+        StringBuffer nextQuery = new StringBuffer("SELECT ${collConf['canonicalId']} FROM ${collConf['className']} WHERE ${orderingProp} = ${nextSeq}")
+        if (collConf['groupProperty']) {
+            nextQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+
+
+        def prevQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(prevQuery.toString(), "UTF-8"));
+        def nextQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(nextQuery.toString(), "UTF-8"));
+
+
+        GDataRequest prevrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, prevQueryUrl, ContentType.TEXT_PLAIN)
+        prevrequest.execute()
+        def prevReplyLines= prevrequest.requestUrl.getText('UTF-8').readLines()
+
+        if (prevReplyLines.size() != 2) {
+            replyBuff.append("<prev/>")
+        } else {
+            replyBuff.append("<prev>urn:cite:${prevReplyLines[1]}</prev>")
+        }
+
+        GDataRequest nextrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, nextQueryUrl, ContentType.TEXT_PLAIN)
+        nextrequest.execute()
+        def nextReplyLines= nextrequest.requestUrl.getText('UTF-8').readLines()
+
+        if (nextReplyLines.size() != 2) {
+            replyBuff.append("<next/>")
+        } else {
+            replyBuff.append("<next>urn:cite:${nextReplyLines[1]}</next>")
+        }
+        replyBuff.append("</prevnext>")
+        return replyBuff.toString()
+    }
 
 
 

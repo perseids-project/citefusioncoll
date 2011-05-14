@@ -140,6 +140,29 @@ home.html {
                 input(name : "id", value : "12r")
                 input (type: "submit", value : "Submit")
             }
+
+
+
+
+            h2 ("GetPrevNextUrn")
+            p("Applies to ordered collections only.")
+            p ("Two possible forms:")
+            p ("1. Identify object by  URN")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetPrevNextUrn")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            p ("2. Identify object by  collection and object IDs")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetPrevNextUrn")
+                input(name : "collection", value : "msA")
+                input(name : "id", value : "12r")
+                input (type: "submit", value : "Submit")
+            }
+
         }
     }
 }

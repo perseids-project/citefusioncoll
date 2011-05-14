@@ -62,6 +62,7 @@ String checkRequest() {
         // a collection + id combination
         case "GetPrev":
         case "GetNext":
+        case "GetPrevNextUrn":
         case "GetObject":
             if (params['urn']) {
             if (!urnSyntaxOk(params['urn'])) {
@@ -189,6 +190,15 @@ if (!(checkReq == "OK")) {
 
         break
 
+
+        case 'GetPrevNextUrn':
+            if (params['urn']) {
+            println cs.getPrevNextReply(params['urn'])
+        } else {
+            println cs.getPrevNextReply(params['collection'], params['id'])
+        }
+
+        break
 
 
         /*
