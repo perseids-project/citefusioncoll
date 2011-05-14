@@ -45,6 +45,5 @@ to generate groovy docs (javadoc-like API documentation
 for groovy source of the  edu.holycross.shot.citecoll package).
 
 TBD/BUGS:
-* need to add groovydocs generation to build file
 * need to decide how to deal with groovy bug handling HTTP parameters
 named 'request'!
