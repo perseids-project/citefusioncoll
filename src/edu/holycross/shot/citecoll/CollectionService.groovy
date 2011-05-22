@@ -17,6 +17,9 @@ import com.google.gdata.util.ContentType;
 
 class CollectionService {
 
+    boolean debug = false
+
+
     // Constants:
     /** URL for Google Fusion API */
     static String SERVICE_URL = "https://www.google.com/fusiontables/api/query"
@@ -43,6 +46,7 @@ class CollectionService {
     CollectionService(File capsFile) {
         this.capabilitiesFile = capsFile
         this.citeConfig = configureFromFile(this.capabilitiesFile)
+        if (this.debug) {System.err.println "CONFIG: " + this.citeConfig }
         // throw exception if could not parse caps file...
     }
 
@@ -522,6 +526,7 @@ class CollectionService {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
+        System.err.println "GETSIZE:  " + qBuff.toString()
 
         def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
@@ -720,6 +725,11 @@ class CollectionService {
     */
     String getObjectData(String requestUrn) {
         def q =  getObjectQuery(requestUrn)
+
+        if (this.debug) {System.err.println "GETOBJECTDATA: " + q }
+
+
+
         def url = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(q, "UTF-8"));
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, url, ContentType.TEXT_PLAIN)
         grequest.execute()
@@ -728,6 +738,10 @@ class CollectionService {
         if (replyLines.size() != 2) {
             // exception:  should be a header and one record
         }
+
+
+        if (this.debug) {System.err.println "GETOBJECTDATA: REPLYLINES " + replyLines + " of size " + replyLines.size()}
+
         return rowToXml(replyLines[1],requestUrn)
     }
 
@@ -744,11 +758,16 @@ class CollectionService {
         def collConf = this.citeConfig[citeUrn.getCollection()]
         def propList = collConf['properties']
         def canonicalIndex
+        def canonicalName = collConf['canonicalId']
         propList.eachWithIndex { p, i ->
+            if (this.debug) {
+                System.err.println "LOOK AT p,i ${p}, ${i}"
+            }
             if (p['name'] == collConf['canonicalId']) {
                 canonicalIndex =  i
             }
         }
+        if (this.debug) {System.err.println "USED CANONICAL NAME ${canonicalName} TO LOOK FOR CANONICAL ID VAL " + collConf['canonicalId'] + " and got index " + canonicalIndex + " FROM CONF " + collConf}
         
         // Parse CSV results, and store in a groovy list:
         def cols = []
@@ -765,18 +784,27 @@ class CollectionService {
                 cols.add(match.group().replaceFirst(/[,\s]+$/,""))
             }
         }
-        
+
+
+        if (this.debug) {System.err.println "ROWTOXML: cols "  + cols  + " of size " + cols.size()}
+        if (this.debug) {System.err.println "COLS == " + cols}
         StringWriter writer = new StringWriter()
         MarkupBuilder xml = new MarkupBuilder(writer)
-        
+
+        if (this.debug) {System.err.println "canonicalIndex = ${canonicalIndex}" }
+
+
         xml.citeObject("urn" : "urn:cite:${cols[canonicalIndex]}") {
             cols.eachWithIndex { c, i ->
+                if (this.debug) {System.err.println "COL c,i = ${c}, ${i}" }
                 def currProp = propList[i]
+                
                 if (currProp['name'] != collConf['canonicalId']) {
                     citeProperty(name : "${currProp['name']}", label : "${currProp['label']}", type : "${currProp['type']}" ,"${c}")
                 }
             }
         }
+
         return writer.toString()     
     }
 

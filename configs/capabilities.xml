@@ -4,43 +4,25 @@
     xmlns:cite="http://chs.harvard.edu/xmlns/cite">
     <collectionService>
         <citeCollection
-            canonicalId="id"
-            class="619516"
-            name="ptolemyGeo">
-            <namespaceMapping
-                abbr="ptolgeo"
-                fullValue="http://shot.holycross.edu/datans"/>
-            <citeProperty
-                label="label"
-                name="label"
-                type="string"/>
-            <citeProperty
-                label="passage"
-                name="ref"
-                type="string"/>
-            <orderedBy
-                property="sequence"/>
-
-        </citeCollection>
-
-
-
-        <citeCollection
-            canonicalId="Siglum"
+            canonicalId="URN"
             class="835352"
-            name="Codex">
+            name="codex">
             <namespaceMapping
                 abbr="hmt"
                 fullValue="http://www.homermultitext.org/datans"/>
             <citeProperty
+                label="Folio ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
                 label="Siglum"
                 name="Siglum"
                 type="string"/>
-            <!--
+          
             <citeProperty
                 label="description"
                 name="MS"
-                type="string"/> -->
+                type="string"/>
         </citeCollection>
         
         
