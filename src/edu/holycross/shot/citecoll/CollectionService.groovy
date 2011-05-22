@@ -43,6 +43,7 @@ class CollectionService {
     CollectionService(File capsFile) {
         this.capabilitiesFile = capsFile
         this.citeConfig = configureFromFile(this.capabilitiesFile)
+System.err.println "CONFIG == " + this.citeConfig
         // throw exception if could not parse caps file...
     }
 
@@ -235,7 +236,7 @@ class CollectionService {
         }
         def orderingProp = propList[orderingPropIndex]['name']
         StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
@@ -261,7 +262,7 @@ class CollectionService {
         }
 
         StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${orderingProp} = ${seqNum}")
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
@@ -346,7 +347,7 @@ class CollectionService {
         }
         def orderingProp = propList[orderingPropIndex]['name']
         StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
@@ -361,11 +362,11 @@ class CollectionService {
 
 
         StringBuffer prevQuery = new StringBuffer("SELECT ${collConf['canonicalId']} FROM ${collConf['className']} WHERE ${orderingProp} = ${prevSeq}")
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             prevQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
         StringBuffer nextQuery = new StringBuffer("SELECT ${collConf['canonicalId']} FROM ${collConf['className']} WHERE ${orderingProp} = ${nextSeq}")
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             nextQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
@@ -428,7 +429,7 @@ class CollectionService {
         }
         def orderingProp = propList[orderingPropIndex]['name']
         StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
@@ -453,7 +454,7 @@ class CollectionService {
         }
 
         StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${orderingProp} = ${seqNum}")
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null)  {
             objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
@@ -518,9 +519,12 @@ class CollectionService {
         def collectionId = requestUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
         StringBuffer qBuff = new StringBuffer("SELECT COUNT() FROM ${collConf['className']}" )
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
+
+        System.err.println "GETSIZE:  " + qBuff.toString()
+
         def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
         grequest.execute()
@@ -554,7 +558,7 @@ class CollectionService {
         }
         
         StringBuffer qBuff = new StringBuffer("SELECT MAXIMUM(${collConf['orderedBy']}) FROM ${collConf['className']}" )
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
@@ -576,7 +580,7 @@ class CollectionService {
         }
 
         StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['orderedBy']} = ${maxVal}")
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
@@ -621,7 +625,7 @@ class CollectionService {
         
         // test for ordering field...
         StringBuffer qBuff = new StringBuffer("SELECT MINIMUM(${collConf['orderedBy']}) FROM ${collConf['className']}" )
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
@@ -643,7 +647,7 @@ class CollectionService {
         }
 
         StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['orderedBy']} = ${minVal}")
-        if (collConf['groupProperty']) {
+        if (collConf['groupProperty'] != null) {
             objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
@@ -807,7 +811,10 @@ class CollectionService {
             if (c.orderedBy) {
                 seq = "${c.orderedBy[0].'@property'}"
             }
-
+            def groupProp = null
+            if (c.'@groupProperty') {
+                groupProp = c.'@groupProperty'
+            }
             def citeExtensions = []
             c[citens.citeExtension].each { ce ->
                 citeExtensions << "${ce.'@uri'}"
@@ -816,13 +823,17 @@ class CollectionService {
             def collData = [
                 "className" : "${c.'@class'}",
                 "canonicalId" : "${c.'@canonicalId'}",
-                "groupProperty" : "${c.'@groupProperty'}",
+                "groupProperty" : groupProp,
                 "nsabbr" : "${c[citens.namespaceMapping][0].'@abbr'}",
                 "nsfull" :"${c[citens.namespaceMapping][0].'@fullValue'}",
                 "orderedBy" : seq,
                 "citeExtensions" : citeExtensions,
                 "properties" : propertyList
             ]
+
+
+            
+
             def coll = ["${c.'@name'}" : collData]
             configuredCollections.putAt("${c.'@name'}",collData)
         }
