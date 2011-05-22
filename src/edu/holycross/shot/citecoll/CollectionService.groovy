@@ -43,7 +43,6 @@ class CollectionService {
     CollectionService(File capsFile) {
         this.capabilitiesFile = capsFile
         this.citeConfig = configureFromFile(this.capabilitiesFile)
-System.err.println "CONFIG == " + this.citeConfig
         // throw exception if could not parse caps file...
     }
 
@@ -523,7 +522,6 @@ System.err.println "CONFIG == " + this.citeConfig
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
-        System.err.println "GETSIZE:  " + qBuff.toString()
 
         def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
