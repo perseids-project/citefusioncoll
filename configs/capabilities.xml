@@ -4,6 +4,37 @@
     xmlns:cite="http://chs.harvard.edu/xmlns/cite">
     <collectionService>
         <citeCollection
+            canonicalId="objectId"
+            class="1199112"
+            name="catalogships">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="seqNum"/>
+            <citeProperty
+                label="Object ID"
+                name="objectId"
+                type="string"/>
+            
+            <citeProperty
+                label="Sequence number"
+                name="seqNum"
+                type="number"/>
+            <citeProperty
+                label="Description"
+                name="description"
+                type="string"/>
+            <citeProperty
+                label="Test passage"
+                name="textURN"
+                type="string"/>
+            <citeProperty
+                label="Image citation"
+                name="imageURN"
+                type="string"/>
+        </citeCollection>
+        <citeCollection
             canonicalId="URN"
             class="835352"
             name="codex">
@@ -18,17 +49,14 @@
                 label="Siglum"
                 name="Siglum"
                 type="string"/>
-          
             <citeProperty
                 label="description"
                 name="MS"
                 type="string"/>
         </citeCollection>
-        
-        
         <citeCollection
             canonicalId="URN"
-            class="835743"
+            class="1001673"
             groupProperty="Siglum"
             name="msA">
             <namespaceMapping
@@ -41,6 +69,10 @@
                 name="URN"
                 type="string"/>
             <citeProperty
+                label="Recto or verso"
+                name="RV"
+                type="string"/>
+            <citeProperty
                 label="MS label"
                 name="MS"
                 type="string"/>
@@ -48,7 +80,6 @@
                 label="MS siglum"
                 name="Siglum"
                 type="string"/>
-          
             <citeProperty
                 label="Internal sequence number"
                 name="Sequence"
@@ -56,7 +87,7 @@
         </citeCollection>
         <citeCollection
             canonicalId="URN"
-            class="835743"
+            class="1001673"
             groupProperty="Siglum"
             name="msB">
             <namespaceMapping
@@ -76,7 +107,6 @@
                 label="MS siglum"
                 name="Siglum"
                 type="string"/>
-           
             <citeProperty
                 label="Internal sequence number"
                 name="Sequence"
@@ -84,7 +114,7 @@
         </citeCollection>
         <citeCollection
             canonicalId="URN"
-            class="835743"
+            class="1001673"
             groupProperty="Siglum"
             name="u4">
             <namespaceMapping
@@ -97,6 +127,10 @@
                 name="URN"
                 type="string"/>
             <citeProperty
+                label="Recto or verso"
+                name="RV"
+                type="string"/>
+            <citeProperty
                 label="MS label"
                 name="MS"
                 type="string"/>
@@ -104,7 +138,6 @@
                 label="MS siglum"
                 name="Siglum"
                 type="string"/>
-            
             <citeProperty
                 label="Internal sequence number"
                 name="Sequence"
@@ -112,7 +145,7 @@
         </citeCollection>
         <citeCollection
             canonicalId="URN"
-            class="835743"
+            class="1001673"
             groupProperty="Siglum"
             name="e3">
             <namespaceMapping
@@ -125,6 +158,10 @@
                 name="URN"
                 type="string"/>
             <citeProperty
+                label="Recto or verso"
+                name="RV"
+                type="string"/>
+            <citeProperty
                 label="MS label"
                 name="MS"
                 type="string"/>
@@ -132,7 +169,6 @@
                 label="MS siglum"
                 name="Siglum"
                 type="string"/>
-            
             <citeProperty
                 label="Internal sequence number"
                 name="Sequence"
