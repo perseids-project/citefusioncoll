@@ -3,6 +3,18 @@
     xmlns="http://chs.harvard.edu/xmlns/cite"
     xmlns:cite="http://chs.harvard.edu/xmlns/cite">
     <collectionService>
+        
+        <citeCollection canonicalId="URN"
+            class="1215426"
+                name="pers">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <citeProperty label="URN" name="URN" type="string"/>
+            <citeProperty name="Label" label="Name" type="string"/>
+            <citeProperty name="Description" label="Description" type="string"></citeProperty>
+        </citeCollection>
+        
         <citeCollection
             canonicalId="objectId"
             class="1199112"
@@ -54,6 +66,76 @@
                 name="MS"
                 type="string"/>
         </citeCollection>
+
+
+        <citeCollection
+            canonicalId="URN"
+            class="1001673"
+            groupProperty="Siglum"
+            name="wissowa">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
+                label="Page ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Recto or verso"
+                name="RV"
+                type="string"/>
+            <citeProperty
+                label="MS label"
+                name="MS"
+                type="string"/>
+            <citeProperty
+                label="MS siglum"
+                name="Siglum"
+                type="string"/>
+            <citeProperty
+                label="Internal sequence number"
+                name="Sequence"
+                type="number"/>
+        </citeCollection>
+
+
+
+        <citeCollection
+            canonicalId="URN"
+            class="1001673"
+            groupProperty="Siglum"
+            name="kalavrezou">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
+                label="Page ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Recto or verso"
+                name="RV"
+                type="string"/>
+            <citeProperty
+                label="MS label"
+                name="MS"
+                type="string"/>
+            <citeProperty
+                label="MS siglum"
+                name="Siglum"
+                type="string"/>
+            <citeProperty
+                label="Internal sequence number"
+                name="Sequence"
+                type="number"/>
+        </citeCollection>
+
+
+
         <citeCollection
             canonicalId="URN"
             class="1001673"
