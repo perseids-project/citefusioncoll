@@ -1,6 +1,6 @@
 OVERVIEW:
 An implementation of the CITE Collections API for data stored in 
-one or more Google fusion table(s).
+one or more Google fusion table(s).  Should be ported to gradle build.
 
 src/fusioncoll/api is a groovlet (a servlet written in Groovy) fields
 CITE Collections requests.  It's a wrapper for the real work that is
