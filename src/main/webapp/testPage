@@ -1,0 +1,183 @@
+import groovy.xml.MarkupBuilder
+StringWriter writer = new StringWriter()
+MarkupBuilder home = new MarkupBuilder(writer)
+
+
+home.html {
+    head {
+        title("CITE Collections service")
+        link(type : "text/css", rel : "stylesheet", href : "cts.css", title : "CSS stylesheet")
+        p('class' : "menu") {
+              mkp.yield "CITE Collections: "
+              a (href : "home", "home")
+          }
+    }
+    body {
+        div(id : "header") 
+        div {
+            h1("CITE Collections service: test API")
+            h2("GetCapabilities")
+            p("No parameters.")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetCapabilities")
+                input (type: "submit", value : "Submit")
+            }
+
+            h2("GetCollectionSize")
+
+            p ("Two possible forms:")
+            p ("1. Identify collection by  URN")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetCollectionSize")
+                input(name : "urn", value : "urn:cite:hmt:msA")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            p ("2. Identify collection by  collection ID")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetCollectionSize")
+                input(name : "collection", value : "msA")
+                input (type: "submit", value : "Submit")
+            }
+
+
+
+            h2 ("GetFirst")
+            p("Applies to ordered collections only.")
+            p ("Two possible forms:")
+            p ("1. Identify collection by  URN")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetFirst")
+                input(name : "urn", value : "urn:cite:hmt:msA")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            p ("2. Identify collection by  collection ID")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetFirst")
+                input(name : "collection", value : "msA")
+                input (type: "submit", value : "Submit")
+            }
+
+
+
+            h2 ("GetLast")
+            p("Applies to ordered collections only.")
+            p ("Two possible forms:")
+            p ("1. Identify collection by  URN")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetLast")
+                input(name : "urn", value : "urn:cite:hmt:msA")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            p ("2. Identify collection by  collection ID")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetLast")
+                input(name : "collection", value : "msA")
+                input (type: "submit", value : "Submit")
+            }
+
+
+
+
+            h2 ("GetObjectPlus")
+            p ("Identify object by  URN")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetObject")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+
+            h2 ("GetObject")
+            p ("Two possible forms:")
+            p ("1. Identify object by  URN")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetObject")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            p ("2. Identify object by  collection and object IDs")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetObject")
+                input(name : "collection", value : "msA")
+                input(name : "id", value : "12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+
+
+
+            h2 ("GetNext")
+            p("Applies to ordered collections only.")
+            p ("Two possible forms:")
+            p ("1. Identify object by  URN")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetNext")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            p ("2. Identify object by  collection and object IDs")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetNext")
+                input(name : "collection", value : "msA")
+                input(name : "id", value : "12r")
+                input (type: "submit", value : "Submit")
+            }
+
+            h2 ("GetPrev")
+            p("Applies to ordered collections only.")
+            p ("Two possible forms:")
+            p ("1. Identify object by  URN")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetPrev")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            p ("2. Identify object by  collection and object IDs")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetPrev")
+                input(name : "collection", value : "msA")
+                input(name : "id", value : "12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+
+
+            h2 ("GetPrevNextUrn")
+            p("Applies to ordered collections only.")
+            p ("Two possible forms:")
+            p ("1. Identify object by  URN")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetPrevNextUrn")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            p ("2. Identify object by  collection and object IDs")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetPrevNextUrn")
+                input(name : "collection", value : "msA")
+                input(name : "id", value : "12r")
+                input (type: "submit", value : "Submit")
+            }
+
+        }
+    }
+}
+
+println writer.toString()
