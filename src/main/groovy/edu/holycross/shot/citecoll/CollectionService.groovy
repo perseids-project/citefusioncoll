@@ -323,6 +323,25 @@ class CollectionService {
     }
 
 
+    String getObjectPlusReply(String requestUrn) {
+        StringBuffer replyBuff = new StringBuffer("<GetObjectPlus  xmlns='http://chs.harvard.edu/xmlns/cite'>\n")
+        replyBuff.append("<request>\n<urn>${requestUrn}</urn>\n</request>\n")
+        replyBuff.append("<reply>\n")
+/*
+        StringBuffer replyBuff = new StringBuffer("<GetObjectPlus xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
+        replyBuff.append("\n<reply>")
+        replyBuff.append("\n${getObjectData(requestUrn)}")
+
+        replyBuff.append ("\n</reply>\n</GetObjectPlus>")
+*/
+//        return replyBuff.toString()
+replyBuff.append( getObjectData(requestUrn))
+replyBuff.append("\n${getPrevNextUrn(requestUrn)}")
+replyBuff.append("\n</reply>\n</GetObjectPlus>")
+return replyBuff.toString()
+
+    }
+
 
     /** Creates a well-formed fragment of a CITE reply
     * giving URNs of preceding and following objects in

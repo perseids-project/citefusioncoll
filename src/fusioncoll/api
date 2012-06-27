@@ -64,6 +64,7 @@ String checkRequest() {
         case "GetNext":
         case "GetPrevNextUrn":
         case "GetObject":
+        case "GetObjectPlus":
             if (params['urn']) {
             if (!urnSyntaxOk(params['urn'])) {
                 return "Invalid urn syntax '" + params['urn'] + "'."
@@ -127,7 +128,9 @@ if (!(checkReq == "OK")) {
         case 'GetCapabilities':
             println cs.getCapsReply()
         break
-
+        case 'GetObject':
+	println cs.getObjectPlusReply(params['urn'])
+	break
         case 'GetObject':
             // 2 legitimate forms of request:
             if (params['urn']) {
