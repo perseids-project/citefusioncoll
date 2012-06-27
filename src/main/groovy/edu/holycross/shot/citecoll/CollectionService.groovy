@@ -526,7 +526,10 @@ class CollectionService {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
+
+        if (this.debug) {
         System.err.println "GETSIZE:  " + qBuff.toString()
+        }
 
         def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
@@ -686,6 +689,8 @@ class CollectionService {
     String getObjReply(String collectionId, String objectId) {
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}.${objectId}")
+
+
 
         StringBuffer replyBuff = new StringBuffer("<GetObject xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n<id>${objectId}</id>\n</request>\n")
         replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")

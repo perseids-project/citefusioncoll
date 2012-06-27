@@ -34,6 +34,16 @@
 	private="false"/>
   </target>
 
+
+
+  <target name="zipdocs"
+	  depends="doc"
+	  description="Zips up documentation">
+    <zip destfile="${builddir}/docs.zip"
+	 basedir="${builddir}/gapi"/>
+  </target>
+
+
   <target name="jar"
 	  description="Compiles and jars CiteService">
     <taskdef name="groovyc"

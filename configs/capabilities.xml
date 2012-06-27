@@ -3,6 +3,97 @@
     xmlns="http://chs.harvard.edu/xmlns/cite"
     xmlns:cite="http://chs.harvard.edu/xmlns/cite">
     <collectionService>
+
+
+      <citeCollection
+	  canonicalId="taskId"
+	  class="1362999"
+	  name="venBscoreboard">
+	<namespaceMapping
+	    abbr="hmt"
+	    fullValue="http://www.homermultitext.org/datans"/>
+
+            <citeProperty
+                label="Record ID"
+                name="taskId"
+                type="string"/>
+
+
+            <citeProperty
+                label="Folio URN"
+                name="target"
+                type="string"/>
+
+            <citeProperty
+                label="Task category"
+                name="category"
+                type="string"/>
+
+            <citeProperty
+                label="Institution"
+                name="institution"
+                type="string"/>
+
+            <citeProperty
+                label="Assigned to"
+                name="who"
+                type="string"/>
+
+
+            <citeProperty
+                label="Status"
+                name="status"
+                type="string"/>
+
+      </citeCollection>
+
+
+
+
+
+      <citeCollection
+	  canonicalId="taskId"
+	  class="1362933"
+	  name="venAscoreboard">
+	<namespaceMapping
+	    abbr="hmt"
+	    fullValue="http://www.homermultitext.org/datans"/>
+
+            <citeProperty
+                label="Record ID"
+                name="taskId"
+                type="string"/>
+
+
+            <citeProperty
+                label="Folio URN"
+                name="target"
+                type="string"/>
+
+            <citeProperty
+                label="Task category"
+                name="category"
+                type="string"/>
+
+            <citeProperty
+                label="Institution"
+                name="institution"
+                type="string"/>
+
+            <citeProperty
+                label="Assigned to"
+                name="who"
+                type="string"/>
+
+
+            <citeProperty
+                label="Status"
+                name="status"
+                type="string"/>
+
+      </citeCollection>
+
+
         <citeCollection
             canonicalId="objectId"
             class="1199112"
