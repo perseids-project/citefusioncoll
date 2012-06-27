@@ -1,0 +1,35 @@
+import groovy.xml.MarkupBuilder
+StringWriter writer = new StringWriter()
+MarkupBuilder home = new MarkupBuilder(writer)
+
+
+home.html {
+    head {
+        title("CITE Collections service")
+        link(type : "text/css", rel : "stylesheet", href : "cts.css", title : "CSS stylesheet")
+        p('class' : "menu", "CITE Collections: home")
+    }
+    body {
+        div(id : "header") 
+        div {
+            h1("CITE Collections interface to data in Google Fusion Tables")
+            p("Supply your own home page here.")
+            
+            p {
+                mkp.yield     "Quick README including "
+                a(href : "README.txt", "how to configure and run")
+                mkp.yield " this service."
+            }
+            p {
+                mkp.yield "License: "
+                a(href : "gpl-3.0.txt","GPL 3")
+            }
+            p {
+                mkp.yield "Page of forms to test the "
+                a (href : "testPage", "CITE Collections API")
+            }
+        }
+    }
+}
+
+println writer.toString()
