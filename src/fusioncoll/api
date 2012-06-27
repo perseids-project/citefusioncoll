@@ -1,0 +1,219 @@
+// HORRIFIC error in groovy:  parameter named 'request'
+// is lost!
+//
+// Possibly add paging for queries that can return multiples
+
+
+import edu.holycross.shot.citecoll.CollectionService
+import edu.harvard.chs.cite.CiteUrn
+import groovy.xml.MarkupBuilder
+
+response.setContentType("text/xml; charset=UTF-8")
+request.setCharacterEncoding("UTF-8")
+
+def getCapsFile = {
+    def capsFile = new File(context.getRealPath("/configs") + "/capabilities.xml" )
+    capsFile
+}
+
+boolean urnSyntaxOk(String urn) {
+    def components = urn.split(/:/)
+    if (components.size() != 4) {
+        return false
+    }
+    if (components[0] != 'urn') {
+        return false
+    }
+    if (components[1] != 'cite') {
+        return false
+    }
+    return true
+}
+
+def errorMsg =  { msg ->
+    StringWriter writer = new StringWriter()
+    MarkupBuilder xml = new MarkupBuilder(writer)
+    xml.CiteError {
+        errorCode("1")
+        description("${msg}")
+    }
+    println writer.toString()    
+}
+
+
+String checkRequest() {
+    params.keySet().each { paramKey ->
+        def paramList = params[paramKey]
+        if (paramList.size() > 1) {
+            return "Bad parameter set:  duplicated parameter ${paramKey}"
+        }
+    }
+    // Must include a 'req' parameter:
+    if (!params['req']) {
+        return  "No 'req' parameter given."
+    }
+    if (params['req'] == "GetCapabilities") {
+        // no other params needed
+        return "OK"
+    }
+
+    switch (params['req']) {
+        // These requests accept either a URN or
+        // a collection + id combination
+        case "GetPrev":
+        case "GetNext":
+        case "GetPrevNextUrn":
+        case "GetObject":
+            if (params['urn']) {
+            if (!urnSyntaxOk(params['urn'])) {
+                return "Invalid urn syntax '" + params['urn'] + "'."
+            }
+            def components = params['urn'].split(/:/)
+            def idparts = components[3].split(/\./)
+
+            if (idparts.size() != 2) {
+                return "Invalid urn ${params['urn']}:  id component ${components[3]} must include collection and object id."
+            }
+            return "OK"
+        }
+        if ((params['collection']) && (params['id'])) {
+            return "OK"
+        }
+    
+        return "${params['req']} request requires either a 'urn' parameter or a combination of a 'collection' and an 'id' parameter for a validly configured collection."
+        break
+
+        // These requests take either a URN or a collection parameter
+        case "GetCollectionSize":
+        case "GetLast":
+        case "GetFirst":
+            if (params['urn']) {
+            if (!urnSyntaxOk(params['urn'])) {
+                return "Invalid urn syntax '" + params['urn'] + "'."
+            }
+            def components = params['urn'].split(/:/)
+            if (components.size() < 4) {
+                return "Invalid urn ${params['urn']}:  must include collection component."
+            }
+            return "OK"
+
+        } else {
+            if (params['collection']) {
+                return "OK"
+            } else {
+                return "${params['req']} request requires either a 'urn' parameter of a 'collection' parameter for a validly configured collection."
+            }
+        }
+        break
+
+        default:
+            return "Unrecognized or unimplemented request '" +  params['req'] + "'"
+        break
+    }
+}
+
+
+// 1. Validate request form.
+def checkReq = checkRequest()
+if (!(checkReq == "OK")) {
+    errorMsg(checkReq)
+} else {
+
+    CollectionService cs = new CollectionService(getCapsFile())
+
+
+    def citeReq = params['req']
+    switch (citeReq) {
+        case 'GetCapabilities':
+            println cs.getCapsReply()
+        break
+
+        case 'GetObject':
+            // 2 legitimate forms of request:
+            if (params['urn']) {
+            println cs.getObjReply(params['urn']) 
+        }  else {
+            println cs.getObjReply(params['collection'], params['id']) 
+        }
+        break
+
+        case 'GetFirst':
+            if (params['urn']) {
+            CiteUrn reqUrn = new CiteUrn(params['urn'])
+            println cs.getFirstReply("${reqUrn}", reqUrn.getCollection())
+        } else {
+            println cs.getFirstReply(params['collection'])
+        }
+            
+
+        break
+
+
+        case 'GetLast':
+            if (params['urn']) {
+            CiteUrn reqUrn = new CiteUrn(params['urn'])
+            println cs.getLastReply("${reqUrn}", reqUrn.getCollection())
+        } else {
+            println cs.getLastReply(params['collection'])
+        }
+        break
+
+
+
+        case 'GetCollectionSize':
+            if (params['urn']) {
+            CiteUrn reqUrn = new CiteUrn(params['urn'])
+            println cs.getSizeReply("${reqUrn}", reqUrn.getCollection())
+        } else {
+            println cs.getSizeReply(params['collection'])
+        }
+        break
+
+
+        case 'GetNext':
+            if (params['urn']) {
+            println cs.getNextReply(params['urn'])
+        } else {
+            println cs.getNextReply(params['collection'], params['id'])
+        }
+        break
+
+
+
+
+        case 'GetPrev':
+            if (params['urn']) {
+            println cs.getPrevReply(params['urn'])
+        } else {
+            println cs.getPrevReply(params['collection'], params['id'])
+        }
+
+        break
+
+
+        case 'GetPrevNextUrn':
+            if (params['urn']) {
+            println cs.getPrevNextReply(params['urn'])
+        } else {
+            println cs.getPrevNextReply(params['collection'], params['id'])
+        }
+
+        break
+
+
+        /*
+        case 'OrderedBy':
+            return orderedBy(params, config)
+        break
+        */
+
+
+        /*
+        case 'GetValidIds':
+            return getIds(params,config)
+        break
+        */
+
+    }
+}
+

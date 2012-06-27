@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GetCapabilities
+    xmlns="http://chs.harvard.edu/xmlns/cite"
+    xmlns:cite="http://chs.harvard.edu/xmlns/cite">
+    <collectionService>
+
+
+      <citeCollection
+	  canonicalId="taskId"
+	  class="1362999"
+	  name="venBscoreboard">
+	<namespaceMapping
+	    abbr="hmt"
+	    fullValue="http://www.homermultitext.org/datans"/>
+
+            <citeProperty
+                label="Record ID"
+                name="taskId"
+                type="string"/>
+
+
+            <citeProperty
+                label="Folio URN"
+                name="target"
+                type="string"/>
+
+            <citeProperty
+                label="Task category"
+                name="category"
+                type="string"/>
+
+            <citeProperty
+                label="Institution"
+                name="institution"
+                type="string"/>
+
+            <citeProperty
+                label="Assigned to"
+                name="who"
+                type="string"/>
+
+
+            <citeProperty
+                label="Status"
+                name="status"
+                type="string"/>
+
+      </citeCollection>
+
+
+
+
+
+      <citeCollection
+	  canonicalId="taskId"
+	  class="1362933"
+	  name="venAscoreboard">
+	<namespaceMapping
+	    abbr="hmt"
+	    fullValue="http://www.homermultitext.org/datans"/>
+
+            <citeProperty
+                label="Record ID"
+                name="taskId"
+                type="string"/>
+
+
+            <citeProperty
+                label="Folio URN"
+                name="target"
+                type="string"/>
+
+            <citeProperty
+                label="Task category"
+                name="category"
+                type="string"/>
+
+            <citeProperty
+                label="Institution"
+                name="institution"
+                type="string"/>
+
+            <citeProperty
+                label="Assigned to"
+                name="who"
+                type="string"/>
+
+
+            <citeProperty
+                label="Status"
+                name="status"
+                type="string"/>
+
+      </citeCollection>
+
+
+        <citeCollection
+            canonicalId="objectId"
+            class="1199112"
+            name="catalogships">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="seqNum"/>
+            <citeProperty
+                label="Object ID"
+                name="objectId"
+                type="string"/>
+            
+            <citeProperty
+                label="Sequence number"
+                name="seqNum"
+                type="number"/>
+            <citeProperty
+                label="Description"
+                name="description"
+                type="string"/>
+            <citeProperty
+                label="Test passage"
+                name="textURN"
+                type="string"/>
+            <citeProperty
+                label="Image citation"
+                name="imageURN"
+                type="string"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="835352"
+            name="codex">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <citeProperty
+                label="Folio ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Siglum"
+                name="Siglum"
+                type="string"/>
+            <citeProperty
+                label="description"
+                name="MS"
+                type="string"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="1001673"
+            groupProperty="Siglum"
+            name="msA">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
+                label="Page ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Recto or verso"
+                name="RV"
+                type="string"/>
+            <citeProperty
+                label="MS label"
+                name="MS"
+                type="string"/>
+            <citeProperty
+                label="MS siglum"
+                name="Siglum"
+                type="string"/>
+            <citeProperty
+                label="Internal sequence number"
+                name="Sequence"
+                type="number"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="1001673"
+            groupProperty="Siglum"
+            name="msB">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
+                label="Page ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="MS label"
+                name="MS"
+                type="string"/>
+            <citeProperty
+                label="MS siglum"
+                name="Siglum"
+                type="string"/>
+            <citeProperty
+                label="Internal sequence number"
+                name="Sequence"
+                type="number"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="1001673"
+            groupProperty="Siglum"
+            name="u4">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
+                label="Page ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Recto or verso"
+                name="RV"
+                type="string"/>
+            <citeProperty
+                label="MS label"
+                name="MS"
+                type="string"/>
+            <citeProperty
+                label="MS siglum"
+                name="Siglum"
+                type="string"/>
+            <citeProperty
+                label="Internal sequence number"
+                name="Sequence"
+                type="number"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="1001673"
+            groupProperty="Siglum"
+            name="e3">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
+                label="Page ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Recto or verso"
+                name="RV"
+                type="string"/>
+            <citeProperty
+                label="MS label"
+                name="MS"
+                type="string"/>
+            <citeProperty
+                label="MS siglum"
+                name="Siglum"
+                type="string"/>
+            <citeProperty
+                label="Internal sequence number"
+                name="Sequence"
+                type="number"/>
+        </citeCollection>
+    </collectionService>
+</GetCapabilities>
