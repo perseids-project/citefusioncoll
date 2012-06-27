@@ -1,8 +1,10 @@
 OVERVIEW:
 An implementation of the CITE Collections API for data stored in 
-one or more Google fusion table(s).  Should be ported to gradle build.
+one or more Google fusion table(s). 
 
-src/fusioncoll/api is a groovlet (a servlet written in Groovy) fields
+Source code is layed out following gradle build conventions.
+
+src/main/webapp is a groovlet (a servlet written in Groovy) that fields
 CITE Collections requests.  It's a wrapper for the real work that is
 done by the edu.holycross.shot.citecoll.CollectionService class.
 For details of that class, see the groovydocs.
@@ -13,36 +15,25 @@ available under the terms of the GNU General Public License, version 3.
 See the included file gpl-3.0.txt for details.
 
 PREREQUISITES:
-* an internet connection.  Obviously, this is only usable if you a
+* an internet connection.  Obviously, this servlet is only usable if you a
 can connect to Google Fusion.
 
 CONFIGURATION:
-* Edit  configs/capabilities.xml with information about the Google Fusion
+* Edit  src/main/webapp/configs/capabilities.xml with information about the Google Fusion
 data set you want to serve.
 
-* Optionally, you may also edit src/fusioncoll/home to tailor the servlet's
+* Optionally, you may also edit src/main/webapp/home to tailor the servlet's
 home page to your project.
 
 
 BUILDING AND RUNNING:
-Run
-	ant
-to see a list of available targets.
+Use standard gradle tasks to build a war or api documentation, or to
+run the war.  Run 'gradle tasks' to see options.
 
-The main targets you need are
+Note that while 'gradle jettyRun' does not correctly set up the
+dependencies on other libraries to run properly, 'gradle jettyRunWar'
+does work correctly, so you can test with that task.
 
-    ant run-coll
-to run the service in the included jetty container.
-
-   ant war
-to build a .war file you can drop into any servlet container.
-
-   ant clean
-to empty the build directory.
-
-   ant doc
-to generate groovy docs (javadoc-like API documentation
-for groovy source of the  edu.holycross.shot.citecoll package).
 
 TBD/BUGS:
 * need to decide how to deal with groovy bug handling HTTP parameters
