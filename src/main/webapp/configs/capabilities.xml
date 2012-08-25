@@ -3,36 +3,73 @@
     xmlns="http://chs.harvard.edu/xmlns/cite"
     xmlns:cite="http://chs.harvard.edu/xmlns/cite">
     <collectionService>
-
-       <citeCollection
+        <citeCollection
             canonicalId="URN"
             class="4436480"
             name="msA">
             <namespaceMapping
                 abbr="hmt"
                 fullValue="http://www.homermultitext.org/datans"/>
-           <orderedBy property="Sequence"/>
-            
-             <citeProperty
+            <!-- optional element.  -->
+            <orderedBy
+                property="Sequence"/>
+            <citeProperty
                 label="Siglum"
                 name="Siglum"
                 type="string"/>
-           <citeProperty label="Sequence" name="Sequence" type="number"></citeProperty>
-           <citeProperty
-               label="Folio ID"
-               name="URN"
-               type="string"/>
-           <citeProperty
-               label="Recto or verso"
-               name="RV"
-               type="string"/>
-          
+            <citeProperty
+                label="Sequence"
+                name="Sequence"
+                type="number"/>
+            <citeProperty
+                label="Folio ID"
+                name="URN"
+                type="string"/>
+            <citeProperty
+                label="Recto or verso"
+                name="RV"
+                type="string">
+                <!-- optional -->
+                <valueList>
+                    <value>recto</value>
+                    <value>verso</value>
+                </valueList>
+            </citeProperty>
             <citeProperty
                 label="description"
                 name="Label"
                 type="string"/>
-           <citeProperty name="CodexURN" type="string" label="Codex URN"/>
+            <citeProperty
+                label="Codex URN"
+                name="CodexURN"
+                type="string"/>
         </citeCollection>
-
-</collectionService>
+        
+        
+        
+        
+        <citeCollection
+            name="hmtimg"
+            canonicalId="URN"
+            class="4436480"
+           >
+            <citeProperty
+                label="Image URN"
+                name="URN"
+                type="urn"/>
+            <citeProperty
+                label="Photographic equipment"
+                name="equipment"
+                type="string"/>
+            <extension
+                atUrl="http://beta.hpcc.uh.edu/tomcat/chsimg/Img?"
+                extensionUri="http://chs.harvard.edu/cite/chsimg">
+                <request>GetBinaryImage</request>
+                <request>GetCaption</request>
+                <request>GetRights</request>
+                <request>GetImagePlus</request>
+                <request>GetIIPMooViewer</request>
+            </extension>
+        </citeCollection>
+    </collectionService>
 </GetCapabilities>
