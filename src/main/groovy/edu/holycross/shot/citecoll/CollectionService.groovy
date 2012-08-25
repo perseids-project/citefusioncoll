@@ -69,6 +69,7 @@ class CollectionService {
     String getSizeReply(String requestUrn, String collectionId) {
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn(requestUrn)
+
         StringBuffer replyBuff = new StringBuffer("<GetCollectionSize xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
         replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
         replyBuff.append("\n<size>${getSize(citeUrn)}</size>\n</reply>\n</GetCollectionSize>\n")
@@ -238,7 +239,9 @@ class CollectionService {
             }
         }
         def orderingProp = propList[orderingPropIndex]['name']
-        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
+//        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
+
+        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn}" + "'")
         if (collConf['groupProperty'] != null) {
             qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
@@ -368,7 +371,9 @@ return replyBuff.toString()
             }
         }
         def orderingProp = propList[orderingPropIndex]['name']
-        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
+//        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
+
+        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn}" + "'")
         if (collConf['groupProperty'] != null) {
             qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
@@ -450,7 +455,8 @@ return replyBuff.toString()
             }
         }
         def orderingProp = propList[orderingPropIndex]['name']
-        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
+//        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
+        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn}" + "'")
         if (collConf['groupProperty'] != null) {
             qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }

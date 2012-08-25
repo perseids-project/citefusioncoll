@@ -87,7 +87,7 @@ home.html {
             h2 ("GetObjectPlus")
             p ("Identify object by  URN")
             form(action : "api", method : "GET")  {
-                input (type : "hidden", name : "req", value : "GetObject")
+                input (type : "hidden", name : "req", value : "GetObjectPlus")
                 input(name : "urn", value : "urn:cite:hmt:msA.12r")
                 input (type: "submit", value : "Submit")
             }
