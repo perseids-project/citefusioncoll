@@ -1,6 +1,15 @@
 apply plugin: 'war'
 apply plugin: 'jetty'
 apply plugin: 'groovy'
+apply plugin:  "maven"
+
+group = "edu.holycross.shot"
+version = "0.1.1"
+
+// for jettyRunWar:
+httpPort = 8080
+stopPort = 9451
+stopKey = 'foo'
 
 repositories {
     mavenCentral()
@@ -20,12 +29,33 @@ dependencies {
     groovy  group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.0-rc-3'
     groovy group: 'com.google.guava', name: 'guava', version: '11.0.2'
     groovy group: 'com.google.gdata', name: 'gdata-core-1.0', version : '1.41.5'
-    groovy  "edu.harvard.chs:cite:$citeVersion"
+    groovy  "edu.harvard.chs:cite:0.9.19"
 }
 
-httpPort = 8080
-stopPort = 9451
-stopKey = 'foo'
+
+task sourcesZip(type: Zip, dependsOn:classes) {
+     classifier = 'sources'
+     from sourceSets.main.allSource
+}
+
+task docsZip(type: Zip, dependsOn: groovydoc) {
+    classifier = 'groovydoc'
+    from groovydoc.destinationDir
+    description = 'Builds zip file of java/groovy docs'
+
+}
 
 
-// set version, define artifacts?
+artifacts {
+    archives docsZip
+    archives sourcesZip
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: nexusRepo) {                   
+            authentication (userName: nexusUser, password: nexusPassword)
+        }
+    }
+}
