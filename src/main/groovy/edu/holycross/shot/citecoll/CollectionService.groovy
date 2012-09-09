@@ -1,7 +1,7 @@
 package edu.holycross.shot.citecoll
-//
-// Possibly add paging for queries that can return multiples
-//
+
+import groovy.json.JsonSlurper
+
 
 
 import edu.harvard.chs.cite.CiteUrn
@@ -24,9 +24,7 @@ class CollectionService {
     /** URL for Google Fusion API */
 //    static String SERVICE_URL = "https://www.google.com/fusiontables/api/query"
 
-
-
-    static String endPoint = "https://www.googleapis.com/fusiontables/v1/query?sql="
+    static String endPoint = "https://www.googleapis.com/fusiontables/v1/"
 
     /** Developer's required Google API key if not using OAuth for authentication */
     String apiKey
@@ -34,7 +32,7 @@ class CollectionService {
 
 
     /** Identifier to Google of this application */
-    static String CLIENT_APP = "shot.holycross.edu-fusioncoll-0.1"
+    static String CLIENT_APP = "shot.holycross.edu-fusioncoll-0.2"
     /** XML namespace for all CITE Collection replies */
     static String CITE_NS = "http://chs.harvard.edu/xmlns/cite"
 
@@ -58,7 +56,7 @@ class CollectionService {
         this.apiKey = googleKey
 
         this.citeConfig = configureFromFile(this.capabilitiesFile)
-        if (this.debug) {System.err.println "CONFIG: " + this.citeConfig }
+        System.err.println "CONFIG: " + this.citeConfig 
         // throw exception if could not parse caps file...
     }
 
@@ -775,14 +773,25 @@ return replyBuff.toString()
     * @returns A String of well-formed XML
     */
     String getObjectData(String requestUrn) {
+        String q = endPoint + "query?sql=" + URLEncoder.encode(getObjectQuery(requestUrn)) + "&key=${apiKey}"
+
+        System.err.println "QUERY: " + q
+        URL queryUrl = new URL(q)
+        String raw = queryUrl.getText("UTF-8")
+
+        System.err.println "RAW REPL : " + raw
+        JsonSlurper jslurp = new JsonSlurper()
+
+
+        def rows = jslurp.parseText(raw).rows
+        def queryProperties = jslurp.parseText(raw).columns
+        System.err.println "yields " + rows
+
+/*
         def q =  getObjectQuery(requestUrn)
 
         if (this.debug) {System.err.println "GETOBJECTDATA: " + q }
 
-        String q = endPoint + "query?sql=" + URLEncoder.encode("SELECT ${cols} FROM ${tableId} WHERE ${where}") + "&key=${apiKey}"
-
-
-/*
         def url = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(q, "UTF-8"));
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, url, ContentType.TEXT_PLAIN)
         grequest.execute()
@@ -876,10 +885,10 @@ return replyBuff.toString()
             return null
         }
 
+
         def configuredCollections = [:]
-        root[citens.collectionService][citens.citeCollection].each { c ->
+        root[citens.citeCollection].each { c ->
             def propertyList = []
-            System.err.println "CONFIGURE COLL " + c
             c[citens.citeProperty].each { cp ->
                 def prop = [:]
                 prop['name'] = "${cp.'@name'}"
@@ -905,19 +914,17 @@ return replyBuff.toString()
                 "className" : "${c.'@class'}",
                 "canonicalId" : "${c.'@canonicalId'}",
                 "groupProperty" : groupProp,
-                "nsabbr" : "${c[citens.namespaceMapping][0].'@abbr'}", // FAILING
+                "nsabbr" : "${c[citens.namespaceMapping][0].'@abbr'}", 
                 "nsfull" :"${c[citens.namespaceMapping][0].'@fullValue'}",
                 "orderedBy" : seq,
                 "citeExtensions" : citeExtensions,
                 "properties" : propertyList
             ]
 
-
-            
-
             def coll = ["${c.'@name'}" : collData]
             configuredCollections.putAt("${c.'@name'}",collData)
         }
+
         return configuredCollections
     }
 
@@ -961,6 +968,8 @@ return replyBuff.toString()
         }
 
         return "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + trimUrn + "'"
+//        return "SELECT ${propNames.toString()} FROM ${collConf['className']} "
+
     }
 
 
