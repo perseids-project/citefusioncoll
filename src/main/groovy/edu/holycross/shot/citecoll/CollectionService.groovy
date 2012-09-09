@@ -22,7 +22,17 @@ class CollectionService {
 
     // Constants:
     /** URL for Google Fusion API */
-    static String SERVICE_URL = "https://www.google.com/fusiontables/api/query"
+//    static String SERVICE_URL = "https://www.google.com/fusiontables/api/query"
+
+
+
+    static String endPoint = "https://www.googleapis.com/fusiontables/v1/query?sql="
+
+    /** Developer's required Google API key if not using OAuth for authentication */
+    String apiKey
+
+
+
     /** Identifier to Google of this application */
     static String CLIENT_APP = "shot.holycross.edu-fusioncoll-0.1"
     /** XML namespace for all CITE Collection replies */
@@ -43,8 +53,10 @@ class CollectionService {
     
 
     /** Constructor parses capabilities file */
-    CollectionService(File capsFile) {
+    CollectionService(File capsFile, String googleKey) {
         this.capabilitiesFile = capsFile
+        this.apiKey = googleKey
+
         this.citeConfig = configureFromFile(this.capabilitiesFile)
         if (this.debug) {System.err.println "CONFIG: " + this.citeConfig }
         // throw exception if could not parse caps file...
@@ -247,7 +259,12 @@ class CollectionService {
         }
 
 
-        def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
+/*
+//        def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
+
+
+
+
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
         grequest.execute()
         def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
@@ -282,6 +299,10 @@ class CollectionService {
             return ""
         }
         return rowToXml(objReplyLines[1],citeUrn.toString())
+*/
+
+
+
     }
 
 
@@ -758,8 +779,10 @@ return replyBuff.toString()
 
         if (this.debug) {System.err.println "GETOBJECTDATA: " + q }
 
+        String q = endPoint + "query?sql=" + URLEncoder.encode("SELECT ${cols} FROM ${tableId} WHERE ${where}") + "&key=${apiKey}"
 
 
+/*
         def url = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(q, "UTF-8"));
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, url, ContentType.TEXT_PLAIN)
         grequest.execute()
@@ -773,6 +796,7 @@ return replyBuff.toString()
         if (this.debug) {System.err.println "GETOBJECTDATA: REPLYLINES " + replyLines + " of size " + replyLines.size()}
 
         return rowToXml(replyLines[1],requestUrn)
+*/
     }
 
 
@@ -855,6 +879,7 @@ return replyBuff.toString()
         def configuredCollections = [:]
         root[citens.collectionService][citens.citeCollection].each { c ->
             def propertyList = []
+            System.err.println "CONFIGURE COLL " + c
             c[citens.citeProperty].each { cp ->
                 def prop = [:]
                 prop['name'] = "${cp.'@name'}"
@@ -880,7 +905,7 @@ return replyBuff.toString()
                 "className" : "${c.'@class'}",
                 "canonicalId" : "${c.'@canonicalId'}",
                 "groupProperty" : groupProp,
-                "nsabbr" : "${c[citens.namespaceMapping][0].'@abbr'}",
+                "nsabbr" : "${c[citens.namespaceMapping][0].'@abbr'}", // FAILING
                 "nsfull" :"${c[citens.namespaceMapping][0].'@fullValue'}",
                 "orderedBy" : seq,
                 "citeExtensions" : citeExtensions,
