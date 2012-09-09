@@ -62,3 +62,11 @@ uploadArchives {
         }
     }
 }
+
+
+test {
+    /* In gradle, properties are normally wiped clean for tests.
+    This passes the project property gapi to tests as a System property
+    */
+    systemProperty  "apiKey", apiKey
+}
