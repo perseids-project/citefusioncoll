@@ -3,12 +3,17 @@ package edu.holycross.shot.citecoll
 import groovy.json.JsonSlurper
 
 
-
 import edu.harvard.chs.cite.CiteUrn
 import groovy.xml.MarkupBuilder
+
+
+
+// REMOVE TEHESE DEPENDENCIES!
 import java.util.regex.Pattern
 import java.util.regex.MatchResult
 
+
+// REMOVE ALL THESE DEPENDENCIES!
 // Google data APIs:
 import com.google.gdata.client.GoogleService;
 import com.google.gdata.client.Service.GDataRequest;
@@ -344,23 +349,28 @@ class CollectionService {
         return replyBuff.toString()
     }
 
+    String getObjectPlusReply(String requestUrnStr) {
+        try {
+            CiteUrn urn = new CiteUrn(requestUrnStr)
+            return getObjectPlusReply(urn)
+        } catch (Exception e) {
+            throw e
+        }
+    }
 
-    String getObjectPlusReply(String requestUrn) {
+    String getObjectPlusReply(CiteUrn requestUrn) {
+        
         StringBuffer replyBuff = new StringBuffer("<GetObjectPlus  xmlns='http://chs.harvard.edu/xmlns/cite'>\n")
         replyBuff.append("<request>\n<urn>${requestUrn}</urn>\n</request>\n")
         replyBuff.append("<reply>\n")
-/*
-        StringBuffer replyBuff = new StringBuffer("<GetObjectPlus xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
-        replyBuff.append("\n<reply>")
-        replyBuff.append("\n${getObjectData(requestUrn)}")
 
-        replyBuff.append ("\n</reply>\n</GetObjectPlus>")
-*/
-//        return replyBuff.toString()
-replyBuff.append( getObjectData(requestUrn))
-replyBuff.append("\n${getPrevNextUrn(requestUrn)}")
-replyBuff.append("\n</reply>\n</GetObjectPlus>")
-return replyBuff.toString()
+
+        // Extract collection id...
+        
+        replyBuff.append( getObjectData(requestUrn))
+        replyBuff.append("\n${getPrevNextUrn(requestUrn)}")
+        replyBuff.append("\n</reply>\n</GetObjectPlus>")
+        return replyBuff.toString()
 
     }
 
@@ -763,7 +773,8 @@ return replyBuff.toString()
     * @returns A String of well-formed XML
     */
     String getObjectData(CiteUrn requestUrn) {
-        return getObjectData(requestUrn.toString())
+        String collectionId = requestUrn.getCollection()
+        return getObjectData(collectionId, requestUrn.toString())
     }
 
     /** Creates a well-formed fragment of a CITE reply
@@ -772,40 +783,55 @@ return replyBuff.toString()
     * @param requestUrn The CITE URN, as a String, identifying the object.
     * @returns A String of well-formed XML
     */
-    String getObjectData(String requestUrn) {
-        String q = endPoint + "query?sql=" + URLEncoder.encode(getObjectQuery(requestUrn)) + "&key=${apiKey}"
+    String getObjectData(String collectionId, String requestUrn) {
+
+        def objQuery = getObjectQuery(collectionId, requestUrn)
+        System.err.println "OBJ QUERY = " + objQuery
+
+        String q = endPoint + "query?sql=" + URLEncoder.encode(objQuery) + "&key=${apiKey}"
 
         System.err.println "QUERY: " + q
         URL queryUrl = new URL(q)
         String raw = queryUrl.getText("UTF-8")
 
-        System.err.println "RAW REPL : " + raw
         JsonSlurper jslurp = new JsonSlurper()
-
-
         def rows = jslurp.parseText(raw).rows
         def queryProperties = jslurp.parseText(raw).columns
-        System.err.println "yields " + rows
+        def collConf = this.citeConfig[collectionId]
 
-/*
-        def q =  getObjectQuery(requestUrn)
 
-        if (this.debug) {System.err.println "GETOBJECTDATA: " + q }
+        System.err.println "for cols " + queryProperties
+        System.err.println "Configured as " + collConf
+        def canonicalId = collConf["canonicalId"]
 
-        def url = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(q, "UTF-8"));
-        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, url, ContentType.TEXT_PLAIN)
-        grequest.execute()
+        
 
-        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
-        if (replyLines.size() != 2) {
-            // exception:  should be a header and one record
+        StringWriter writer = new StringWriter()
+        MarkupBuilder xml = new MarkupBuilder(writer)
+
+
+
+        rows.each { r ->
+            def urnVal
+            r.eachWithIndex { p, i ->
+                if (queryProperties[i] == canonicalId) {
+                    urnVal = p
+                }
+                
+            }
+            xml.citeObject("urn" : urnVal)  { 
+                r.eachWithIndex { prop, i ->
+                    if (queryProperties[i] != canonicalId) {
+                        collConf["properties"].each { confProp ->
+                            if (confProp["name"] == queryProperties[i]) {
+                                citeProperty(name: queryProperties[i], label: confProp["label"], type : confProp["type"], "${prop}")
+                            }
+                        }
+                    }
+                }
+            }
         }
-
-
-        if (this.debug) {System.err.println "GETOBJECTDATA: REPLYLINES " + replyLines + " of size " + replyLines.size()}
-
-        return rowToXml(replyLines[1],requestUrn)
-*/
+        return writer.toString()     
     }
 
 
@@ -817,6 +843,7 @@ return replyBuff.toString()
     * @return A String with an XML serialization of the data.
     */
     String rowToXml(String row, String requestUrn) {
+/*
         def CiteUrn citeUrn = new CiteUrn(requestUrn)
         def collConf = this.citeConfig[citeUrn.getCollection()]
         def propList = collConf['properties']
@@ -869,6 +896,7 @@ return replyBuff.toString()
         }
 
         return writer.toString()     
+*/
     }
 
     /** Creates a map of the configuration data 
@@ -951,11 +979,14 @@ return replyBuff.toString()
     * parameter to Google Fusion, or null if the requested
     * collection is not configured.
     */
-    String getObjectQuery(String coll, String obj) {
+    String getObjectQuery(String coll, String urn) {
         def collConf = this.citeConfig[coll]
         if (!collConf) { return null }
 
-        def trimUrn = "${collConf['nsabbr']}:${coll}.${obj}"
+//        System.err.println "GET OBJECT QUERY: CONF IS " + collConf
+
+        def trimUrn = urn //"urn:cite:${collConf['nsabbr']}:${coll}.${obj}"
+        System.err.println "URN KEY: " + trimUrn
         // simplify syntax:
         def props = collConf['properties']
         StringBuffer propNames =  new StringBuffer()
