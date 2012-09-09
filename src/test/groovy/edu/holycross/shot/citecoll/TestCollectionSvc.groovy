@@ -29,13 +29,17 @@ class TestCollectionSvc extends GroovyTestCase {
 //        assert svc.citeConfig.keySet().size() == expectedSize
 
 //        String tstCollection = "us-states"
-        String tstCollection = "paleography"
+        String tstCollection = "greek"
 //        String tstId = "Alabama"
        String tstId = "urn:cite:paleog:greek.op1"
         
         System.err.println "collection config  - " + svc.citeConfig[tstCollection]
         def query = svc.getObjectQuery(tstCollection,tstId)
         System.err.println svc.getObjectData(tstCollection,tstId)
+
+
+        System.err.println svc.getObjReply(tstId)
+        
         
     }
  

@@ -366,7 +366,7 @@ class CollectionService {
 
 
         // Extract collection id...
-        
+        System.err.println "GOP:  GET data for " + requestUrn
         replyBuff.append( getObjectData(requestUrn))
         replyBuff.append("\n${getPrevNextUrn(requestUrn)}")
         replyBuff.append("\n</reply>\n</GetObjectPlus>")
@@ -735,26 +735,6 @@ class CollectionService {
 
     /** Creates a string with valid XML reply to the
     * CITE Collection GetObject request when the object
-    * is identified by a collection identifier and an
-    * an object identifier.
-    * @param collectionId CITE identifier for the collection.
-    * @param objectId CITE identifier for the object within the collection.
-    */
-    String getObjReply(String collectionId, String objectId) {
-        def collConf = this.citeConfig[collectionId]
-        CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}.${objectId}")
-
-
-
-        StringBuffer replyBuff = new StringBuffer("<GetObject xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n<id>${objectId}</id>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getObjectData(citeUrn)}</reply>\n</GetObject>\n")
-        return replyBuff.toString()
-    }
-
-
-    /** Creates a string with valid XML reply to the
-    * CITE Collection GetObject request when the object
     * is identified by a CITE URN.
     * @param URN identifying the object.
     */
@@ -763,7 +743,7 @@ class CollectionService {
         def collConf = this.citeConfig[citeUrn.getCollection()]
         StringBuffer replyBuff = new StringBuffer("<GetObject xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
         replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getObjectData(requestUrn)}</reply>\n</GetObject>\n")
+        replyBuff.append("\n${getObjectData(citeUrn)}</reply>\n</GetObject>\n")
     }
 
 
@@ -786,7 +766,7 @@ class CollectionService {
     String getObjectData(String collectionId, String requestUrn) {
 
         def objQuery = getObjectQuery(collectionId, requestUrn)
-        System.err.println "OBJ QUERY = " + objQuery
+        System.err.println "OBJ QUERY FOR ${collectionId}, ${requestUrn}= " + objQuery
 
         String q = endPoint + "query?sql=" + URLEncoder.encode(objQuery) + "&key=${apiKey}"
 
