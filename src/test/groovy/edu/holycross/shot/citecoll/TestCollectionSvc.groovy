@@ -11,7 +11,8 @@ class TestCollectionSvc extends GroovyTestCase {
    String apiKey =  System.properties['apiKey']
 
     @Test void testSvc() {
-        File caps = new File("testdata/unit-tests-caps.xml")
+//        File caps = new File("testdata/unit-tests-caps.xml")
+        File caps = new File("testdata/testedit-capabilities.xml")
         assert (caps.exists())
         CollectionService svc = new CollectionService(caps, apiKey)
         assert svc
@@ -21,21 +22,20 @@ class TestCollectionSvc extends GroovyTestCase {
         System.err.println "CONIFGURED WITH API KEY " + svc.apiKey
         System.err.println "SVC: " + svc
         System.err.println "configs: " + svc.citeConfig
-        // 3 collections configured in caps file
-        int expectedSize = 2
 
-        
+
+        // 3 collections configured in caps file
+//        int expectedSize = 2
 //        assert svc.citeConfig.keySet().size() == expectedSize
 
-        String tstCollection = "us-states"
-        String tstId = "Alabama"
+//        String tstCollection = "us-states"
+        String tstCollection = "paleography"
+//        String tstId = "Alabama"
+       String tstId = "urn:cite:paleog:greek.op1"
         
-        System.err.println "US States - " + svc.citeConfig[tstCollection]
-
-        System.err.println "Query for URN " + tstUrn + " == " 
-        System.err.println svc.getObjectQuery(tstCollection,tstUrn)
-
-        System.err.println svc.getObjectData(tstUrn)
+        System.err.println "collection config  - " + svc.citeConfig[tstCollection]
+        def query = svc.getObjectQuery(tstCollection,tstId)
+        System.err.println svc.getObjectData(tstCollection,tstId)
         
     }
  
