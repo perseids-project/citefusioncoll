@@ -13,10 +13,6 @@ stopKey = 'foo'
 
 repositories {
     mavenCentral()
-    // for com.google.gdata group:
-    maven {
-        url "http://mandubian-mvn.googlecode.com/svn/trunk/mandubian-mvn/repository"
-    }
     // for the CITE library
     maven {
         url "http://beta.hpcc.uh.edu/nexus/content/repositories/releases"
@@ -26,13 +22,11 @@ repositories {
 dependencies {
     compile group: 'commons-io', name: 'commons-io', version: '1.4'
     compile group: 'log4j', name: 'log4j', version: '1.2.15', ext: 'jar'
+
     groovy  group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.0.0-rc-3'
-    groovy group: 'com.google.guava', name: 'guava', version: '11.0.2'
-    groovy group: 'com.google.gdata', name: 'gdata-core-1.0', version : '1.41.5'
+    groovy  "edu.harvard.chs:cite:0.9.19"
 
     testCompile group: 'junit', name: 'junit', version: '4.8.2'
-
-    groovy  "edu.harvard.chs:cite:0.9.19"
 }
 
 
@@ -48,7 +42,6 @@ task docsZip(type: Zip, dependsOn: groovydoc) {
 
 }
 
-
 artifacts {
     archives docsZip
     archives sourcesZip
@@ -63,10 +56,9 @@ uploadArchives {
     }
 }
 
-
 test {
     /* In gradle, properties are normally wiped clean for tests.
-    This passes the project property gapi to tests as a System property
+    This passes the project property apiKey to tests as a System property
     */
     systemProperty  "apiKey", apiKey
 }
