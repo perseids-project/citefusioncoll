@@ -26,33 +26,29 @@ class CollectionService {
 
 
     // Constants:
-    /** URL for Google Fusion API */
-//    static String SERVICE_URL = "https://www.google.com/fusiontables/api/query"
 
     static String endPoint = "https://www.googleapis.com/fusiontables/v1/"
 
     /** Developer's required Google API key if not using OAuth for authentication */
     String apiKey
+    /** Capabilities file for this service */
+    File capabilitiesFile
 
 
-
-    /** Identifier to Google of this application */
+    /** Identifier to Google of this application 
     static String CLIENT_APP = "shot.holycross.edu-fusioncoll-0.2"
+*/
     /** XML namespace for all CITE Collection replies */
     static String CITE_NS = "http://chs.harvard.edu/xmlns/cite"
 
 
     /** Groovy Namespace object for use in parsing capabilities document. */
     groovy.xml.Namespace citens = new groovy.xml.Namespace(CITE_NS)
-    /** Capabilities file for this service */
-    File capabilitiesFile
+
     /** A map representing the data in the capabilities file */
     LinkedHashMap citeConfig
 
 
-    /** Pattern for parsing CSV data.
-    * Ripped off from http://code.google.com/apis/fusiontables/docs/samples/java.html.  Thanks to Google for the awesome reg.exp.!     */
-    static Pattern CSV_VALUE_PATTERN = Pattern.compile("([^,\\r\\n\"]*|\"(([^\"]*\"\")*[^\"]*)\")(,|\\r?\\n)")
     
 
     /** Constructor parses capabilities file */
@@ -71,24 +67,8 @@ class CollectionService {
     * @returns The XML reply, as a String.
     */
     String getCapsReply() {
-        return this.capabilitiesFile.getText()
-    }
-
-    /** Creates a string with valid XML reply to the
-    * CITE Collection GetCollectionSize request.
-    * @param collectionId CITE identifier for the collection.
-    * @param requestUrn Source URN that this collection ID was
-    * derived from.
-    * @returns The XML reply, as a String.
-    */
-    String getSizeReply(String requestUrn, String collectionId) {
-        def collConf = this.citeConfig[collectionId]
-        CiteUrn citeUrn = new CiteUrn(requestUrn)
-
-        StringBuffer replyBuff = new StringBuffer("<GetCollectionSize xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n<size>${getSize(citeUrn)}</size>\n</reply>\n</GetCollectionSize>\n")
-        return replyBuff.toString()
+        return "NEED TO WRAP capabilities file IN PROPER MARKUP"
+        //return this.capabilitiesFile.getText()
 
     }
 
@@ -126,26 +106,6 @@ class CollectionService {
     }
 
 
-    /** Creates a string with valid XML reply to the
-    * CITE Collection GetPrevNextUrn request when the object
-    * is identified by a collection identifier and an
-    * an object identifier.
-    * @param collection CITE identifier for the collection.
-    * @param obj CITE identifier for the object within the collection.
-    * @returns The XML reply, as a String, or null if the collection is not
-    * a configured, ordered collection.
-    */
-    String getPrevNextReply(String collection, String obj) {
-        def collConf = this.citeConfig[collection]
-        def urnStr = "urn:cite:${collConf['nsabbr']}:${collection}.${obj}"
-
-        StringBuffer replyBuff = new StringBuffer("<GetPrevNextUrn xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collection}</collection>\n<id>${obj}</id>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getPrevNextUrn(urnStr)}\n</reply>\n</GetPrevNextUrn>\n")
-        return replyBuff.toString()
-    }
-
-
 
     /** Creates a string with valid XML reply to the
     * CITE Collection GetPrev request when the object
@@ -162,26 +122,6 @@ class CollectionService {
         StringBuffer replyBuff = new StringBuffer("<GetPrev xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
         replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
         replyBuff.append("\n${getPrevObject(requestUrn)}\n</reply>\n</GetPrev>\n")
-        return replyBuff.toString()
-    }
-
-    /** Creates a string with valid XML reply to the
-    * CITE Collection GetPrev request when the object
-    * is identified by a collection identifier and an
-    * an object identifier.
-    * @param collection CITE identifier for the collection.
-    * @param obj CITE identifier for the object within the collection.
-    * @returns A well-formed XML string representing the previous
-    * object in the collection, or null if the collection is not
-    * a configured, ordered collection.
-    */
-    String getPrevReply(String collection, String obj) {
-        def collConf = this.citeConfig[collection]
-        def urnStr = "urn:cite:${collConf['nsabbr']}:${collection}.${obj}"
-
-        StringBuffer replyBuff = new StringBuffer("<GetPrev xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collection}</collection>\n<id>${obj}</id>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getPrevObject(urnStr)}\n</reply>\n</GetPrev>\n")
         return replyBuff.toString()
     }
 
@@ -203,27 +143,9 @@ class CollectionService {
         return replyBuff.toString()
     }
 
-    /** Creates a string with valid XML reply to the
-    * CITE Collection GetNext request when the object
-    * is identified by a collection identifier and an
-    * an object identifier.
-    * @param collection CITE identifier for the collection.
-    * @param obj CITE identifier for the object within the collection.
-    * @returns A well-formed XML string representing the next
-    * object in the collection, or null if the collection is not
-    * a configured, ordered collection.
-    */
-    String getNextReply(String collection, String obj) {
-        def collConf = this.citeConfig[collection]
-        def urnStr = "urn:cite:${collConf['nsabbr']}:${collection}.${obj}"
-
-        StringBuffer replyBuff = new StringBuffer("<GetNext xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collection}</collection>\n<id>${obj}</id>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getNextObject(urnStr)}\n</reply>\n</GetNext>\n")
-        return replyBuff.toString()
-    }
 
 
+    // INTERNAL METHOD:
 
     /** Creates an XML serialization of the following object
     * in an ordered collection.  This requires two hits on
@@ -242,9 +164,12 @@ class CollectionService {
         CiteUrn citeUrn = new CiteUrn (urnStr)
         def collectionId = citeUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
+
         if (!collConf['orderedBy']) {
             return null
         }
+
+/*
         // Get index of orderedBy
         def propList = collConf['properties']
         def orderingPropIndex
@@ -260,76 +185,9 @@ class CollectionService {
         if (collConf['groupProperty'] != null) {
             qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
-
-
-/*
-//        def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
-
-
-
-
-        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
-        grequest.execute()
-        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
-        // Look for 1 more than the this object's sequence number.
-        // Test for end of line!
-        def seqNum = Integer.parseInt(replyLines[1],10) + 1
-
-
-        // simplify syntax:
-        def props = collConf['properties']
-        StringBuffer propNames =  new StringBuffer()
-        props.eachWithIndex { p, i ->
-            if (i != 0) {
-                propNames.append(", ${p['name']}")
-            } else {
-                propNames.append(p['name'])
-            }
-        }
-
-        StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${orderingProp} = ${seqNum}")
-        if (collConf['groupProperty'] != null) {
-            objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
-        }
-
-
-        def objQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(objQuery.toString(), "UTF-8"));
-        GDataRequest objrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, objQueryUrl, ContentType.TEXT_PLAIN)
-        objrequest.execute()
-        def objReplyLines= objrequest.requestUrl.getText('UTF-8').readLines()
-
-        if (objReplyLines.size() != 2) {
-            return ""
-        }
-        return rowToXml(objReplyLines[1],citeUrn.toString())
 */
 
-
-
     }
-
-
-    /** Creates a string with valid XML reply to the
-    * CITE Collection GetLast request when the collection
-    * is identified by a collection identifier and a requesting URN.
-    * @param collectionId CITE identifier for the collection.
-    * @param requestUrn Source URN that this collection ID was
-    * derived from.
-    * @returns A well-formed XML string representing the last
-    * object in the collection, or null if the collection is not
-    * a configured, ordered collection.
-    */
-    String getLastReply(String requestUrn, String collectionId) {
-        def collConf = this.citeConfig[collectionId]
-        CiteUrn citeUrn = new CiteUrn(requestUrn)
-
-        StringBuffer replyBuff = new StringBuffer("<GetLast xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getLastObject(citeUrn)}\n</reply>\n</GetLast>\n")
-        return replyBuff.toString()
-
-    }
-
 
     /** Creates a string with valid XML reply to the
     * CITE Collection GetLast request when the collection
@@ -348,6 +206,10 @@ class CollectionService {
         replyBuff.append("\n${getLastObject(citeUrn)}</reply>\n</GetLast>\n")
         return replyBuff.toString()
     }
+
+
+
+
 
     String getObjectPlusReply(String requestUrnStr) {
         try {
@@ -526,27 +388,6 @@ class CollectionService {
         }
         return rowToXml(objReplyLines[1],citeUrn.toString())
     }
-
-
-    /** Creates a string with valid XML reply to the
-    * CITE Collection GetFirst request when the collection
-    * is identified by a collection identifier and a requesting URN.
-    * @param collectionId CITE identifier for the collection.
-    * @param requestUrn Source URN that this collection ID was
-    * derived from.
-    * @returns The XML reply, as a String, or null if the collection 
-    * is not a configured, ordered collection.
-    */
-    String getFirstReply(String requestUrn, String collectionId) {
-        def collConf = this.citeConfig[collectionId]
-        CiteUrn citeUrn = new CiteUrn(requestUrn)
-
-        StringBuffer replyBuff = new StringBuffer("<GetFirst xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getFirstObject(citeUrn)}\n</reply>\n</GetFirst>\n")
-        return replyBuff.toString()
-    }
-
 
     /** Creates a string with valid XML reply to the
     * CITE Collection GetFirst request when the collection
@@ -823,60 +664,7 @@ class CollectionService {
     * @return A String with an XML serialization of the data.
     */
     String rowToXml(String row, String requestUrn) {
-/*
-        def CiteUrn citeUrn = new CiteUrn(requestUrn)
-        def collConf = this.citeConfig[citeUrn.getCollection()]
-        def propList = collConf['properties']
-        def canonicalIndex
-        def canonicalName = collConf['canonicalId']
-        propList.eachWithIndex { p, i ->
-            if (this.debug) {
-                System.err.println "LOOK AT p,i ${p}, ${i}"
-            }
-            if (p['name'] == collConf['canonicalId']) {
-                canonicalIndex =  i
-            }
-        }
-        if (this.debug) {System.err.println "USED CANONICAL NAME ${canonicalName} TO LOOK FOR CANONICAL ID VAL " + collConf['canonicalId'] + " and got index " + canonicalIndex + " FROM CONF " + collConf}
-        
-        // Parse CSV results, and store in a groovy list:
-        def cols = []
-        Scanner scanner = new Scanner("${row}\n");
-        def count = 0
-        while (scanner.hasNextLine()) {
-            count++
-            scanner.findWithinHorizon(CollectionService.CSV_VALUE_PATTERN, 0)
-            MatchResult match = scanner.match()
-            String quotedString = match.group(2)
-            if (quotedString) {
-                cols.add(quotedString.replaceFirst(/[,\s]+$/,""))
-            } else {
-                cols.add(match.group().replaceFirst(/[,\s]+$/,""))
-            }
-        }
-
-
-        if (this.debug) {System.err.println "ROWTOXML: cols "  + cols  + " of size " + cols.size()}
-        if (this.debug) {System.err.println "COLS == " + cols}
-        StringWriter writer = new StringWriter()
-        MarkupBuilder xml = new MarkupBuilder(writer)
-
-        if (this.debug) {System.err.println "canonicalIndex = ${canonicalIndex}" }
-
-
-        xml.citeObject("urn" : "urn:cite:${cols[canonicalIndex]}") {
-            cols.eachWithIndex { c, i ->
-                if (this.debug) {System.err.println "COL c,i = ${c}, ${i}" }
-                def currProp = propList[i]
-                
-                if (currProp['name'] != collConf['canonicalId']) {
-                    citeProperty(name : "${currProp['name']}", label : "${currProp['label']}", type : "${currProp['type']}" ,"${c}")
-                }
-            }
-        }
-
-        return writer.toString()     
-*/
+        return ""
     }
 
     /** Creates a map of the configuration data 
@@ -963,8 +751,6 @@ class CollectionService {
         def collConf = this.citeConfig[coll]
         if (!collConf) { return null }
 
-//        System.err.println "GET OBJECT QUERY: CONF IS " + collConf
-
         def trimUrn = urn //"urn:cite:${collConf['nsabbr']}:${coll}.${obj}"
         System.err.println "URN KEY: " + trimUrn
         // simplify syntax:
@@ -979,7 +765,7 @@ class CollectionService {
         }
 
         return "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + trimUrn + "'"
-//        return "SELECT ${propNames.toString()} FROM ${collConf['className']} "
+
 
     }
 

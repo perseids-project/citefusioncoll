@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="CiteCollection.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<collectionService xmlns="http://chs.harvard.edu/xmlns/cite"
+    xmlns:cite="http://chs.harvard.edu/xmlns/cite">
+        <citeCollection
+            canonicalId="URN"
+            class="1tFhVfSS_u5zokh3EcIhjEwPEKjTfAwnHkEMPQD8"
+            name="DMK"
+            description="The Drei Männer Kommentar to the Iliad">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <citeProperty
+                label="URN"
+                name="URN"
+                type="citeurn"/>
+            <!-- maps to Google String -->
+            <citeProperty
+                label="URN of text commented on"
+                name="URN-commentedOn"
+                type="citeurn"/>
+            <citeProperty
+                label="Author"
+                name="Author"
+                type="string"/>
+            <citeProperty
+                label="Comment"
+                name="Comment"
+                type="markdown"/>
+            <!-- maps to Google String -->
+            <citeProperty
+                label="Date"
+                name="Date"
+                type="datetime"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="1iElXI_3c0owUsTBw5Ao0xv8FZ7nf6MsHbwX_B9E"
+            name="hmtWorkLog"
+            description="Homer Multitext project at Holy Cross:  work log">
+            <namespaceMapping
+                abbr="hmt"
+                fullValue="http://www.homermultitext.org/datans"/>
+            <citeProperty
+                label="URN"
+                name="URN"
+                type="citeurn"/>
+            <!-- maps to Google String -->
+            <citeProperty
+                label="URN of object commented on"
+                name="URN-commentedOn"
+                type="citeurn"/>
+            <citeProperty
+                label="Author"
+                name="Author"
+                type="string"/>
+            <citeProperty
+                label="Comment"
+                name="Comment"
+                type="markdown"/>
+            <!-- maps to Google String -->
+            <citeProperty
+                label="Date"
+                name="Date"
+                type="datetime"/>
+        </citeCollection>
+        <citeCollection
+            canonicalId="URN"
+            class="1Yt3tSWh2C5-t9y5-3I9SauZhljUgmmzoPa_6xQI"
+            name="greek"
+            description="Open Paleography project:  Greek paleography">
+            <namespaceMapping
+                abbr="paleog"
+                fullValue="http://shot.holycross.edu/datans/paleography"/>
+            <citeProperty
+                label="URN"
+                name="URN"
+                type="citeurn"/>
+            <citeProperty
+                label="Image citation"
+                name="ImageUrn"
+                type="citeimg"/>
+            <citeProperty
+                label="Description"
+                name="Description"
+                type="string"/>
+            <citeProperty
+                label="Type of feature"
+                name="RepertoryType"
+                type="string">
+                <valueList>
+                    <value>letter</value>
+                    <value>abbreviation</value>
+                    <value>ligature</value>
+                    <value>punctuation</value>
+                </valueList>
+            </citeProperty>
+          <citeProperty name="PhysicalArtifact"
+               label="Physical artifact"
+                 type="citeurn"/>
+            <citeProperty
+                label="Visual class"
+                name="VisualClass"
+                type="string">
+                <valueList>
+                    <value>Suspension</value>
+                    <value>Horizontal</value>
+                    <value>Vertical</value>
+                    <value>Slanting</value>
+                    <value>Sinusoid</value>
+                    <value>Superscription</value>
+                    <value>Discontinuous</value>
+                    <value>Monograms</value>
+                    <value>Symbols</value>
+                    <value>Brachigraphy</value>
+                </valueList>
+            </citeProperty>
+            
+            <citeProperty name="Contributor"
+                 label="Contributor"
+                 type="string"></citeProperty>
+        </citeCollection>
+    </collectionService>
