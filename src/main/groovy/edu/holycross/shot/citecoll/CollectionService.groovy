@@ -6,39 +6,18 @@ import groovy.json.JsonSlurper
 import edu.harvard.chs.cite.CiteUrn
 import groovy.xml.MarkupBuilder
 
-
-
-// REMOVE TEHESE DEPENDENCIES!
-import java.util.regex.Pattern
-import java.util.regex.MatchResult
-
-
-// REMOVE ALL THESE DEPENDENCIES!
-// Google data APIs:
-import com.google.gdata.client.GoogleService;
-import com.google.gdata.client.Service.GDataRequest;
-import com.google.gdata.client.Service.GDataRequest.RequestType;
-import com.google.gdata.util.ContentType;
-
 class CollectionService {
 
-    boolean debug = false
-
-
-    // Constants:
-
+    /** End point for Google Tables API v1. */
     static String endPoint = "https://www.googleapis.com/fusiontables/v1/"
 
-    /** Developer's required Google API key if not using OAuth for authentication */
+    /** Google API key required if not using OAuth for authentication. */
     String apiKey
-    /** Capabilities file for this service */
+
+    /** Capabilities file for this service. */
     File capabilitiesFile
 
-
-    /** Identifier to Google of this application 
-    static String CLIENT_APP = "shot.holycross.edu-fusioncoll-0.2"
-*/
-    /** XML namespace for all CITE Collection replies */
+    /** XML namespace for all CITE Collection replies. */
     static String CITE_NS = "http://chs.harvard.edu/xmlns/cite"
 
 
@@ -49,15 +28,13 @@ class CollectionService {
     LinkedHashMap citeConfig
 
 
-    
-
     /** Constructor parses capabilities file */
     CollectionService(File capsFile, String googleKey) {
         this.capabilitiesFile = capsFile
         this.apiKey = googleKey
 
         this.citeConfig = configureFromFile(this.capabilitiesFile)
-        System.err.println "CONFIG: " + this.citeConfig 
+        // Should parse caps file against rng schema, and
         // throw exception if could not parse caps file...
     }
 
@@ -67,9 +44,10 @@ class CollectionService {
     * @returns The XML reply, as a String.
     */
     String getCapsReply() {
-        return "NEED TO WRAP capabilities file IN PROPER MARKUP"
-        //return this.capabilitiesFile.getText()
-
+        StringBuffer replyBuff = new StringBuffer("<GetCapabilities xmlns='http://chs.harvard.edu/xmlns/cite'>\n<reply>\n")
+        replyBuff.append( this.capabilitiesFile.getText())
+        replyBuff.append("\n</reply></GetCapabilities>")
+        return replyBuff.toString()
     }
 
     /** Creates a string with valid XML reply to the
@@ -253,6 +231,7 @@ class CollectionService {
 
         StringBuffer replyBuff = new StringBuffer("<prevnext>")
 
+/*
         // Get index of orderedBy property
         def propList = collConf['properties']
         def orderingPropIndex
@@ -312,6 +291,7 @@ class CollectionService {
         } else {
             replyBuff.append("<next>urn:cite:${nextReplyLines[1]}</next>")
         }
+*/
         replyBuff.append("</prevnext>")
         return replyBuff.toString()
     }
@@ -352,7 +332,7 @@ class CollectionService {
             qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
-
+/*
         def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
         grequest.execute()
@@ -386,7 +366,7 @@ class CollectionService {
         if (objReplyLines.size() != 2) {
             return ""
         }
-        return rowToXml(objReplyLines[1],citeUrn.toString())
+        return rowToXml(objReplyLines[1],citeUrn.toString())*/
     }
 
     /** Creates a string with valid XML reply to the
@@ -421,7 +401,7 @@ class CollectionService {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
-
+/*
         if (this.debug) {
         System.err.println "GETSIZE:  " + qBuff.toString()
         }
@@ -435,6 +415,7 @@ class CollectionService {
         } else {
             return(replyLines[1])
         }
+*/
     } 
     // end getSize
 
@@ -462,7 +443,7 @@ class CollectionService {
         if (collConf['groupProperty'] != null) {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
-
+/*
         def maxQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, maxQueryUrl, ContentType.TEXT_PLAIN)
         grequest.execute()
@@ -491,6 +472,7 @@ class CollectionService {
         def objReplyLines= objrequest.requestUrl.getText('UTF-8').readLines()
 
         return rowToXml(objReplyLines[1],requestUrn.toString())
+*/
 
     }
 
@@ -530,6 +512,7 @@ class CollectionService {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
+/*
         def minQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
         GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, minQueryUrl, ContentType.TEXT_PLAIN)
         grequest.execute()
@@ -558,6 +541,7 @@ class CollectionService {
         def objReplyLines= objrequest.requestUrl.getText('UTF-8').readLines()
 
         return rowToXml(objReplyLines[1],requestUrn.toString())
+*/
     }
 
 
