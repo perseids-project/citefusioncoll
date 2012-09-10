@@ -27,23 +27,34 @@ class TestCollectionSvc extends GroovyTestCase {
         
     }
 
-    @Test void testFirstLastReplies() {
-        assert 1 + 1 == 2
-    }
+
+    @Test void testGetCaps() {
+        File caps = new File("testdata/unittests-capabilities.xml")
+        CollectionService svc = new CollectionService(caps, apiKey)
+        System.err.println svc.getCapsReply()
 
 
-    @Test void testPrevNextUrns() {
-        assert 1 + 1 == 2
-    }
-
-
-    @Test void testPrevNextReplies() {
-        assert 1 + 1 == 2
     }
 
     @Test void testCollectionSizeReply() {
         assert 1 + 1 == 2
     }
+
+
+    // TESTS FOR ORDERED COLLECTIONS:
+
+    @Test void testFirstLastReplies() {
+        assert 1 + 1 == 2
+    }
+
+    @Test void testPrevNextUrns() {
+        assert 1 + 1 == 2
+    }
+
+    @Test void testPrevNextReplies() {
+        assert 1 + 1 == 2
+    }
+
 
  
 }

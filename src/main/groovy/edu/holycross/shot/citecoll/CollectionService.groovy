@@ -45,7 +45,9 @@ class CollectionService {
     */
     String getCapsReply() {
         StringBuffer replyBuff = new StringBuffer("<GetCapabilities xmlns='http://chs.harvard.edu/xmlns/cite'>\n<reply>\n")
-        replyBuff.append( this.capabilitiesFile.getText())
+
+        // get text, and get xml body only, no PIs, etc...
+///        replyBuff.append( this.capabilitiesFile.getText())
         replyBuff.append("\n</reply></GetCapabilities>")
         return replyBuff.toString()
     }
