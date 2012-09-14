@@ -1,10 +1,13 @@
 package edu.holycross.shot.citecoll
 
-import groovy.json.JsonSlurper
-
-
 import edu.harvard.chs.cite.CiteUrn
+
+import groovy.json.JsonSlurper
+import groovy.xml.XmlUtil
 import groovy.xml.MarkupBuilder
+
+
+
 
 class CollectionService {
 
@@ -46,24 +49,42 @@ class CollectionService {
     String getCapsReply() {
         StringBuffer replyBuff = new StringBuffer("<GetCapabilities xmlns='http://chs.harvard.edu/xmlns/cite'>\n<reply>\n")
 
-        // get text, and get xml body only, no PIs, etc...
-///        replyBuff.append( this.capabilitiesFile.getText())
+        def xmlserialized = this.capabilitiesFile.getText()
+        // Delete xml PI:
+        // <?xml version="1.0" encoding="UTF-8"?>
+        replyBuff.append(xmlserialized.replaceAll("\\<\\?xml version=\"1.0\" encoding=\"UTF-8\"\\?\\>","")         )
+
         replyBuff.append("\n</reply></GetCapabilities>")
         return replyBuff.toString()
     }
+
 
     /** Creates a string with valid XML reply to the
     * CITE Collection GetCollectionSize request.
     * @param collection CITE identifier for the collection.
     * @returns The XML reply, as a String.
+    * @throws Exception if collectionUrnStr is not a valid URN.
     */
-    String getSizeReply(String collectionId) {
-        def collConf = this.citeConfig[collectionId]
-        CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
+    String getCollSizeReply(String collectionUrnStr) 
+    throws Exception {
+        try {
+            CiteUrn urn = new CiteUrn(collectionUrnStr)
+            return getCollSizeReply(urn)
+        } catch (Exception e) {
+            throw e
+        }
+    }
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetCollectionSize request.
+    * @param collection CITE identifier for the collection.
+    * @returns The XML reply, as a String.
+    */
+    String getCollSizeReply(CiteUrn urn) {
+        def collConf = this.citeConfig[urn.getCollection()]
 
-        StringBuffer replyBuff = new StringBuffer("<GetCollectionSize xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n</request>\n")
+        StringBuffer replyBuff = new StringBuffer("<GetCollectionSize xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${urn}</urn>\n<collection>${urn.getCollection()}</collection>\n</request>\n")
         replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n<size>${getSize(citeUrn)}</size>\n</reply>\n</GetCollectionSize>\n")
+        replyBuff.append("\n<count>${getCount(urn)}</count>\n</reply>\n</GetCollectionSize>\n")
         return replyBuff.toString()
     }
 
@@ -395,7 +416,7 @@ class CollectionService {
     * objects in the requested Collection, or null if the
     * query to Fusion did not succeed.
     */
-    String getSize(CiteUrn requestUrn) {
+    String getCount(CiteUrn requestUrn) {
         def collectionId = requestUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
         StringBuffer qBuff = new StringBuffer("SELECT COUNT() FROM ${collConf['className']}" )
@@ -403,23 +424,22 @@ class CollectionService {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
 
-/*
-        if (this.debug) {
-        System.err.println "GETSIZE:  " + qBuff.toString()
-        }
+        String q = endPoint + "query?sql=" + URLEncoder.encode(qBuff.toString()) + "&key=${apiKey}"
+        URL queryUrl = new URL(q)
+        String raw = queryUrl.getText("UTF-8")
 
-        def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
-        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
-        grequest.execute()
-        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
-        if (replyLines.size() != 2) {
-            return null
-        } else {
-            return(replyLines[1])
+        JsonSlurper jslurp = new JsonSlurper()
+        def rows = jslurp.parseText(raw).rows
+        def cnt
+        rows.each { r ->
+            // TEST urnVal : only allow correct rows...
+            def urnVal
+            r.each { p ->
+               cnt = p 
+            }
         }
-*/
-    } 
-    // end getSize
+        return cnt
+    } // end getCount
 
 
     /** Creates an XML serialization of the last object
@@ -593,11 +613,7 @@ class CollectionService {
     String getObjectData(String collectionId, String requestUrnStr) {
 
         def objQuery = getObjectQuery(collectionId, requestUrnStr)
-        System.err.println "OBJ QUERY FOR ${collectionId}, ${requestUrnStr}= " + objQuery
-
         String q = endPoint + "query?sql=" + URLEncoder.encode(objQuery) + "&key=${apiKey}"
-
-        System.err.println "QUERY: " + q
         URL queryUrl = new URL(q)
         String raw = queryUrl.getText("UTF-8")
 
@@ -605,17 +621,10 @@ class CollectionService {
         def rows = jslurp.parseText(raw).rows
         def queryProperties = jslurp.parseText(raw).columns
         def collConf = this.citeConfig[collectionId]
-
-
-        System.err.println "for cols " + queryProperties
-        System.err.println "Configured as " + collConf
         def canonicalId = collConf["canonicalId"]
 
         StringWriter writer = new StringWriter()
         MarkupBuilder xml = new MarkupBuilder(writer)
-
-        
-
         rows.each { r ->
             // TEST urnVal : only allow correct rows...
             def urnVal
@@ -624,9 +633,8 @@ class CollectionService {
                     urnVal = p
                 }
                 
-            }
-            System.err.println "\nCOMPARE ${urnVal} to ${requestUrnStr}"
-            CiteUrn returnUrn = new CiteUrn(urnVal)
+            } 
+           CiteUrn returnUrn = new CiteUrn(urnVal)
             CiteUrn requestUrn = new CiteUrn(requestUrnStr)
             if (requestUrn.getObjectId() == returnUrn.getObjectId()) {
                 xml.citeObject("urn" : urnVal)  { 
