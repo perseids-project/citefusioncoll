@@ -1,5 +1,6 @@
 package edu.holycross.shot.citecoll 
 
+import edu.harvard.chs.cite.CiteUrn
 
 import static org.junit.Assert.*
 import org.junit.Test
@@ -17,19 +18,26 @@ class TestCollectionSvc extends GroovyTestCase {
         CollectionService svc = new CollectionService(caps, apiKey)
         assert svc
 
-        String tstCollection = "greek"
         String tstId = "urn:cite:paleog:greek.op1"
+        String versionId = "urn:cite:paleog:greek.op1.0"
 
-        def query = svc.getObjectQuery(tstCollection,tstId)
-
-        System.err.println svc.getObjectData(tstCollection,tstId)
         String getObjStr = svc.getObjReply(tstId)
-        def root = new XmlParser().parseText(getObjStr)
-        System.err.println "Parsed == " + root
-        root[citens.reply][citens.citeObject].each {
-            System.err.println "\t ${it.'@urn'}"
-        }
-        System.err.println "TOTAL FINDS = " +   root[citens.reply][citens.citeObject].size()
+        String getVersStr = svc.getObjReply(versionId)
+
+        // Version and object request alike should produce only
+        // one match.
+        int expectedSize = 1
+
+        def objRoot = new XmlParser().parseText(getObjStr)
+        assert  objRoot[citens.reply][citens.citeObject].size() == expectedSize
+        
+        def versionRoot = new XmlParser().parseText(getVersStr)
+        assert versionRoot[citens.reply][citens.citeObject].size() == expectedSize
+        def obj = objRoot[citens.reply][citens.citeObject][0]
+        def vers = versionRoot[citens.reply][citens.citeObject][0]
+        // Object-level query still gives you full version-level URN:
+        assert obj.'@urn' == vers.'@urn'
+
     }
 
 
@@ -37,12 +45,19 @@ class TestCollectionSvc extends GroovyTestCase {
         File caps = new File("testdata/unittests-capabilities.xml")
         CollectionService svc = new CollectionService(caps, apiKey)
         System.err.println svc.getCapsReply()
-
-
+        // set up a canned Caps file to XML compare to reply ...
     }
 
     @Test void testCollectionSizeReply() {
-        assert 1 + 1 == 2
+        File caps = new File("testdata/unittests-capabilities.xml")
+        assert (caps.exists())
+        CollectionService svc = new CollectionService(caps, apiKey)
+        assert svc
+
+
+        CiteUrn tstId = new CiteUrn("urn:cite:paleog:greek.op1")
+        System.err.println "SIZE:  " + svc.getCollSizeReply(tstId)
+        
     }
 
 
