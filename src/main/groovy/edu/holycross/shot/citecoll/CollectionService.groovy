@@ -590,10 +590,10 @@ class CollectionService {
     * @param requestUrn The CITE URN, as a String, identifying the object.
     * @returns A String of well-formed XML
     */
-    String getObjectData(String collectionId, String requestUrn) {
+    String getObjectData(String collectionId, String requestUrnStr) {
 
-        def objQuery = getObjectQuery(collectionId, requestUrn)
-        System.err.println "OBJ QUERY FOR ${collectionId}, ${requestUrn}= " + objQuery
+        def objQuery = getObjectQuery(collectionId, requestUrnStr)
+        System.err.println "OBJ QUERY FOR ${collectionId}, ${requestUrnStr}= " + objQuery
 
         String q = endPoint + "query?sql=" + URLEncoder.encode(objQuery) + "&key=${apiKey}"
 
@@ -611,14 +611,13 @@ class CollectionService {
         System.err.println "Configured as " + collConf
         def canonicalId = collConf["canonicalId"]
 
-        
-
         StringWriter writer = new StringWriter()
         MarkupBuilder xml = new MarkupBuilder(writer)
 
-
+        
 
         rows.each { r ->
+            // TEST urnVal : only allow correct rows...
             def urnVal
             r.eachWithIndex { p, i ->
                 if (queryProperties[i] == canonicalId) {
@@ -626,12 +625,17 @@ class CollectionService {
                 }
                 
             }
-            xml.citeObject("urn" : urnVal)  { 
-                r.eachWithIndex { prop, i ->
-                    if (queryProperties[i] != canonicalId) {
-                        collConf["properties"].each { confProp ->
-                            if (confProp["name"] == queryProperties[i]) {
-                                citeProperty(name: queryProperties[i], label: confProp["label"], type : confProp["type"], "${prop}")
+            System.err.println "\nCOMPARE ${urnVal} to ${requestUrnStr}"
+            CiteUrn returnUrn = new CiteUrn(urnVal)
+            CiteUrn requestUrn = new CiteUrn(requestUrnStr)
+            if (requestUrn.getObjectId() == returnUrn.getObjectId()) {
+                xml.citeObject("urn" : urnVal)  { 
+                    r.eachWithIndex { prop, i ->
+                        if (queryProperties[i] != canonicalId) {
+                            collConf["properties"].each { confProp ->
+                                if (confProp["name"] == queryProperties[i]) {
+                                    citeProperty(name: queryProperties[i], label: confProp["label"], type : confProp["type"], "${prop}")
+                                }
                             }
                         }
                     }
@@ -733,12 +737,12 @@ class CollectionService {
     * parameter to Google Fusion, or null if the requested
     * collection is not configured.
     */
-    String getObjectQuery(String coll, String urn) {
+    String getObjectQuery(String coll, String urnStr) {
         def collConf = this.citeConfig[coll]
         if (!collConf) { return null }
 
-        def trimUrn = urn //"urn:cite:${collConf['nsabbr']}:${coll}.${obj}"
-        System.err.println "URN KEY: " + trimUrn
+        CiteUrn urn = new CiteUrn(urnStr)
+
         // simplify syntax:
         def props = collConf['properties']
         StringBuffer propNames =  new StringBuffer()
@@ -750,9 +754,14 @@ class CollectionService {
             }
         }
 
-        return "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + trimUrn + "'"
-
-
+        if (urn.hasVersion()) {
+            return "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + urnStr +  "'"
+        } else {
+            String fullQuery =  "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} LIKE '" + urnStr +  "%'"
+        }
+        // No OR in Google sql!
+        // Have to select for all possible matches, then weed out
+        // the false hits at receiving end of query. :-(
     }
 
 

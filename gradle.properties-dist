@@ -1,7 +1,7 @@
 apiKey=YOURAPIKEY
 
 # Versions of dependencies:
-citeversion=0.10.0
+citeversion=0.10.1
 commonsioversion=1.4
 log4jversion=1.2.15
 groovyversion=2.0.0-rc-3

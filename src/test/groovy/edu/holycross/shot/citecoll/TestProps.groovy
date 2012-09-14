@@ -1,4 +1,4 @@
-package edu.holycross.shot.fusiontables
+package edu.holycross.shot.citecoll
 
 import static org.junit.Assert.*;
 import org.junit.Test;
