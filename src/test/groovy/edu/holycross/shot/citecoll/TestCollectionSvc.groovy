@@ -61,6 +61,37 @@ class TestCollectionSvc extends GroovyTestCase {
     }
 
 
+    @Test void testPropertyRetrieval() {
+        File caps = new File("testdata/unittests-capabilities.xml")
+        assert (caps.exists())
+        CollectionService svc = new CollectionService(caps, apiKey)
+        assert svc
+        CiteUrn tstId = new CiteUrn("urn:cite:paleog:greek.op1")
+        String expectedName = "URN"
+        assert svc.getCanonicalIdProperty(tstId) == expectedName
+
+
+        assert svc.isOrdered(tstId) == false
+        assert svc.isGrouped(tstId) == false
+
+
+        CiteUrn venAurn = new CiteUrn("urn:cite:hmt:msA.52v")
+        assert svc.isOrdered(venAurn)
+        assert svc.getOrderedByProperty(venAurn) == "Sequence"
+        
+    }
+
+    @Test void testGetValidReff() {
+         File caps = new File("testdata/unittests-capabilities.xml")
+        assert (caps.exists())
+        CollectionService svc = new CollectionService(caps, apiKey)
+        assert svc
+        CiteUrn tstId = new CiteUrn("urn:cite:paleog:greek.op1")
+        CiteUrn collUrn = new CiteUrn("urn:cite:paleog:greek")
+        svc.getValidReff(tstId)
+        svc.getValidReff(collUrn)
+    }
+
     // TESTS FOR ORDERED COLLECTIONS:
 
     @Test void testFirstLastReplies() {
