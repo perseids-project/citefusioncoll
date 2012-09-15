@@ -7,8 +7,10 @@ import groovy.xml.XmlUtil
 import groovy.xml.MarkupBuilder
 
 
-
-
+/** A class to support working with a CITE Collection, including
+*  support for forming replies to the requests of the CITE Collection Service
+*  API.
+*/
 class CollectionService {
 
     /** End point for Google Tables API v1. */
@@ -40,6 +42,40 @@ class CollectionService {
         // Should parse caps file against rng schema, and
         // throw exception if could not parse caps file...
     }
+
+
+    
+    String getCanonicalIdProperty(CiteUrn urn) {
+        def config =  this.citeConfig[urn.getCollection()]
+        return config['canonicalId']
+    }
+
+
+    String getOrderedByProperty(CiteUrn urn) {
+        def config =  this.citeConfig[urn.getCollection()]
+        return config['orderedBy']
+    }
+
+
+    String getClassName(CiteUrn urn) {
+        def config =  this.citeConfig[urn.getCollection()]
+        return config['className']
+    }
+
+    boolean isOrdered(CiteUrn urn) {
+        def config =  this.citeConfig[urn.getCollection()]
+        return (config['orderedBy']?.size() > 0)
+    }
+
+
+    boolean isGrouped(CiteUrn urn) {
+        def config =  this.citeConfig[urn.getCollection()]
+        return (config['groupedBy']?.size() > 0)
+    }
+
+
+
+
 
 
     /** Creates a string with valid XML reply to the
@@ -579,6 +615,46 @@ class CollectionService {
         return getFirstObject(new CiteUrn(urnStr))
     }
 
+    String getValidReffReply(String requestUrn) {
+        CiteUrn citeUrn = new CiteUrn(requestUrn)
+        def collConf = this.citeConfig[citeUrn.getCollection()]
+        StringBuffer replyBuff = new StringBuffer("<GetValidReff xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n${getValidReff(citeUrn)}</reply>\n</GetValidReff>\n")
+    }
+
+
+
+    String getValidReff(CiteUrn urn) {
+        def collConf = this.citeConfig[urn.getCollection()]
+        StringBuffer query = new StringBuffer("SELECT ${getCanonicalIdProperty(urn)} FROM ${getClassName(urn)}")
+        boolean filterRows = false
+        if (urn.hasObjectId()) {
+            query.append(" WHERE ${getCanonicalIdProperty(urn)} LIKE '"  + urn + "%'")
+           filterRows = true
+        }
+        
+        String q = endPoint + "query?sql=" + URLEncoder.encode(query.toString()) + "&key=${apiKey}"
+
+        URL queryUrl = new URL(q)
+        String raw = queryUrl.getText("UTF-8")
+
+        JsonSlurper jslurp = new JsonSlurper()
+        def rows = jslurp.parseText(raw).rows
+        rows.each { r ->
+            String resultUrnStr = r[0]
+            if (filterRows) {
+                CiteUrn returnUrn = new CiteUrn(resultUrnStr)
+                if (urn.getObjectId() == returnUrn.getObjectId()) {
+                    System.err.println resultUrnStr
+                }
+            } else {
+                System.err.println resultUrnStr
+            }
+        }
+
+    } // GVR
+
 
     /** Creates a string with valid XML reply to the
     * CITE Collection GetObject request when the object
@@ -626,6 +702,7 @@ class CollectionService {
         StringWriter writer = new StringWriter()
         MarkupBuilder xml = new MarkupBuilder(writer)
         rows.each { r ->
+          
             // TEST urnVal : only allow correct rows...
             def urnVal
             r.eachWithIndex { p, i ->
