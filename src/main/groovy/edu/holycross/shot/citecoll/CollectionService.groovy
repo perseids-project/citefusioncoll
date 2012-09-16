@@ -132,9 +132,20 @@ class CollectionService {
     * @returns The XML reply, as a String, or null if the collection is not
     * a configured, ordered collection.
     */
-    String getPrevNextReply(String requestUrn) {
-        CiteUrn citeUrn = new CiteUrn(requestUrn)
-        def collConf = this.citeConfig[citeUrn.getCollection()]
+
+
+    String getPrevNextReply(String requestUrnStr) {
+        try {
+            CiteUrn citeUrn = new CiteUrn(requestUrn)
+            return getPrevNextReply(citeUrn)
+        } catch (Exception e) {
+            throw e
+        }
+    }
+
+
+    String getPrevNextReply(CiteUrn requestUrn) {
+        def collConf = this.citeConfig[requestUrn.getCollection()]
 
         StringBuffer replyBuff = new StringBuffer("<GetPrevNextUrn xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
         replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
@@ -195,26 +206,19 @@ class CollectionService {
     * or null if it is not a configured, ordered collection.
     */
     String getNextObject(String urnStr) {
-        CiteUrn citeUrn = new CiteUrn (urnStr)
-        def collectionId = citeUrn.getCollection()
-        def collConf = this.citeConfig[collectionId]
+        try {
+            CiteUrn urn = new CiteUrn(urnStr)
+            return getNextObject(urn)
+        } catch (Exception e ) {
+            throw e
+        }
+    }
 
-        if (!collConf['orderedBy']) {
+    String getNextObject(CiteUrn urn) {
+        if (! isOrdered(urn)) {
             return null
         }
-
-/*
-    
-        }
-        def orderingProp = propList[orderingPropIndex]['name']
-//        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
-
-        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn}" + "'")
-        if (collConf['groupProperty'] != null) {
-            qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
-        }
-*/
-
+        return getProximateObject(urn, "next")
     }
 
     /** Creates a string with valid XML reply to the
@@ -260,6 +264,56 @@ class CollectionService {
     }
 
 
+    String getProximateObject(CiteUrn urn, String prevnext) {
+        StringBuffer returnData = new StringBuffer()
+        String canonicalProp = getCanonicalIdProperty(urn)
+        String orderingProp = getOrderedByProperty(urn)
+        String className = getClassName(urn)
+
+        StringBuffer qBuff = new StringBuffer("SELECT ${canonicalProp}, ${orderingProp} FROM ${className} WHERE ${canonicalProp} = '" + "${urn}" + "' ORDER BY ${orderingProp}")        
+
+        String q = endPoint + "query?sql=" + URLEncoder.encode(qBuff.toString()) + "&key=${apiKey}"
+        URL queryUrl = new URL(q)
+        String raw = queryUrl.getText("UTF-8")
+
+        JsonSlurper jslurp = new JsonSlurper()
+        def rows = jslurp.parseText(raw).rows
+        System.err.println "BACK FROR PROXIMATE OBJ: " + rows
+        Integer seq
+        rows.each { r ->
+            try {
+                String seqStr = r[1]
+                seq = seqStr.toInteger()
+                Integer proxVal
+                String tagName
+                if (prevnext.toLowerCase() == "next") {
+                    proxVal = seq + 1
+                } else if (prevnext.toLowerCase() == "prev") {
+                    proxVal = seq - 1
+                }
+
+                
+                StringBuffer proxBuff = new StringBuffer("SELECT ${canonicalProp}, ${orderingProp} FROM ${className} WHERE ${orderingProp} = ${proxVal}")        
+                String proxQuery = endPoint + "query?sql=" + URLEncoder.encode(proxBuff.toString()) + "&key=${apiKey}"
+                URL proxUrl = new URL(proxQuery)
+                String proxRaw = proxUrl.getText("UTF-8")
+
+                JsonSlurper proxSlurp = new JsonSlurper()
+                def proxRows = proxSlurp.parseText(proxRaw).rows
+
+                proxRows.each { proxRow ->
+                    // getObjectData and add to return data...
+                    //
+                    returnData.append(getObjectData(proxRow[0]))
+                }
+            } catch (Exception e) {
+                throw e
+            }
+        }
+
+        return returnData.toString()
+    }
+
     /** Creates a well-formed fragment of a CITE reply
     * giving URNs of preceding and following objects in
     * an ordered collection .
@@ -285,7 +339,6 @@ class CollectionService {
 
         JsonSlurper jslurp = new JsonSlurper()
         def rows = jslurp.parseText(raw).rows
-        System.err.println "BACK FROR PROXIMATE: " + rows
         Integer seq
         rows.each { r ->
             try {
@@ -301,7 +354,6 @@ class CollectionService {
                     tagName = "prev"
                 }
                 StringBuffer proxBuff = new StringBuffer("SELECT ${canonicalProp}, ${orderingProp} FROM ${className} WHERE ${orderingProp} = ${proxVal}")        
-                System.err.println "GET PROX WITH QUERY " + proxBuff
                 String proxQuery = endPoint + "query?sql=" + URLEncoder.encode(proxBuff.toString()) + "&key=${apiKey}"
                 URL proxUrl = new URL(proxQuery)
                 String proxRaw = proxUrl.getText("UTF-8")
@@ -310,7 +362,7 @@ class CollectionService {
                 def proxRows = proxSlurp.parseText(proxRaw).rows
 
                 proxRows.each { proxRow ->
-                    returnList.append( "<${tagName}>${proxRow[0]}</${tagName}>")
+                    returnList.append( "<${tagName}>${proxRow[0]}</${tagName}>\n")
                 }
             } catch (Exception e) {
                 throw e
@@ -319,9 +371,6 @@ class CollectionService {
         return returnList.toString()
     }
 
-    String getProximateObject(CiteUrn urn, String prevnext) {
-        
-    }
 
     String getPrevNextUrn(String urnStr) {
         CiteUrn citeUrn = new CiteUrn (urnStr)
@@ -329,30 +378,29 @@ class CollectionService {
     }
 
     String getPrevNextUrn(CiteUrn citeUrn) {
-        def collectionId = citeUrn.getCollection()
-        def collConf = this.citeConfig[collectionId]
-        if (!collConf['orderedBy']) {
+        if (! isOrdered(citeUrn)) {
             return null
         }
 
-        StringBuffer replyBuff = new StringBuffer("<prevnext>")
-        // following:
-
+        StringBuffer replyBuff = new StringBuffer("<prevnext>\n")
         String prevList = getProximateUrn(citeUrn, 'prev') 
         if (prevList) {
             replyBuff.append(prevList)
         } else {
-            replyBuff.append("<prev/>")
+            replyBuff.append("<prev/>\n")
         }
         String nextList = getProximateUrn(citeUrn, 'next')
         if (nextList) {
             replyBuff.append(nextList)
         } else {
-            replyBuff.append("<next/>")
+            replyBuff.append("<next/>\n")
         }
-        replyBuff.append("</prevnext>")
+        replyBuff.append("</prevnext>\n")
         return replyBuff.toString()
     }
+
+
+
 
 
     /** Creates an XML serialization of the preceding object
@@ -606,15 +654,6 @@ String getExtremeObject(CiteUrn requestUrn, String extreme) {
     }
 
 
-    /** Creates a well-formed fragment of a CITE reply
-    * representing a single CITE object uniquely identified by CITE URN.
-    * @param requestUrn The CITE URN identifying the object.
-    * @returns A String of well-formed XML
-    */
-    String getObjectData(CiteUrn requestUrn) {
-        String collectionId = requestUrn.getCollection()
-        return getObjectData(collectionId, requestUrn.toString())
-    }
 
     /** Creates a well-formed fragment of a CITE reply
     * representing a single CITE object uniquely identified by 
@@ -622,18 +661,29 @@ String getExtremeObject(CiteUrn requestUrn, String extreme) {
     * @param requestUrn The CITE URN, as a String, identifying the object.
     * @returns A String of well-formed XML
     */
-    String getObjectData(String collectionId, String requestUrnStr) {
 
-        def objQuery = getObjectQuery(collectionId, requestUrnStr)
+    String getObjectData(String requestUrnStr) {
+        try {
+            CiteUrn urn = new CiteUrn(requestUrnStr)
+            return getObjectData(urn)
+        } catch (Exception e) {
+            throw e
+        }
+    }
+
+
+    String getObjectData(CiteUrn urn) {
+        def objQuery = getObjectQuery(urn)
+        def collConf = this.citeConfig[urn.getCollection()]
         String q = endPoint + "query?sql=" + URLEncoder.encode(objQuery) + "&key=${apiKey}"
         URL queryUrl = new URL(q)
         String raw = queryUrl.getText("UTF-8")
 
         JsonSlurper jslurp = new JsonSlurper()
         def rows = jslurp.parseText(raw).rows 
-       def queryProperties = jslurp.parseText(raw).columns
-        def collConf = this.citeConfig[collectionId]
-        def canonicalId = collConf["canonicalId"]
+        def canonicalId = getCanonicalIdProperty(urn)
+        def queryProperties = jslurp.parseText(raw).columns
+        
 
         StringWriter writer = new StringWriter()
         MarkupBuilder xml = new MarkupBuilder(writer)
@@ -648,8 +698,8 @@ String getExtremeObject(CiteUrn requestUrn, String extreme) {
                 
             } 
            CiteUrn returnUrn = new CiteUrn(urnVal)
-            CiteUrn requestUrn = new CiteUrn(requestUrnStr)
-            if (requestUrn.getObjectId() == returnUrn.getObjectId()) {
+
+            if (urn.getObjectId() == returnUrn.getObjectId()) {
                 xml.citeObject("urn" : urnVal)  { 
                     r.eachWithIndex { prop, i ->
                         if (queryProperties[i] != canonicalId) {
@@ -731,12 +781,6 @@ String getExtremeObject(CiteUrn requestUrn, String extreme) {
     * parameter to Google Fusion, or null if the requested
     * collection is not configured.
     */
-    String getObjectQuery(String urn) {
-        def citeUrn = new CiteUrn(urn)
-        def coll = citeUrn.getCollection()
-        def obj = citeUrn.getObjectId()
-        return getObjectQuery(coll,obj)
-    }
 
 
     /** Constructs an SQL query string for a given
@@ -747,12 +791,24 @@ String getExtremeObject(CiteUrn requestUrn, String extreme) {
     * parameter to Google Fusion, or null if the requested
     * collection is not configured.
     */
-    String getObjectQuery(String coll, String urnStr) {
 
-        def collConf = this.citeConfig[coll]
+
+
+
+
+    String getObjectQuery(String urnStr) {
+        try {
+            CiteUrn urn = new CiteUrn(urnStr)
+            return getObjectQuery(urn)
+
+        } catch (Exception e) {
+            throw e
+        }
+    }
+
+    String getObjectQuery(CiteUrn urn) {
+        def collConf = this.citeConfig[urn.getCollection()]
         if (!collConf) { return null }
-
-        CiteUrn urn = new CiteUrn(urnStr)
 
         // simplify syntax:
         def props = collConf['properties']
@@ -766,9 +822,9 @@ String getExtremeObject(CiteUrn requestUrn, String extreme) {
         }
 
         if (urn.hasVersion()) {
-            return "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + urnStr +  "'"
+            return "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + urn.toString() +  "'"
         } else {
-            String fullQuery =  "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} LIKE '" + urnStr +  "%'"
+            String fullQuery =  "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} LIKE '" + urn.toString() +  "%'"
         }
         // No OR in Google sql!
         // Have to select for all possible matches, then weed out

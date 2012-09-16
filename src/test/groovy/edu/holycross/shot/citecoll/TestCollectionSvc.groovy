@@ -91,37 +91,4 @@ class TestCollectionSvc extends GroovyTestCase {
         svc.getValidReff(tstId)
         svc.getValidReff(collUrn)
     }
-
-    // TESTS FOR ORDERED COLLECTIONS:
-
-    @Test void testFirstLastReplies() {
-        File caps = new File("testdata/unittests-capabilities.xml")
-        assert (caps.exists())
-        CollectionService svc = new CollectionService(caps, apiKey)
-        assert svc
-        CiteUrn collUrn = new CiteUrn("urn:cite:paleog:greek")
-        // returns null on unordered collection
-
-        assert svc.getFirstObject(collUrn) == null
-        CiteUrn orderedUrn = new CiteUrn("urn:cite:hmt:msA")
-        svc.getFirstObject(orderedUrn) 
-        svc.getLastObject(orderedUrn) 
-    }
-
-    @Test void testPrevNextUrns() {
-        File caps = new File("testdata/unittests-capabilities.xml")
-        assert (caps.exists())
-        CollectionService svc = new CollectionService(caps, apiKey)
-        assert svc
-
-        CiteUrn orderedUrn = new CiteUrn("urn:cite:hmt:msA.1r")
-        System.err.println "NEXT: " + svc.getPrevNextUrn(orderedUrn)
-    }
-
-    @Test void testPrevNextReplies() {
-        assert 1 + 1 == 2
-    }
-
-
- 
 }
