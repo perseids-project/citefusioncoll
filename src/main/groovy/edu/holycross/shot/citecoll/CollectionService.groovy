@@ -7,12 +7,14 @@ import groovy.xml.XmlUtil
 import groovy.xml.MarkupBuilder
 
 
+// CHANGE ALL SIGNATURES TO PURE URN:  NO COLL + URN combos
+
 /** A class to support working with a CITE Collection, including
 *  support for forming replies to the requests of the CITE Collection Service
 *  API.
 */
 class CollectionService {
-
+    
     /** End point for Google Tables API v1. */
     static String endPoint = "https://www.googleapis.com/fusiontables/v1/"
 
@@ -37,7 +39,7 @@ class CollectionService {
     CollectionService(File capsFile, String googleKey) {
         this.capabilitiesFile = capsFile
         this.apiKey = googleKey
-
+        
         this.citeConfig = configureFromFile(this.capabilitiesFile)
         // Should parse caps file against rng schema, and
         // throw exception if could not parse caps file...
@@ -73,11 +75,7 @@ class CollectionService {
         return (config['groupedBy']?.size() > 0)
     }
 
-
-
-
-
-
+    
     /** Creates a string with valid XML reply to the
     * CITE Collection GetCapabilities request.
     * @returns The XML reply, as a String.
@@ -94,7 +92,7 @@ class CollectionService {
         return replyBuff.toString()
     }
 
-
+    
     /** Creates a string with valid XML reply to the
     * CITE Collection GetCollectionSize request.
     * @param collection CITE identifier for the collection.
@@ -110,6 +108,7 @@ class CollectionService {
             throw e
         }
     }
+
     /** Creates a string with valid XML reply to the
     * CITE Collection GetCollectionSize request.
     * @param collection CITE identifier for the collection.
@@ -121,6 +120,7 @@ class CollectionService {
         StringBuffer replyBuff = new StringBuffer("<GetCollectionSize xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${urn}</urn>\n<collection>${urn.getCollection()}</collection>\n</request>\n")
         replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
         replyBuff.append("\n<count>${getCount(urn)}</count>\n</reply>\n</GetCollectionSize>\n")
+        
         return replyBuff.toString()
     }
 
@@ -141,7 +141,6 @@ class CollectionService {
         replyBuff.append("\n${getPrevNextUrn(requestUrn)}\n</reply>\n</GetPrevNextUrn>\n")
         return replyBuff.toString()
     }
-
 
 
     /** Creates a string with valid XML reply to the
@@ -182,8 +181,6 @@ class CollectionService {
 
 
 
-    // INTERNAL METHOD:
-
     /** Creates an XML serialization of the following object
     * in an ordered collection.  This requires two hits on
     * Fusion:  first to find the sequence number of the 
@@ -207,13 +204,7 @@ class CollectionService {
         }
 
 /*
-        // Get index of orderedBy
-        def propList = collConf['properties']
-        def orderingPropIndex
-        propList.eachWithIndex { p, i ->
-            if (p['name'] == collConf['orderedBy']) {
-                orderingPropIndex =  i
-            }
+    
         }
         def orderingProp = propList[orderingPropIndex]['name']
 //        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
@@ -235,6 +226,7 @@ class CollectionService {
     * a configured, ordered collection.
     */
     String getLastReply(String collectionId) {
+
         def collConf = this.citeConfig[collectionId]
         CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
 
@@ -243,9 +235,6 @@ class CollectionService {
         replyBuff.append("\n${getLastObject(citeUrn)}</reply>\n</GetLast>\n")
         return replyBuff.toString()
     }
-
-
-
 
 
     String getObjectPlusReply(String requestUrnStr) {
@@ -263,14 +252,11 @@ class CollectionService {
         replyBuff.append("<request>\n<urn>${requestUrn}</urn>\n</request>\n")
         replyBuff.append("<reply>\n")
 
-
-        // Extract collection id...
         System.err.println "GOP:  GET data for " + requestUrn
         replyBuff.append( getObjectData(requestUrn))
         replyBuff.append("\n${getPrevNextUrn(requestUrn)}")
         replyBuff.append("\n</reply>\n</GetObjectPlus>")
         return replyBuff.toString()
-
     }
 
 
@@ -280,6 +266,16 @@ class CollectionService {
     * @param requestUrn The CITE URN identifying the object.
     * @returns A String of well-formed XML
     */
+
+
+    String getProximateUrn(CiteUrn urn, String proximity) {
+        // select ordering prop for urn
+        // then get canonical ID prop of plus one or minus one
+    }
+
+    String getProximateObject(CiteUrn urn, String proximity) {
+    }
+
     String getPrevNextUrn(String urnStr) {
         CiteUrn citeUrn = new CiteUrn (urnStr)
         def collectionId = citeUrn.getCollection()
@@ -290,67 +286,6 @@ class CollectionService {
 
         StringBuffer replyBuff = new StringBuffer("<prevnext>")
 
-/*
-        // Get index of orderedBy property
-        def propList = collConf['properties']
-        def orderingPropIndex
-        propList.eachWithIndex { p, i ->
-            if (p['name'] == collConf['orderedBy']) {
-                orderingPropIndex =  i
-            }
-        }
-        def orderingProp = propList[orderingPropIndex]['name']
-//        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
-
-        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn}" + "'")
-        if (collConf['groupProperty'] != null) {
-            qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
-        }
-
-
-        def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
-        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
-        grequest.execute()
-        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
-        
-        def prevSeq =  Integer.parseInt(replyLines[1],10) - 1
-        def nextSeq =  Integer.parseInt(replyLines[1],10) + 1
-
-
-        StringBuffer prevQuery = new StringBuffer("SELECT ${collConf['canonicalId']} FROM ${collConf['className']} WHERE ${orderingProp} = ${prevSeq}")
-        if (collConf['groupProperty'] != null) {
-            prevQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
-        }
-        StringBuffer nextQuery = new StringBuffer("SELECT ${collConf['canonicalId']} FROM ${collConf['className']} WHERE ${orderingProp} = ${nextSeq}")
-        if (collConf['groupProperty'] != null) {
-            nextQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
-        }
-
-
-        def prevQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(prevQuery.toString(), "UTF-8"));
-        def nextQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(nextQuery.toString(), "UTF-8"));
-
-
-        GDataRequest prevrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, prevQueryUrl, ContentType.TEXT_PLAIN)
-        prevrequest.execute()
-        def prevReplyLines= prevrequest.requestUrl.getText('UTF-8').readLines()
-
-        if (prevReplyLines.size() != 2) {
-            replyBuff.append("<prev/>")
-        } else {
-            replyBuff.append("<prev>urn:cite:${prevReplyLines[1]}</prev>")
-        }
-
-        GDataRequest nextrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, nextQueryUrl, ContentType.TEXT_PLAIN)
-        nextrequest.execute()
-        def nextReplyLines= nextrequest.requestUrl.getText('UTF-8').readLines()
-
-        if (nextReplyLines.size() != 2) {
-            replyBuff.append("<next/>")
-        } else {
-            replyBuff.append("<next>urn:cite:${nextReplyLines[1]}</next>")
-        }
-*/
         replyBuff.append("</prevnext>")
         return replyBuff.toString()
     }
@@ -385,47 +320,10 @@ class CollectionService {
             }
         }
         def orderingProp = propList[orderingPropIndex]['name']
-//        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn.getNs()}:${citeUrn.getCollection()}.${citeUrn.getObjectId()}" + "'")
         StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn}" + "'")
         if (collConf['groupProperty'] != null) {
             qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
         }
-
-/*
-        def queryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
-        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, queryUrl, ContentType.TEXT_PLAIN)
-        grequest.execute()
-        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
-        // Look for 1 more than the this object's sequence number.
-        // Test for end of line!
-        def seqNum = Integer.parseInt(replyLines[1],10) - 1
-
-        // simplify syntax:
-        def props = collConf['properties']
-        StringBuffer propNames =  new StringBuffer()
-        props.eachWithIndex { p, i ->
-            if (i != 0) {
-                propNames.append(", ${p['name']}")
-            } else {
-                propNames.append(p['name'])
-            }
-        }
-
-        StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${orderingProp} = ${seqNum}")
-        if (collConf['groupProperty'] != null)  {
-            objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
-        }
-
-
-        def objQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(objQuery.toString(), "UTF-8"));
-        GDataRequest objrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, objQueryUrl, ContentType.TEXT_PLAIN)
-        objrequest.execute()
-        def objReplyLines= objrequest.requestUrl.getText('UTF-8').readLines()
-
-        if (objReplyLines.size() != 2) {
-            return ""
-        }
-        return rowToXml(objReplyLines[1],citeUrn.toString())*/
     }
 
     /** Creates a string with valid XML reply to the
@@ -475,7 +373,8 @@ class CollectionService {
             }
         }
         return cnt
-    } // end getCount
+    } 
+    // end getCount
 
 
     /** Creates an XML serialization of the last object
@@ -490,48 +389,12 @@ class CollectionService {
     * @returns An XML serialization of the last object in the collection,
     * or null if it is not a configured, ordered collection.
     */
+
+
+
+
     String getLastObject(CiteUrn requestUrn) {
-        def collectionId = requestUrn.getCollection()
-        def collConf = this.citeConfig[collectionId]
-        if (!collConf['orderedBy']) {
-            return null
-        }
-        
-        StringBuffer qBuff = new StringBuffer("SELECT MAXIMUM(${collConf['orderedBy']}) FROM ${collConf['className']}" )
-        if (collConf['groupProperty'] != null) {
-            qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
-        }
-/*
-        def maxQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
-        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, maxQueryUrl, ContentType.TEXT_PLAIN)
-        grequest.execute()
-        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
-        def maxVal = replyLines[1]
-
-        // simplify syntax:
-        def props = collConf['properties']
-        StringBuffer propNames =  new StringBuffer()
-        props.eachWithIndex { p, i ->
-            if (i != 0) {
-                propNames.append(", ${p['name']}")
-            } else {
-                propNames.append(p['name'])
-            }
-        }
-
-        StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['orderedBy']} = ${maxVal}")
-        if (collConf['groupProperty'] != null) {
-            objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
-        }
-
-        def objQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(objQuery.toString(), "UTF-8"));
-        GDataRequest objrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, objQueryUrl, ContentType.TEXT_PLAIN)
-        objrequest.execute()
-        def objReplyLines= objrequest.requestUrl.getText('UTF-8').readLines()
-
-        return rowToXml(objReplyLines[1],requestUrn.toString())
-*/
-
+        return getExtremeObject(requestUrn, "MAXIMUM")
     }
 
     /** Creates an XML serialization of the last object
@@ -558,26 +421,34 @@ class CollectionService {
     * or null if it is not a configured, ordered collection.
     */
     String getFirstObject(CiteUrn requestUrn) {
+return getExtremeObject(requestUrn, "MINIMUM")
+}
+
+String getExtremeObject(CiteUrn requestUrn, String extreme) {
         def collectionId = requestUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
         if (!collConf['orderedBy']) {
             return null
         }
         
+        StringBuffer qBuff = new StringBuffer("SELECT ${extreme}(${collConf['orderedBy']}) FROM ${collConf['className']}" )
+        /* ?
         // test for ordering field...
-        StringBuffer qBuff = new StringBuffer("SELECT MINIMUM(${collConf['orderedBy']}) FROM ${collConf['className']}" )
         if (collConf['groupProperty'] != null) {
             qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
         }
+        */
 
-/*
-        def minQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(qBuff.toString(), "UTF-8"));
-        GDataRequest grequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, minQueryUrl, ContentType.TEXT_PLAIN)
-        grequest.execute()
-        def replyLines= grequest.requestUrl.getText('UTF-8').readLines()
-        def minVal = replyLines[1]
 
-        // simplify syntax:
+        String q = endPoint + "query?sql=" + URLEncoder.encode(qBuff.toString()) + "&key=${apiKey}"
+        URL queryUrl = new URL(q)
+        String raw = queryUrl.getText("UTF-8")
+
+        JsonSlurper jslurp = new JsonSlurper()
+        def rows = jslurp.parseText(raw).rows
+        
+        def extremeSequence = rows[0][0]
+
         def props = collConf['properties']
         StringBuffer propNames =  new StringBuffer()
         props.eachWithIndex { p, i ->
@@ -588,18 +459,19 @@ class CollectionService {
             }
         }
 
-        StringBuffer objQuery = new StringBuffer("SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['orderedBy']} = ${minVal}")
-        if (collConf['groupProperty'] != null) {
-            objQuery.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
+        String objQuery = "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['orderedBy']} = ${extremeSequence}"
+        
+        
+        String fullq = endPoint + "query?sql=" + URLEncoder.encode(objQuery) + "&key=${apiKey}"
+        URL fullQueryUrl = new URL(fullq)
+        String fullRaw = fullQueryUrl.getText("UTF-8")
+
+        JsonSlurper fullslurp = new JsonSlurper()
+        def objectRows = fullslurp.parseText(fullRaw).rows
+        System.err.println "Extreme obj (${extreme}): " 
+        objectRows[0].each {
+            System.err.println it
         }
-
-        def objQueryUrl = new URL(CollectionService.SERVICE_URL + "?sql=" + URLEncoder.encode(objQuery.toString(), "UTF-8"));
-        GDataRequest objrequest = new GoogleService("fusiontables", CollectionService.CLIENT_APP).getRequestFactory().getRequest(RequestType.QUERY, objQueryUrl, ContentType.TEXT_PLAIN)
-        objrequest.execute()
-        def objReplyLines= objrequest.requestUrl.getText('UTF-8').readLines()
-
-        return rowToXml(objReplyLines[1],requestUrn.toString())
-*/
     }
 
 
@@ -694,8 +566,8 @@ class CollectionService {
         String raw = queryUrl.getText("UTF-8")
 
         JsonSlurper jslurp = new JsonSlurper()
-        def rows = jslurp.parseText(raw).rows
-        def queryProperties = jslurp.parseText(raw).columns
+        def rows = jslurp.parseText(raw).rows 
+       def queryProperties = jslurp.parseText(raw).columns
         def collConf = this.citeConfig[collectionId]
         def canonicalId = collConf["canonicalId"]
 
@@ -730,17 +602,6 @@ class CollectionService {
         return writer.toString()     
     }
 
-
-    /** Creates a well-formed fragment of XML in the
-    * CITE namespace representing a single row of data
-    * corresponding to a given URN.
-    * @param row A row of data in csv format as returned by Fusion.
-    * @param requestUrn The URN identifying this object.
-    * @return A String with an XML serialization of the data.
-    */
-    String rowToXml(String row, String requestUrn) {
-        return ""
-    }
 
     /** Creates a map of the configuration data 
     * in an XML capabilities file.
@@ -823,6 +684,7 @@ class CollectionService {
     * collection is not configured.
     */
     String getObjectQuery(String coll, String urnStr) {
+
         def collConf = this.citeConfig[coll]
         if (!collConf) { return null }
 
