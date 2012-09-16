@@ -268,16 +268,67 @@ class CollectionService {
     */
 
 
-    String getProximateUrn(CiteUrn urn, String proximity) {
+    String getProximateUrn(CiteUrn urn, String prevnext) {
+        StringBuffer returnList = new StringBuffer()
+
         // select ordering prop for urn
         // then get canonical ID prop of plus one or minus one
+        String canonicalProp = getCanonicalIdProperty(urn)
+        String orderingProp = getOrderedByProperty(urn)
+        String className = getClassName(urn)
+
+        StringBuffer qBuff = new StringBuffer("SELECT ${canonicalProp}, ${orderingProp} FROM ${className} WHERE ${canonicalProp} = '" + "${urn}" + "' ORDER BY ${orderingProp}")        
+
+        String q = endPoint + "query?sql=" + URLEncoder.encode(qBuff.toString()) + "&key=${apiKey}"
+        URL queryUrl = new URL(q)
+        String raw = queryUrl.getText("UTF-8")
+
+        JsonSlurper jslurp = new JsonSlurper()
+        def rows = jslurp.parseText(raw).rows
+        System.err.println "BACK FROR PROXIMATE: " + rows
+        Integer seq
+        rows.each { r ->
+            try {
+                String seqStr = r[1]
+                seq = seqStr.toInteger()
+                Integer proxVal
+                String tagName
+                if (prevnext.toLowerCase() == "next") {
+                    proxVal = seq + 1
+                    tagName = "next"
+                } else if (prevnext.toLowerCase() == "prev") {
+                    proxVal = seq - 1
+                    tagName = "prev"
+                }
+                StringBuffer proxBuff = new StringBuffer("SELECT ${canonicalProp}, ${orderingProp} FROM ${className} WHERE ${orderingProp} = ${proxVal}")        
+                System.err.println "GET PROX WITH QUERY " + proxBuff
+                String proxQuery = endPoint + "query?sql=" + URLEncoder.encode(proxBuff.toString()) + "&key=${apiKey}"
+                URL proxUrl = new URL(proxQuery)
+                String proxRaw = proxUrl.getText("UTF-8")
+
+                JsonSlurper proxSlurp = new JsonSlurper()
+                def proxRows = proxSlurp.parseText(proxRaw).rows
+
+                proxRows.each { proxRow ->
+                    returnList.append( "<${tagName}>${proxRow[0]}</${tagName}>")
+                }
+            } catch (Exception e) {
+                throw e
+            }
+        }
+        return returnList.toString()
     }
 
-    String getProximateObject(CiteUrn urn, String proximity) {
+    String getProximateObject(CiteUrn urn, String prevnext) {
+        
     }
 
     String getPrevNextUrn(String urnStr) {
         CiteUrn citeUrn = new CiteUrn (urnStr)
+        return getPrevNextUrn(citeUrn)
+    }
+
+    String getPrevNextUrn(CiteUrn citeUrn) {
         def collectionId = citeUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
         if (!collConf['orderedBy']) {
@@ -285,7 +336,20 @@ class CollectionService {
         }
 
         StringBuffer replyBuff = new StringBuffer("<prevnext>")
+        // following:
 
+        String prevList = getProximateUrn(citeUrn, 'prev') 
+        if (prevList) {
+            replyBuff.append(prevList)
+        } else {
+            replyBuff.append("<prev/>")
+        }
+        String nextList = getProximateUrn(citeUrn, 'next')
+        if (nextList) {
+            replyBuff.append(nextList)
+        } else {
+            replyBuff.append("<next/>")
+        }
         replyBuff.append("</prevnext>")
         return replyBuff.toString()
     }
