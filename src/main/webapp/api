@@ -108,104 +108,126 @@ if (!(checkReq == "OK")) {
         CollectionService cs = new CollectionService(getCapsFile(), apiKey)
 
 
-    def citeReq = params['req']
-    switch (citeReq) {
-        case 'GetCapabilities':
-            String xslt = "citecaps.xsl"
-        if (params['withXslt']) {
-            xslt = params['withXslt']
-        }
-        println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-        println cs.getCapsReply()
-        break
-
-        case 'GetObjectPlus':
-            String xslt = "citegop.xsl"
-        if (params['withXslt']) {
-            xslt = params['withXslt']
-        }
-        println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-        println cs.getObjectPlusReply(params['urn']) 
-        break
-
-        case 'GetObject':
-            String xslt = "citegop.xsl"
-        if (params['withXslt']) {
-            xslt = params['withXslt']
-        }
-        println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-        println cs.getObjReply(params['urn']) 
-        break
-
-        case 'GetFirst':
-            String xslt = "citegop.xsl"
-        if (params['withXslt']) {
-            xslt = params['withXslt']
-        }
-        println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            println cs.getFirstReply(params['urn'])
-        break
-
-
-        case 'GetLast':
-            String xslt = "citegop.xsl"
-        if (params['withXslt']) {
-            xslt = params['withXslt']
-        }
-        println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-        println cs.getLastReply(params['urn'])
-        break
-
-        case 'GetCollectionSize':
-            String xslt = "citecaps.xsl"
-        if (params['withXslt']) {
-            xslt = params['withXslt']
-        }
-        println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-        println cs.getCollSizeReply(params['urn'])
-        break
-
-
-        case 'GetNext':
-            String xslt = "citegop.xsl"
-        if (params['withXslt']) {
-            xslt = params['withXslt']
-        }
-        println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-        println cs.getNextReply(params['urn'])
-        break
-
-        case 'GetPrev':
-            String xslt = "citegop.xsl"
-        if (params['withXslt']) {
-            xslt = params['withXslt']
-        }
-        println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-        println cs.getPrevReply(params['urn'])
-        break
-
-
-        case 'GetPrevNextUrn':
-            String xslt = "citenavurns.xsl"
-        if (params['withXslt']) {
-            xslt = params['withXslt']
-        }
-        println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-        println cs.getPrevReply(params['urn'])
-        println cs.getPrevNextReply(params['urn'])
-        break
-
-        case 'GetValidReff':
-            String xslt = "citegvr.xsl"
-        if (params['withXslt']) {
-            xslt = params['withXslt']
-        }
-        println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-        println cs.getValidReffReply(params['urn'])
-        break
-
-        default:
+        def citeReq = params['req']
+        switch (citeReq) {
+            case 'GetCapabilities':
+                String xslt = "citecaps.xsl"
+            if (params['withXslt']) {
+                xslt = params['withXslt']
+            }
+            if (xslt != 'none') {
+                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
+            }
+            println cs.getCapsReply()
             break
-    } // switch
-} // if capsfile
-} // if request ok
+
+            case 'GetObjectPlus':
+                String xslt = "citegop.xsl"
+            if (params['withXslt']) {
+                xslt = params['withXslt']
+            }
+            if (xslt != 'none') {
+                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
+            }
+            println cs.getObjectPlusReply(params['urn']) 
+            break
+
+            case 'GetObject':
+                String xslt = "citegop.xsl"
+            if (params['withXslt']) {
+                xslt = params['withXslt']
+            }
+            if (xslt != 'none') {
+                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
+            }
+            println cs.getObjReply(params['urn']) 
+            break
+
+            case 'GetFirst':
+                String xslt = "citegop.xsl"
+            if (params['withXslt']) {
+                xslt = params['withXslt']
+            }
+            if (xslt != 'none') {
+                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
+            }
+            println cs.getFirstReply(params['urn'])
+            break
+
+
+            case 'GetLast':
+                String xslt = "citegop.xsl"
+            if (params['withXslt']) {
+                xslt = params['withXslt']
+            }
+            if (xslt != 'none') {
+                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
+            }
+            println cs.getLastReply(params['urn'])
+            break
+
+            case 'GetCollectionSize':
+                String xslt = "citecaps.xsl"
+            if (params['withXslt']) {
+                xslt = params['withXslt']
+            }
+            if (xslt != 'none') {
+                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
+            }
+            println cs.getCollSizeReply(params['urn'])
+            break
+
+
+            case 'GetNext':
+                String xslt = "citegop.xsl"
+            if (params['withXslt']) {
+                xslt = params['withXslt']
+            }
+            if (xslt != 'none') {
+                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
+            }
+            println cs.getNextReply(params['urn'])
+            break
+
+            case 'GetPrev':
+                String xslt = "citegop.xsl"
+            if (params['withXslt']) {
+                xslt = params['withXslt']
+            }
+            if (xslt != 'none') {
+                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
+            }
+            println cs.getPrevReply(params['urn'])
+            break
+
+
+            case 'GetPrevNextUrn':
+                String xslt = "citenavurns.xsl"
+            if (params['withXslt']) {
+                xslt = params['withXslt']
+            }
+            if (xslt != 'none') {
+                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
+            }
+            println cs.getPrevNextReply(params['urn'])
+            break
+
+            case 'GetValidReff':
+                String xslt = "citegvr.xsl"
+            if (params['withXslt']) {
+                xslt = params['withXslt']
+            }
+            if (xslt != 'none') {
+                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
+            }
+            println cs.getValidReffReply(params['urn'])
+            break
+
+            default:
+                break
+        } 
+        // switch
+    } 
+    // if capsfile
+} 
+// if request ok

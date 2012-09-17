@@ -17,7 +17,7 @@ home.html {
             
             p {
                 mkp.yield     "Quick README including "
-                a(href : "README.txt", "how to configure and run")
+                a(href : "README.md", "how to configure and run")
                 mkp.yield " this service."
             }
             p {
