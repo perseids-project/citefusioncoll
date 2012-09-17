@@ -1,3 +1,19 @@
+# Checklist for release #
+
+- Add README.txt to web app, with quick config and run info
+- Add GPL to web app
+- Fix embedding of GetCaps reply
+- Add links to xslt for each request
+- need to decide how to deal with groovy bug handling HTTP parameters
+named 'request'!
+- complete and review api docs
+- Add ordering clause to GVR requests on ordered collections; default to ordering by URN for unordered collections
+- Check datans declarations on all replies that include urn content
+- abstract a single method for serialization of a CITE object
+- add artifacts to upload war, source bundle, and api docs to nexus repository
+
+
+
 # Overview
 An implementation of the CITE Collections API for data stored in 
 one or more Google fusion table(s). 
@@ -34,9 +50,3 @@ Note that while `gradle jettyRun` does not correctly set up the
 dependencies on other libraries to run properly with source files in place, `gradle jettyRunWar` creates a full war file and does work correctly, so you can test with that task.
 
 
-# TBD and known bugs
-
-- Add links to xslt for each request
-- need to decide how to deal with groovy bug handling HTTP parameters
-named 'request'!
-- add artifacts to upload war, source bundle, and api docs to nexus repository

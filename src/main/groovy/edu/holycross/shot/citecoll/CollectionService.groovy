@@ -7,8 +7,6 @@ import groovy.xml.XmlUtil
 import groovy.xml.MarkupBuilder
 
 
-// CHANGE ALL SIGNATURES TO PURE URN:  NO COLL + URN combos
-
 /** A class to support working with a CITE Collection, including
 *  support for forming replies to the requests of the CITE Collection Service
 *  API.
@@ -46,7 +44,68 @@ class CollectionService {
     }
 
 
-    
+
+
+
+    /*  ***********   METHODS FOR USING CONFIGURATION METADATA *************** */
+
+        /** Creates a map of the configuration data 
+    * in an XML capabilities file.
+    * @param f The XML capabilities file.
+    * @returns A map of configuration data or null
+    * if the file could not be parsed.
+    */
+    LinkedHashMap configureFromFile(File f) {
+        def root 
+        try {
+            root = new XmlParser().parse(f)
+        } catch (Exception e) {
+            return null
+        }
+
+
+        def configuredCollections = [:]
+        root[citens.citeCollection].each { c ->
+            def propertyList = []
+            c[citens.citeProperty].each { cp ->
+                def prop = [:]
+                prop['name'] = "${cp.'@name'}"
+                prop['label'] = "${cp.'@label'}"
+                prop['type'] = "${cp.'@type'}"
+                propertyList.add(prop)
+            } 
+
+            def seq = ""
+            if (c.orderedBy) {
+                seq = "${c.orderedBy[0].'@property'}"
+            }
+            def groupProp = null
+            if (c.'@groupProperty') {
+                groupProp = c.'@groupProperty'
+            }
+            def citeExtensions = []
+            c[citens.citeExtension].each { ce ->
+                citeExtensions << "${ce.'@uri'}"
+            }
+
+            def collData = [
+                "className" : "${c.'@class'}",
+                "canonicalId" : "${c.'@canonicalId'}",
+                "groupProperty" : groupProp,
+                "nsabbr" : "${c[citens.namespaceMapping][0].'@abbr'}", 
+                "nsfull" :"${c[citens.namespaceMapping][0].'@fullValue'}",
+                "orderedBy" : seq,
+                "citeExtensions" : citeExtensions,
+                "properties" : propertyList
+            ]
+
+            def coll = ["${c.'@name'}" : collData]
+            configuredCollections.putAt("${c.'@name'}",collData)
+        }
+
+        return configuredCollections
+    }
+
     String getCanonicalIdProperty(CiteUrn urn) {
         def config =  this.citeConfig[urn.getCollection()]
         return config['canonicalId']
@@ -74,6 +133,12 @@ class CollectionService {
         def config =  this.citeConfig[urn.getCollection()]
         return (config['groupedBy']?.size() > 0)
     }
+
+
+
+
+
+    /*  ***********   METHODS GETTING SERVICE AND COLLECTION METADATA ******* */
 
     
     /** Creates a string with valid XML reply to the
@@ -124,6 +189,241 @@ class CollectionService {
         return replyBuff.toString()
     }
 
+    String getValidReffReply(String requestUrnStr) {
+        try {
+            CiteUrn citeUrn = new CiteUrn(requestUrnStr)
+            return getValidReffReply(citeUrn)
+        } catch (Exception e) {
+            throw e
+        }
+    }
+
+    String getValidReffReply(CiteUrn urn) {
+        def collConf = this.citeConfig[urn.getCollection()]
+        StringBuffer query = new StringBuffer("SELECT ${getCanonicalIdProperty(urn)} FROM ${getClassName(urn)}")
+        boolean filterRows = false
+        if (urn.hasObjectId()) {
+            query.append(" WHERE ${getCanonicalIdProperty(urn)} LIKE '"  + urn + "%'")
+           filterRows = true
+        }
+        
+        String q = endPoint + "query?sql=" + URLEncoder.encode(query.toString()) + "&key=${apiKey}"
+
+        URL queryUrl = new URL(q)
+        String raw = queryUrl.getText("UTF-8")
+
+        JsonSlurper jslurp = new JsonSlurper()
+        def rows = jslurp.parseText(raw).rows
+
+
+        StringBuffer replyBuffer = new StringBuffer("<GetValidReff xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${urn}</urn>\n</request>\n<reply>\n")
+        rows.each { r ->
+            String resultUrnStr = r[0]
+            if (filterRows) {
+                CiteUrn returnUrn = new CiteUrn(resultUrnStr)
+                if (urn.getObjectId() == returnUrn.getObjectId()) {
+                    replyBuffer.append("<urn>${resultUrnStr}</urn>")
+                }
+            } else {
+                replyBuffer.append("<urn>${resultUrnStr}</urn>")
+            }
+        }
+        replyBuffer.append("</reply>\n</GetValidReff>")
+        return replyBuffer.toString()
+    } 
+
+
+
+    /** Finds the number of objects in a CITE Collection
+    * identified by CITE URN.
+    * @param requestUrn CITE URN identifying the Collection.
+    * @returns A String representation of the number of
+    * objects in the requested Collection, or null if the
+    * query to Fusion did not succeed.
+    */
+    String getCount(CiteUrn requestUrn) {
+        def collectionId = requestUrn.getCollection()
+        def collConf = this.citeConfig[collectionId]
+        StringBuffer qBuff = new StringBuffer("SELECT COUNT() FROM ${collConf['className']}" )
+        if (collConf['groupProperty'] != null) {
+            qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
+        }
+
+        String q = endPoint + "query?sql=" + URLEncoder.encode(qBuff.toString()) + "&key=${apiKey}"
+        URL queryUrl = new URL(q)
+        String raw = queryUrl.getText("UTF-8")
+
+        JsonSlurper jslurp = new JsonSlurper()
+        def rows = jslurp.parseText(raw).rows
+        def cnt
+        rows.each { r ->
+            // TEST urnVal : only allow correct rows...
+            def urnVal
+            r.each { p ->
+               cnt = p 
+            }
+        }
+        return cnt
+    } 
+    // end getCount
+
+
+
+
+
+
+    /*  ***********   RETRIEVAL METHODS ************************************** */
+
+    String getObjectPlusReply(String requestUrnStr) {
+        try {
+            CiteUrn urn = new CiteUrn(requestUrnStr)
+            return getObjectPlusReply(urn)
+        } catch (Exception e) {
+            throw e
+        }
+    }
+
+    String getObjectPlusReply(CiteUrn requestUrn) {
+        
+        StringBuffer replyBuff = new StringBuffer("<GetObjectPlus  xmlns='http://chs.harvard.edu/xmlns/cite'>\n")
+        replyBuff.append("<request>\n<urn>${requestUrn}</urn>\n</request>\n")
+        replyBuff.append("<reply>\n")
+
+        replyBuff.append( getObjectData(requestUrn))
+        replyBuff.append("\n${getPrevNextUrn(requestUrn)}")
+        replyBuff.append("\n</reply>\n</GetObjectPlus>")
+        return replyBuff.toString()
+    }
+
+    /** Creates a string with valid XML reply to the
+    * CITE Collection GetObject request when the object
+    * is identified by a CITE URN.
+    * @param URN identifying the object.
+    */
+    String getObjReply(String requestUrn) {
+        CiteUrn citeUrn = new CiteUrn(requestUrn)
+        def collConf = this.citeConfig[citeUrn.getCollection()]
+        StringBuffer replyBuff = new StringBuffer("<GetObject xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
+        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+        replyBuff.append("\n${getObjectData(citeUrn)}</reply>\n</GetObject>\n")
+    }
+
+
+
+    /** Creates a well-formed fragment of a CITE reply
+    * representing a single CITE object uniquely identified by 
+    * a CITE URN string.
+    * @param requestUrn The CITE URN, as a String, identifying the object.
+    * @returns A String of well-formed XML
+    */
+
+    String getObjectData(String requestUrnStr) {
+        try {
+            CiteUrn urn = new CiteUrn(requestUrnStr)
+            return getObjectData(urn)
+        } catch (Exception e) {
+            throw e
+        }
+    }
+
+
+    String getObjectData(CiteUrn urn) {
+        def objQuery = getObjectQuery(urn)
+        def collConf = this.citeConfig[urn.getCollection()]
+        String q = endPoint + "query?sql=" + URLEncoder.encode(objQuery) + "&key=${apiKey}"
+        URL queryUrl = new URL(q)
+        String raw = queryUrl.getText("UTF-8")
+
+        JsonSlurper jslurp = new JsonSlurper()
+        def rows = jslurp.parseText(raw).rows 
+        def canonicalId = getCanonicalIdProperty(urn)
+        def queryProperties = jslurp.parseText(raw).columns
+        
+
+        StringWriter writer = new StringWriter()
+        MarkupBuilder xml = new MarkupBuilder(writer)
+        rows.each { r ->
+          
+            // TEST urnVal : only allow correct rows...
+            def urnVal
+            r.eachWithIndex { p, i ->
+                if (queryProperties[i] == canonicalId) {
+                    urnVal = p
+                }
+                
+            } 
+           CiteUrn returnUrn = new CiteUrn(urnVal)
+
+            if (urn.getObjectId() == returnUrn.getObjectId()) {
+                xml.citeObject("urn" : urnVal)  { 
+                    r.eachWithIndex { prop, i ->
+                        if (queryProperties[i] != canonicalId) {
+                            collConf["properties"].each { confProp ->
+                                if (confProp["name"] == queryProperties[i]) {
+                                    citeProperty(name: queryProperties[i], label: confProp["label"], type : confProp["type"], "${prop}")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return writer.toString()     
+    }
+
+
+    String getObjectQuery(CiteUrn urn) {
+        def collConf = this.citeConfig[urn.getCollection()]
+        if (!collConf) { return null }
+
+        // simplify syntax:
+        def props = collConf['properties']
+        StringBuffer propNames =  new StringBuffer()
+        props.eachWithIndex { p, i ->
+            if (i != 0) {
+                propNames.append(", ${p['name']}")
+            } else {
+                propNames.append(p['name'])
+            }
+        }
+
+        if (urn.hasVersion()) {
+            return "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + urn.toString() +  "'"
+        } else {
+            String fullQuery =  "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} LIKE '" + urn.toString() +  "%'"
+        }
+        // No OR in Google sql!
+        // Have to select for all possible matches, then weed out
+        // the false hits at receiving end of query. :-(
+    }
+
+
+    /** Constructs an SQL query string for a given
+    *  pair of collection and object identifier.
+    * @param coll The collection identifier.
+    * @param obj The object identifier within the collection.
+    * @returns An SQL string that can be submitted as the query
+    * parameter to Google Fusion, or null if the requested
+    * collection is not configured.
+    */
+
+
+
+
+
+    String getObjectQuery(String urnStr) {
+        try {
+            CiteUrn urn = new CiteUrn(urnStr)
+            return getObjectQuery(urn)
+
+        } catch (Exception e) {
+            throw e
+        }
+    }
+
+
+
+    /*  ***********  METHODS FOR NAVIGATING ORDERED COLLECTIONS  ************* */
 
     /** Creates a string with valid XML reply to the
     * CITE Collection GetPrevNextUrn request when the object
@@ -136,7 +436,7 @@ class CollectionService {
 
     String getPrevNextReply(String requestUrnStr) {
         try {
-            CiteUrn citeUrn = new CiteUrn(requestUrn)
+            CiteUrn citeUrn = new CiteUrn(requestUrnStr)
             return getPrevNextReply(citeUrn)
         } catch (Exception e) {
             throw e
@@ -162,9 +462,22 @@ class CollectionService {
     * object in the collection, or null if the collection is not
     * a configured, ordered collection.
     */
+
+
+
     String getPrevReply(String requestUrn) {
-        CiteUrn citeUrn = new CiteUrn(requestUrn)
-        def collConf = this.citeConfig[citeUrn.getCollection()]
+        try {
+            CiteUrn urn = new CiteUrn(requestUrn)
+            return getPrevReply(urn)
+        } catch (Exception e) {
+            throw e
+        }
+    }
+
+
+
+    String getPrevReply(CiteUrn requestUrn) {
+        def collConf = this.citeConfig[requestUrn.getCollection()]
 
         StringBuffer replyBuff = new StringBuffer("<GetPrev xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
         replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
@@ -205,6 +518,8 @@ class CollectionService {
     * @returns An XML serialization of the next object in the collection,
     * or null if it is not a configured, ordered collection.
     */
+
+
     String getNextObject(String urnStr) {
         try {
             CiteUrn urn = new CiteUrn(urnStr)
@@ -221,6 +536,25 @@ class CollectionService {
         return getProximateObject(urn, "next")
     }
 
+    String getPrevObject(String urnStr) {
+        try {
+            CiteUrn urn = new CiteUrn(urnStr)
+            return getPrevObject(urn)
+        } catch (Exception e ) {
+            throw e
+        }
+    }
+
+    String getPrevObject(CiteUrn urn) {
+        if (! isOrdered(urn)) {
+            return null
+        }
+        return getProximateObject(urn, "prev")
+    }
+
+
+
+
     /** Creates a string with valid XML reply to the
     * CITE Collection GetLast request when the collection
     * is identified by a collection identifier.
@@ -229,37 +563,24 @@ class CollectionService {
     * object in the collection, or null if the collection is not
     * a configured, ordered collection.
     */
-    String getLastReply(String collectionId) {
-
-        def collConf = this.citeConfig[collectionId]
-        CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
-
-        StringBuffer replyBuff = new StringBuffer("<GetLast xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getLastObject(citeUrn)}</reply>\n</GetLast>\n")
-        return replyBuff.toString()
-    }
-
-
-    String getObjectPlusReply(String requestUrnStr) {
+    String getLastReply(String urnStr) {
         try {
-            CiteUrn urn = new CiteUrn(requestUrnStr)
-            return getObjectPlusReply(urn)
+            CiteUrn urn = new CiteUrn (urnStr)
+            return getLastReply(urn)
         } catch (Exception e) {
             throw e
         }
     }
 
-    String getObjectPlusReply(CiteUrn requestUrn) {
-        
-        StringBuffer replyBuff = new StringBuffer("<GetObjectPlus  xmlns='http://chs.harvard.edu/xmlns/cite'>\n")
-        replyBuff.append("<request>\n<urn>${requestUrn}</urn>\n</request>\n")
-        replyBuff.append("<reply>\n")
+    String getLastReply(CiteUrn urn) {
+        def collConf = this.citeConfig[urn.getCollection()]
+        String collectionId = urn.getCollection()
+        CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
 
-        System.err.println "GOP:  GET data for " + requestUrn
-        replyBuff.append( getObjectData(requestUrn))
-        replyBuff.append("\n${getPrevNextUrn(requestUrn)}")
-        replyBuff.append("\n</reply>\n</GetObjectPlus>")
+        StringBuffer replyBuff = new StringBuffer("<GetLast xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n</request>\n")
+//        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+//        replyBuff.append("\n${getLastObject(citeUrn)}</reply>\n</GetLast>\n")
+        replyBuff.append("\n${getLastObject(citeUrn)}\n</GetLast>\n")
         return replyBuff.toString()
     }
 
@@ -278,7 +599,6 @@ class CollectionService {
 
         JsonSlurper jslurp = new JsonSlurper()
         def rows = jslurp.parseText(raw).rows
-        System.err.println "BACK FROR PROXIMATE OBJ: " + rows
         Integer seq
         rows.each { r ->
             try {
@@ -416,77 +736,33 @@ class CollectionService {
     * @returns An XML serialization of the previous object in the collection,
     * or null if it is not a configured, ordered collection.
     */
-    String getPrevObject(String urnStr) {
-        CiteUrn citeUrn = new CiteUrn (urnStr)
-        def collectionId = citeUrn.getCollection()
-        def collConf = this.citeConfig[collectionId]
-        if (!collConf['orderedBy']) {
-            return null
-        }
-        // Get index of orderedBy
-        def propList = collConf['properties']
-        def orderingPropIndex
-        propList.eachWithIndex { p, i ->
-            if (p['name'] == collConf['orderedBy']) {
-                orderingPropIndex =  i
-            }
-        }
-        def orderingProp = propList[orderingPropIndex]['name']
-        StringBuffer qBuff = new StringBuffer("SELECT ${orderingProp} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + "${citeUrn}" + "'")
-        if (collConf['groupProperty'] != null) {
-            qBuff.append(" AND ${collConf['groupProperty']} = '" + collectionId + "'")
+
+
+
+
+
+
+
+    String getFirstReply(String urnStr) {
+        try {
+            CiteUrn urn = new CiteUrn(urnStr)
+            return getFirstReply(urn)
+        } catch (Exception e) {
+            throw e
         }
     }
 
-    /** Creates a string with valid XML reply to the
-    * CITE Collection GetFirst request when the collection
-    * is identified by a collection identifier.
-    * @param collectionId CITE identifier for the collection.
-    * @returns The XML reply, as a String, or null if the collection 
-    * is not a configured, ordered collection.
-    */
-    String getFirstReply(String collectionId) {
-        def collConf = this.citeConfig[collectionId]
-        CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${collectionId}")
+    String getFirstReply(CiteUrn urn) {
+        def collConf = this.citeConfig[urn.getCollection()]
+        String collectionId = urn.getCollection()
+        CiteUrn citeUrn = new CiteUrn("urn:cite:${collConf['nsabbr']}:${urn.getCollection()}")
 
         StringBuffer replyBuff = new StringBuffer("<GetFirst xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<collection>${collectionId}</collection>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getFirstObject(citeUrn)}</reply>\n</GetFirst>\n")
+//        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
+//        replyBuff.append("\n${getFirstObject(citeUrn)}</reply>\n</GetFirst>\n")
+        replyBuff.append("\n${getFirstObject(citeUrn)}\n</GetFirst>\n")
         return replyBuff.toString()
     }
-
-    /** Finds the number of objects in a CITE Collection
-    * identified by CITE URN.
-    * @param requestUrn CITE URN identifying the Collection.
-    * @returns A String representation of the number of
-    * objects in the requested Collection, or null if the
-    * query to Fusion did not succeed.
-    */
-    String getCount(CiteUrn requestUrn) {
-        def collectionId = requestUrn.getCollection()
-        def collConf = this.citeConfig[collectionId]
-        StringBuffer qBuff = new StringBuffer("SELECT COUNT() FROM ${collConf['className']}" )
-        if (collConf['groupProperty'] != null) {
-            qBuff.append(" WHERE ${collConf['groupProperty']} = '" + collectionId + "'")
-        }
-
-        String q = endPoint + "query?sql=" + URLEncoder.encode(qBuff.toString()) + "&key=${apiKey}"
-        URL queryUrl = new URL(q)
-        String raw = queryUrl.getText("UTF-8")
-
-        JsonSlurper jslurp = new JsonSlurper()
-        def rows = jslurp.parseText(raw).rows
-        def cnt
-        rows.each { r ->
-            // TEST urnVal : only allow correct rows...
-            def urnVal
-            r.each { p ->
-               cnt = p 
-            }
-        }
-        return cnt
-    } 
-    // end getCount
 
 
     /** Creates an XML serialization of the last object
@@ -533,10 +809,10 @@ class CollectionService {
     * or null if it is not a configured, ordered collection.
     */
     String getFirstObject(CiteUrn requestUrn) {
-return getExtremeObject(requestUrn, "MINIMUM")
-}
+        return getExtremeObject(requestUrn, "MINIMUM")
+    }
 
-String getExtremeObject(CiteUrn requestUrn, String extreme) {
+    String getExtremeObject(CiteUrn requestUrn, String extreme) {
         def collectionId = requestUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
         if (!collConf['orderedBy']) {
@@ -560,7 +836,7 @@ String getExtremeObject(CiteUrn requestUrn, String extreme) {
         def rows = jslurp.parseText(raw).rows
         
         def extremeSequence = rows[0][0]
-
+        def canonicalId = getCanonicalIdProperty(requestUrn)
         def props = collConf['properties']
         StringBuffer propNames =  new StringBuffer()
         props.eachWithIndex { p, i ->
@@ -580,10 +856,38 @@ String getExtremeObject(CiteUrn requestUrn, String extreme) {
 
         JsonSlurper fullslurp = new JsonSlurper()
         def objectRows = fullslurp.parseText(fullRaw).rows
-        System.err.println "Extreme obj (${extreme}): " 
+
+        def queryProperties = jslurp.parseText(fullRaw).columns
+        StringWriter writer = new StringWriter()
+        MarkupBuilder xml = new MarkupBuilder(writer)
+        xml.reply {
+            objectRows.each { r ->
+                // Find canonicalId value for object:
+                String urnVal =""
+                r.eachWithIndex { p, i ->
+                    if (queryProperties[i] == canonicalId) {
+                        urnVal = p
+                    }
+                } 
+                citeObject("urn" : urnVal)  { 
+                    r.eachWithIndex { prop, i ->
+                        if (queryProperties[i] != canonicalId) {
+                            collConf["properties"].each { confProp ->
+                                if (confProp["name"] == queryProperties[i]) {
+                                    citeProperty(name: queryProperties[i], label: confProp["label"], type : confProp["type"], "${prop}")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return writer.toString()     
+/*        System.err.println "Extreme obj (${extreme}): " 
         objectRows[0].each {
             System.err.println it
-        }
+            // format ...
+        } */
     }
 
 
@@ -599,237 +903,10 @@ String getExtremeObject(CiteUrn requestUrn, String extreme) {
         return getFirstObject(new CiteUrn(urnStr))
     }
 
-    String getValidReffReply(String requestUrn) {
-        CiteUrn citeUrn = new CiteUrn(requestUrn)
-        def collConf = this.citeConfig[citeUrn.getCollection()]
-        StringBuffer replyBuff = new StringBuffer("<GetValidReff xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getValidReff(citeUrn)}</reply>\n</GetValidReff>\n")
-    }
-
-
-
-    String getValidReff(CiteUrn urn) {
-        def collConf = this.citeConfig[urn.getCollection()]
-        StringBuffer query = new StringBuffer("SELECT ${getCanonicalIdProperty(urn)} FROM ${getClassName(urn)}")
-        boolean filterRows = false
-        if (urn.hasObjectId()) {
-            query.append(" WHERE ${getCanonicalIdProperty(urn)} LIKE '"  + urn + "%'")
-           filterRows = true
-        }
-        
-        String q = endPoint + "query?sql=" + URLEncoder.encode(query.toString()) + "&key=${apiKey}"
-
-        URL queryUrl = new URL(q)
-        String raw = queryUrl.getText("UTF-8")
-
-        JsonSlurper jslurp = new JsonSlurper()
-        def rows = jslurp.parseText(raw).rows
-        rows.each { r ->
-            String resultUrnStr = r[0]
-            if (filterRows) {
-                CiteUrn returnUrn = new CiteUrn(resultUrnStr)
-                if (urn.getObjectId() == returnUrn.getObjectId()) {
-                    System.err.println resultUrnStr
-                }
-            } else {
-                System.err.println resultUrnStr
-            }
-        }
-
-    } // GVR
-
-
-    /** Creates a string with valid XML reply to the
-    * CITE Collection GetObject request when the object
-    * is identified by a CITE URN.
-    * @param URN identifying the object.
-    */
-    String getObjReply(String requestUrn) {
-        CiteUrn citeUrn = new CiteUrn(requestUrn)
-        def collConf = this.citeConfig[citeUrn.getCollection()]
-        StringBuffer replyBuff = new StringBuffer("<GetObject xmlns='http://chs.harvard.edu/xmlns/cite'>\n<request>\n<urn>${requestUrn}</urn>\n</request>\n")
-        replyBuff.append("\n<reply datans='" + collConf['nsabbr'] +"' datansuri='" + collConf['nsfull'] + "'>")
-        replyBuff.append("\n${getObjectData(citeUrn)}</reply>\n</GetObject>\n")
-    }
-
-
-
-    /** Creates a well-formed fragment of a CITE reply
-    * representing a single CITE object uniquely identified by 
-    * a CITE URN string.
-    * @param requestUrn The CITE URN, as a String, identifying the object.
-    * @returns A String of well-formed XML
-    */
-
-    String getObjectData(String requestUrnStr) {
-        try {
-            CiteUrn urn = new CiteUrn(requestUrnStr)
-            return getObjectData(urn)
-        } catch (Exception e) {
-            throw e
-        }
-    }
-
-
-    String getObjectData(CiteUrn urn) {
-        def objQuery = getObjectQuery(urn)
-        def collConf = this.citeConfig[urn.getCollection()]
-        String q = endPoint + "query?sql=" + URLEncoder.encode(objQuery) + "&key=${apiKey}"
-        URL queryUrl = new URL(q)
-        String raw = queryUrl.getText("UTF-8")
-
-        JsonSlurper jslurp = new JsonSlurper()
-        def rows = jslurp.parseText(raw).rows 
-        def canonicalId = getCanonicalIdProperty(urn)
-        def queryProperties = jslurp.parseText(raw).columns
-        
-
-        StringWriter writer = new StringWriter()
-        MarkupBuilder xml = new MarkupBuilder(writer)
-        rows.each { r ->
-          
-            // TEST urnVal : only allow correct rows...
-            def urnVal
-            r.eachWithIndex { p, i ->
-                if (queryProperties[i] == canonicalId) {
-                    urnVal = p
-                }
-                
-            } 
-           CiteUrn returnUrn = new CiteUrn(urnVal)
-
-            if (urn.getObjectId() == returnUrn.getObjectId()) {
-                xml.citeObject("urn" : urnVal)  { 
-                    r.eachWithIndex { prop, i ->
-                        if (queryProperties[i] != canonicalId) {
-                            collConf["properties"].each { confProp ->
-                                if (confProp["name"] == queryProperties[i]) {
-                                    citeProperty(name: queryProperties[i], label: confProp["label"], type : confProp["type"], "${prop}")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return writer.toString()     
-    }
-
-
-    /** Creates a map of the configuration data 
-    * in an XML capabilities file.
-    * @param f The XML capabilities file.
-    * @returns A map of configuration data or null
-    * if the file could not be parsed.
-    */
-    LinkedHashMap configureFromFile(File f) {
-        def root 
-        try {
-            root = new XmlParser().parse(f)
-        } catch (Exception e) {
-            return null
-        }
-
-
-        def configuredCollections = [:]
-        root[citens.citeCollection].each { c ->
-            def propertyList = []
-            c[citens.citeProperty].each { cp ->
-                def prop = [:]
-                prop['name'] = "${cp.'@name'}"
-                prop['label'] = "${cp.'@label'}"
-                prop['type'] = "${cp.'@type'}"
-                propertyList.add(prop)
-            } 
-
-            def seq = ""
-            if (c.orderedBy) {
-                seq = "${c.orderedBy[0].'@property'}"
-            }
-            def groupProp = null
-            if (c.'@groupProperty') {
-                groupProp = c.'@groupProperty'
-            }
-            def citeExtensions = []
-            c[citens.citeExtension].each { ce ->
-                citeExtensions << "${ce.'@uri'}"
-            }
-
-            def collData = [
-                "className" : "${c.'@class'}",
-                "canonicalId" : "${c.'@canonicalId'}",
-                "groupProperty" : groupProp,
-                "nsabbr" : "${c[citens.namespaceMapping][0].'@abbr'}", 
-                "nsfull" :"${c[citens.namespaceMapping][0].'@fullValue'}",
-                "orderedBy" : seq,
-                "citeExtensions" : citeExtensions,
-                "properties" : propertyList
-            ]
-
-            def coll = ["${c.'@name'}" : collData]
-            configuredCollections.putAt("${c.'@name'}",collData)
-        }
-
-        return configuredCollections
-    }
-
-    /** Constructs an SQL query string for a given
-    * CITE URN.
-    * @param urn The CITE URN.
-    * @returns An SQL string that can be submitted as the query
-    * parameter to Google Fusion, or null if the requested
-    * collection is not configured.
-    */
-
-
-    /** Constructs an SQL query string for a given
-    *  pair of collection and object identifier.
-    * @param coll The collection identifier.
-    * @param obj The object identifier within the collection.
-    * @returns An SQL string that can be submitted as the query
-    * parameter to Google Fusion, or null if the requested
-    * collection is not configured.
-    */
 
 
 
 
-
-    String getObjectQuery(String urnStr) {
-        try {
-            CiteUrn urn = new CiteUrn(urnStr)
-            return getObjectQuery(urn)
-
-        } catch (Exception e) {
-            throw e
-        }
-    }
-
-    String getObjectQuery(CiteUrn urn) {
-        def collConf = this.citeConfig[urn.getCollection()]
-        if (!collConf) { return null }
-
-        // simplify syntax:
-        def props = collConf['properties']
-        StringBuffer propNames =  new StringBuffer()
-        props.eachWithIndex { p, i ->
-            if (i != 0) {
-                propNames.append(", ${p['name']}")
-            } else {
-                propNames.append(p['name'])
-            }
-        }
-
-        if (urn.hasVersion()) {
-            return "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} = '" + urn.toString() +  "'"
-        } else {
-            String fullQuery =  "SELECT ${propNames.toString()} FROM ${collConf['className']} WHERE ${collConf['canonicalId']} LIKE '" + urn.toString() +  "%'"
-        }
-        // No OR in Google sql!
-        // Have to select for all possible matches, then weed out
-        // the false hits at receiving end of query. :-(
-    }
 
 
 }
