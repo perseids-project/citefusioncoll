@@ -10,4 +10,4 @@
 The CITE Collection Service requests are submitted to the URL  `SERVICEINSTALLAION/api`.  This servlet supports two optional parameters to the `api` URL that are not part of the specification, and allow you to override default settings:
 
 - `withXslt`:  use this to supply the name of an xslt file in the `xslt` directory.  To specify that you want a pure XML reply with no transformation, set `withXslt` = `none`.
-- `config`:  use this to supply the name of a capabilities file in the `config` directory.
+- `config`:  use this to supply the name of a capabilities file in the `config` directory.  You can maintain multiple configuration files to present multiple virtual collection services.  The configuration file is read afresh with every request, so if you modify an existing file, or add a new configuration file, the new configuration is immediately available without restarting the servlet.  
