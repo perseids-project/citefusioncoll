@@ -35,8 +35,8 @@ dependencies on other libraries to run properly with source files in place, `gra
 
 
 # TBD and known bugs
-- GetObjectPlus:  test for ordered collection before requesting next/prev data?
+
+- Add links to xslt for each request
 - need to decide how to deal with groovy bug handling HTTP parameters
 named 'request'!
-- add testing
 - add artifacts to upload war, source bundle, and api docs to nexus repository
