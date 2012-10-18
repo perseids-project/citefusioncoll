@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Uncomment the following if you want to validate against a local copy of CiteCollection.rng in oXygen: -->
+<!--
+<?xml-model href="CiteCollection.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+-->
+<collectionService
+    xmlns="http://chs.harvard.edu/xmlns/cite"
+    xmlns:cite="http://chs.harvard.edu/xmlns/cite">
+    <citeCollection
+        canonicalId="URN"
+        class="1ah-wUkhbcqVkfNgbixS0eQFUTd52Md25HlYL4Cs"
+        description="Small test collection on US States"
+        name="states">
+        <namespaceMapping
+            abbr="ussstates"
+            fullValue="http://shot.holycross.edu/datans/ussstates"/>
+        <citeProperty
+            label="URN"
+            name="StateURN"
+            type="citeurn"/>
+        <citeProperty label="Name of state" name="State" type="string"/>
+        <citeProperty
+            label="Capital city"
+            name="Capital city"
+            type="string"/>
+    </citeCollection>
+</collectionService>
