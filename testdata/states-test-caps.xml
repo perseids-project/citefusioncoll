@@ -23,5 +23,22 @@
             label="Capital city"
             name="Capital city"
             type="string"/>
+
+        <citeProperty
+            label="Geographic location of capital"
+            name="Location of Capital"
+            type="string"/>
+
+        <citeProperty
+            label="Population, 2000 census"
+	   name="Population, 2000 census"
+            type="string"/>
+
+        <citeProperty
+            label="Date of statehood"
+            name="Date of statehood"
+	   type="datetime" />
+
+
     </citeCollection>
 </collectionService>
