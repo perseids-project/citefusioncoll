@@ -27,7 +27,7 @@ class TestCollectionSvc extends GroovyTestCase {
         // Version and object request alike should produce only
         // one match.
         int expectedSize = 1
-
+        System.err.println "getObjStr " + getObjStr
         def objRoot = new XmlParser().parseText(getObjStr)
         assert  objRoot[citens.reply][citens.citeObject].size() == expectedSize
         
