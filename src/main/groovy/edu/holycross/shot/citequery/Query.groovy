@@ -140,21 +140,45 @@ class Query {
         return pNames.toString()
     }
 
-
+/*
     def getResults(String collectionName, String propName, String propValue) {
         String op = "="
         return getResults(collectionName, propName, propValue, op)
     }
-
+*/
 
 
     // MODIFY TO CONSULT INFO ON TYPE IN ORDER TO QUOTE VALUE OR NOT APPROPRIATELY
-    def getResults(String collectionName, String propName, String propValue, String op) {
+//    def getResults(String collectionName, String propName, String propValue, String op) {
+
+    def getResults(String collectionName, Object triples) {
+        
+
         String propList = listPropNames(collectionName)
-        StringBuffer qBuff = new StringBuffer("SELECT ${propList} FROM ${getClassName(collectionName)} WHERE ")
+        StringBuffer qBuff = new StringBuffer("SELECT ${propList} FROM ${getClassName(collectionName)} ")
+        if (triples.size() > 0) {
+            qBuff.append (" WHERE ")
+        }
+        
+        String propName
+        String propValue
+        String op
+        System.err.println "query from triples: " + triples.size()
+        triples.eachWithIndex { t, i  ->
+            System.err.println "triple "  + t
+            propName = t[0]
+            propValue = t[1]
 
-        qBuff.append(" ${propName} ${op} '" + propValue + "'")
-
+            if (t.size() == 2) {
+                op = "="
+            } else {
+                op = t[2]                
+            }
+            if (i > 0) {
+                qBuff.append(" AND " )
+            }
+            qBuff.append(" '" + propName + "' ${op} '" + propValue + "'")
+        }
         if (orderProperty) {
             qBuff.append(" ORDER BY ${orderProperty}")
         }

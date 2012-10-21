@@ -58,9 +58,14 @@ class TestQuery extends GroovyTestCase {
     @Test public void testSimpleQuery() {
         Query q = new Query(testCapsFile, apiKey)
         String collName = "ptolgeo"
-        String val = "urn:cite:rage:ptolgeo.pt-ll-1"
         String prop = "URN"
-        def resList = q.getResults(collName, prop, val)
+        String val = "urn:cite:rage:ptolgeo.pt-ll-1"
+
+        def triples = []
+        def defaultOp = [prop, val]
+        triples.add(defaultOp)
+
+        def resList = q.getResults(collName, triples)
         def res = resList[0]
         def propNames = q.getPropNameList(collName)
         assert propNames[0] == prop
@@ -74,19 +79,33 @@ class TestQuery extends GroovyTestCase {
         String coll = "states"
         String val = "Alabama"
         String prop = "State"
-        println "${q.getResults(coll,prop,val)}"
+        def explicitOp = [prop, val, "="]
+        def triples = []
+        triples.add(explicitOp)
+        
+        println "${q.getResults(coll,triples)}"
+        assert q.getResults(coll, []).size() == 50
+
+
+        print "A's starting: " +   q.getResults(coll,[[ 'State', 'A', ' STARTS WITH '], ['Population, 2000 census', '2000000', '>']])
+
+
     }
 
     @Test public void testMatchQuery() {
         Query q = new Query(testCapsFile, apiKey)
         String collName = "ptolgeo"
-        String val = "urn:cite:rage:ptolgeo.pt-ll-1"
+        String val = "urn:cite:rage:ptolgeo.pt-ll-2"
         String prop = "URN"
 //        String op ="MATCHES"
         String op ="STARTS WITH"
 //        String op = "="
-        def resList = q.getResults(collName, prop, val, op)
-        assert resList.size() > 1000
+
+        def tList = []
+        def triple = [prop, val, op]
+        tList.add(triple)
+        def resList = q.getResults(collName, tList)
+        assert resList.size() > 10
 
         println "CLAS OF RESL: " + resList.getClass() + " of size " + resList.size()
 /*
