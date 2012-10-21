@@ -1,0 +1,74 @@
+
+import org.apache.tools.ant.filters.*
+
+
+apply plugin: 'war'
+apply plugin: 'jetty'
+apply plugin: 'groovy'
+apply plugin:  "maven"
+
+group = "edu.holycross.shot"
+version = "0.2.0"
+
+// for jettyRunWar:
+httpPort = 8080
+stopPort = 9451
+stopKey = 'foo'
+
+repositories {
+    mavenCentral()
+    // for the CITE library
+    maven {
+        url "http://beta.hpcc.uh.edu/nexus/content/repositories/releases"
+    }
+}
+
+dependencies {
+    compile group: 'commons-io', name: 'commons-io', version: commonsioversion
+    compile group: 'log4j', name: 'log4j', version: log4jversion, ext: 'jar'
+
+    groovy  group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyversion
+    groovy group: 'edu.harvard.chs', name: 'cite', version: citeversion
+
+    testCompile group: 'junit', name: 'junit', version: junitversion
+}
+
+
+task sourcesZip(type: Zip, dependsOn:classes) {
+     classifier = 'sources'
+     from sourceSets.main.allSource
+}
+
+task docsZip(type: Zip, dependsOn: groovydoc) {
+    classifier = 'groovydoc'
+    from groovydoc.destinationDir
+    description = 'Builds zip file of java/groovy docs'
+
+}
+
+artifacts {
+    archives docsZip
+    archives sourcesZip
+}
+
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: nexusRepo) {                   
+            authentication (userName: nexusUser, password: nexusPassword)
+        }
+    }
+}
+
+test {
+    /* In gradle, properties are normally wiped clean for tests.
+    This passes the project property apiKey to tests as a System property
+    */
+    systemProperty  "apiKey", apiKey
+}
+
+
+war {
+    from "src/main/webapp"
+    filter(ReplaceTokens, tokens: ['apiKey': apiKey])
+}

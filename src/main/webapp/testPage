@@ -1,0 +1,117 @@
+import groovy.xml.MarkupBuilder
+StringWriter writer = new StringWriter()
+MarkupBuilder home = new MarkupBuilder(writer)
+
+
+home.html {
+    head {
+        title("CITE Collections service")
+        link(type : "text/css", rel : "stylesheet", href : "cts.css", title : "CSS stylesheet")
+        p('class' : "menu") {
+              mkp.yield "CITE Collections: "
+              a (href : "home", "home")
+          }
+    }
+    body {
+        div(id : "header") 
+        div {
+            h1("CITE Collections service: test API")
+
+            h2("Metadata requests")
+            h3("GetCapabilities")
+            p("Applies to all collections; requires no further parameters")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetCapabilities")
+                input (type: "submit", value : "Submit")
+            }
+
+            h3("GetCollectionSize")
+
+            p ("Supply a URN identifying the collection; returns the number of objects in the collection.")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetCollectionSize")
+                input(name : "urn", value : "urn:cite:hmt:msA")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            h3("GetValidReff")
+
+            p ("Supply a URN identifying the collection or object; returns valid reff  for all objects in the collection or all versions of the object.")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetValidReff")
+                input(name : "urn", value : "urn:cite:hmt:msA")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            h2("Retrieval methods")
+
+            h3 ("GetObject")
+            p("Supply a URN identifying the object; returns a CITE XML description of hte object.")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetObject")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            h3 ("GetObjectPlus")
+            p("Supply a URN identifying the object; returns a CITE XML description of hte object, together with navigational information if the collection is ordered.")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetObjectPlus")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            h2("Navigation of ordered collections")
+            p("These methods apply only to ordered collections.")
+
+            h3 ("GetFirst")
+            p("Supply a URN identifying a collection; returns the URN identifying the first object in the collection.")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetFirst")
+                input(name : "urn", value : "urn:cite:hmt:msA")
+                input (type: "submit", value : "Submit")
+            }
+
+            h3 ("GetLast")
+            p("Supply a URN identifying a collection; returns the URN identifying the last object in the collection.")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetLast")
+                input(name : "urn", value : "urn:cite:hmt:msA")
+                input (type: "submit", value : "Submit")
+            }
+
+
+            h3 ("GetNext")
+            p("Supply a URN identifying an object; returns the CITE XML description of the following object.")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetNext")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+
+            h3 ("GetPrev")
+            p("Supply a URN identifying an object; returns the CITE XML description of the preceding object.")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetPrev")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+
+
+
+            h3 ("GetPrevNextUrn")
+            p("Supply a URN identifying an object; returns URNs identifying the preceding and following objects.")
+            form(action : "api", method : "GET")  {
+                input (type : "hidden", name : "req", value : "GetPrevNextUrn")
+                input(name : "urn", value : "urn:cite:hmt:msA.12r")
+                input (type: "submit", value : "Submit")
+            }
+        }
+    }
+}
+
+println writer.toString()
