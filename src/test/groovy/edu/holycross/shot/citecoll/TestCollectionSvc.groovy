@@ -18,8 +18,8 @@ class TestCollectionSvc extends GroovyTestCase {
         CollectionService svc = new CollectionService(caps, apiKey)
         assert svc
 
-        String tstId = "urn:cite:paleog:greek.op1"
-        String versionId = "urn:cite:paleog:greek.op1.0"
+        String tstId = "urn:cite:op:greek.1"
+        String versionId = "urn:cite:op:greek.1.1"
 
         String getObjStr = svc.getObjReply(tstId)
         String getVersStr = svc.getObjReply(versionId)
@@ -61,6 +61,17 @@ class TestCollectionSvc extends GroovyTestCase {
     }
 
 
+
+    @Test testCollectionList() {
+        File caps = new File("testdata/unittests-capabilities.xml")
+        assert (caps.exists())
+        CollectionService svc = new CollectionService(caps, apiKey)
+        assert svc
+        System.err.println "CONFIG IS " + svc.citeConfig
+    }
+
+
+
     @Test void testPropertyRetrieval() {
         File caps = new File("testdata/unittests-capabilities.xml")
         assert (caps.exists())
@@ -88,7 +99,7 @@ class TestCollectionSvc extends GroovyTestCase {
         assert svc
         CiteUrn tstId = new CiteUrn("urn:cite:paleog:greek.op1")
         CiteUrn collUrn = new CiteUrn("urn:cite:paleog:greek")
-        svc.getValidReff(tstId)
-        svc.getValidReff(collUrn)
+        svc.getValidReffReply(tstId)
+        svc.getValidReffReply(collUrn)
     }
 }
