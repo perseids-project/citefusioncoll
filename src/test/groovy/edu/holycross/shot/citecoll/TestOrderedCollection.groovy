@@ -36,6 +36,12 @@ class TestOrderedCollection extends GroovyTestCase {
 
         CiteUrn orderedUrn = new CiteUrn("urn:cite:hmt:msA.1r")
         System.err.println "PREV-NEXT: " + svc.getPrevNextReply(orderedUrn)
+
+        System.err.println "CONFIG:  " + svc.citeConfig
+        svc.citeConfig.keySet().each  {  k ->
+            System.err.println "\tkey: " + k
+        }
+
     }
 
     @Test void testPrevNextReplies() {
