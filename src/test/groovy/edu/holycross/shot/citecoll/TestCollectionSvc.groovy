@@ -12,6 +12,8 @@ class TestCollectionSvc extends GroovyTestCase {
    String apiKey =  System.properties['apiKey']
     groovy.xml.Namespace citens = new groovy.xml.Namespace("http://chs.harvard.edu/xmlns/cite")
 
+
+
     @Test void testGetObject() {
         File caps = new File("testdata/unittests-capabilities.xml")
         assert (caps.exists())
@@ -27,7 +29,7 @@ class TestCollectionSvc extends GroovyTestCase {
         // Version and object request alike should produce only
         // one match.
         int expectedSize = 1
-        System.err.println "getObjStr " + getObjStr
+        
         def objRoot = new XmlParser().parseText(getObjStr)
         assert  objRoot[citens.reply][citens.citeObject].size() == expectedSize
         
@@ -38,14 +40,19 @@ class TestCollectionSvc extends GroovyTestCase {
         // Object-level query still gives you full version-level URN:
         assert obj.'@urn' == vers.'@urn'
 
+
+
+
     }
 
 
     @Test void testGetCaps() {
         File caps = new File("testdata/unittests-capabilities.xml")
         CollectionService svc = new CollectionService(caps, apiKey)
-        System.err.println svc.getCapsReply()
+        //System.err.println svc.getCapsReply()
         // set up a canned Caps file to XML compare to reply ...
+
+
     }
 
     @Test void testCollectionSizeReply() {
@@ -56,21 +63,24 @@ class TestCollectionSvc extends GroovyTestCase {
 
 
         CiteUrn tstId = new CiteUrn("urn:cite:paleog:greek.op1")
-        System.err.println "SIZE:  " + svc.getCollSizeReply(tstId)
-        
+        //System.err.println "SIZE:  " + svc.getCollSizeReply(tstId)
     }
 
 
-
-    @Test testCollectionList() {
+    @Test void testCollectionList() {
         File caps = new File("testdata/unittests-capabilities.xml")
         assert (caps.exists())
         CollectionService svc = new CollectionService(caps, apiKey)
         assert svc
-        System.err.println "CONFIG IS " + svc.citeConfig
+        System.err.println "TEST COLL LIST:  CONFIG IS " + svc.citeConfig
+
+        svc.citeConfig.keySet().each  {  k ->
+            System.err.println "\tkey: " + k + "-> " + svc.citeConfig[k]
+        }
     }
 
 
+/*
 
     @Test void testPropertyRetrieval() {
         File caps = new File("testdata/unittests-capabilities.xml")
@@ -102,4 +112,5 @@ class TestCollectionSvc extends GroovyTestCase {
         svc.getValidReffReply(tstId)
         svc.getValidReffReply(collUrn)
     }
+*/
 }
