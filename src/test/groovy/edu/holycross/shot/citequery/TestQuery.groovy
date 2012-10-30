@@ -1,6 +1,7 @@
 package edu.holycross.shot.citequery
 
 import edu.harvard.chs.cite.CiteUrn
+import edu.holycross.shot.citecoll.CollectionService
 
 import static org.junit.Assert.*
 import org.junit.Test
@@ -14,6 +15,7 @@ class TestQuery extends GroovyTestCase {
 
     File testCapsFile = new File("testdata/capabilities.xml")
     File statesCaps = new File("testdata/states-test-caps.xml")
+    File opCaps = new File("testdata/op-caps.xml")
 
     @Test public void testPropertyPassing() {
         /* Test that configuration of your installation includes
@@ -24,50 +26,56 @@ class TestQuery extends GroovyTestCase {
     }
 
     @Test public void testConstructor() {
-        Query q = new Query(testCapsFile, apiKey)
+        CollectionService svc = new CollectionService(testCapsFile, apiKey)
+        Query q = new Query(svc)
         assert q
     }
 
 
     @Test public void testIdProperty() {
-        Query q = new Query(testCapsFile, apiKey)
+        CollectionService svc = new CollectionService(testCapsFile, apiKey)
+        Query q = new Query(svc)
         CiteUrn urn = new CiteUrn("urn:cite:rage:ptolgeo")
         String expectedPropertyName = "URN"
-        assert q.getCanonicalIdProperty(urn) == expectedPropertyName
+        assert q.svc.getCanonicalIdProperty(urn) == expectedPropertyName
     }
 
     @Test public void testClassName() {
-        Query q = new Query(testCapsFile, apiKey)
+        CollectionService svc = new CollectionService(testCapsFile, apiKey)
+        Query q = new Query(svc)
+
         String expectedGoogleId = "1GC4S75Vz9GI6sYcLXGWTvgrK7-usKB_eU9MGoGQ"
-        // two signatures
-        assert q.getClassName("ptolgeo") == expectedGoogleId
         CiteUrn urn = new CiteUrn("urn:cite:rage:ptolgeo")
-        assert q.getClassName(urn) == expectedGoogleId
+        assert q.svc.getClassName(urn) == expectedGoogleId
 
     }
 
     @Test public void testPropListMethods() {
-        Query q = new Query(testCapsFile, apiKey)
+        CollectionService svc = new CollectionService(testCapsFile, apiKey)
+        Query q = new Query(svc)
+
         String expectedString = "'URN', 'label', 'PleiadesId'"
         assert q.listPropNames("ptolgeo") == expectedString
 
         def expectedList = ["URN", "label", "PleiadesId"]
-        assert q.getPropNameList("ptolgeo") == expectedList
+        assert q.svc.getPropNameList("ptolgeo") == expectedList
     }
 
     @Test public void testSimpleQuery() {
-        Query q = new Query(testCapsFile, apiKey)
-        String collName = "ptolgeo"
+        CollectionService svc = new CollectionService(testCapsFile, apiKey)
+        Query q = new Query(svc)
+
         String prop = "URN"
         String val = "urn:cite:rage:ptolgeo.pt-ll-1"
+        CiteUrn collUrn = new CiteUrn(val)
 
         def triples = []
         def defaultOp = [prop, val]
         triples.add(defaultOp)
 
-        def resList = q.getResults(collName, triples)
+        def resList = q.getResults(collUrn, triples)
         def res = resList[0]
-        def propNames = q.getPropNameList(collName)
+        def propNames = q.svc.getPropNameList(collUrn)
         assert propNames[0] == prop
         assert res[0] == val
 
@@ -75,24 +83,50 @@ class TestQuery extends GroovyTestCase {
 
 
     @Test public void testStates() {
-        Query q = new Query(statesCaps, apiKey)
-        String coll = "states"
+        CollectionService svc = new CollectionService(statesCaps, apiKey)
+        Query q = new Query(svc)
+
+        CiteUrn collUrn = new CiteUrn("urn:cite:usstates:states")
+
         String val = "Alabama"
         String prop = "State"
         def explicitOp = [prop, val, "="]
         def triples = []
         triples.add(explicitOp)
         
-        println "${q.getResults(coll,triples)}"
-        assert q.getResults(coll, []).size() == 50
+        //println "${q.getResults(coll,triples)}"
+        assert q.getResults(collUrn, []).size() == 50
 
 
-        print "A's starting: " +   q.getResults(coll,[[ 'State', 'A', ' STARTS WITH '], ['Population, 2000 census', '2000000', '>']])
+        //print "A's starting: " +   q.getResults(coll,[[ 'State', 'A', ' STARTS WITH '], ['Population, 2000 census', '2000000', '>']])
 
 
     }
+/*
 
-    @Test public void testMatchQuery() {
+    @Test public void testForImgMap() {
+        Query q = new Query(opCaps, apiKey)
+        String img = "urn:cite:fufolioimg:AthPol.131_3v_1_col_13"
+        String prop = "Description"
+        String imgProp = "ImageUrn"
+        String collName = "greek"
+
+
+        
+        def tList = []
+        def imgTriple = [imgProp, img]
+        tList.add(imgTriple)
+
+        
+//        def resultList = q.getResults(collName, tList)
+
+        //println q.getValue(collName,prop,resultList[0])
+    }
+*/
+
+//    @Test public void testMatchQuery() {
+
+/*
         Query q = new Query(testCapsFile, apiKey)
         String collName = "ptolgeo"
         String val = "urn:cite:rage:ptolgeo.pt-ll-2"
@@ -107,7 +141,7 @@ class TestQuery extends GroovyTestCase {
         def resList = q.getResults(collName, tList)
         assert resList.size() > 10
 
-        println "CLAS OF RESL: " + resList.getClass() + " of size " + resList.size()
+        //println "CLAS OF RESL: " + resList.getClass() + " of size " + resList.size()*/
 /*
         def res = resList[0]
         def propNames = q.getPropNameList(collName)
@@ -115,8 +149,7 @@ class TestQuery extends GroovyTestCase {
             println "${p} :  ${res[i]}"
         }
 */
-    }
-
+//    }
 
 
 }
