@@ -1,0 +1,66 @@
+import groovy.xml.MarkupBuilder
+StringWriter writer = new StringWriter()
+MarkupBuilder home = new MarkupBuilder(writer)
+
+
+home.html {
+    head {
+        title("CITE Collections Query Extension")
+        link(type : "text/css", rel : "stylesheet", href : "cts.css", title : "CSS stylesheet")
+        p('class' : "menu") {
+              mkp.yield "CITE Collections service: "
+              a (href : "home", "home")
+          }
+    }
+    body {
+        div(id : "header") 
+        div {
+            h1("CITE Collections Query Extension")
+            p("Currently in development: ")
+            ul {
+                li("count")
+                li("aggregate")
+            }
+
+            p {
+                mkp.yield("The examples below use the Greek paleography collection of the Open Paleography project, with URN ")
+                code("urn:cite:op:greek")
+            }
+            p("Available for testing:")
+            
+            h2("List objects")
+            p("NB: ")
+            ul {
+                li ("you may include" )
+            }
+            form(action : "list", method : "GET")  {
+                input(name : "coll", value : "urn:cite:op:greek")
+                input(name : "prop", value : "Description")
+                input(name : "Description", value : "alpha")
+                input (type: "submit", value : "Submit")
+            }
+            
+
+            h2("Show object")
+            p("As currently implemented, this is little more than an alternate syntax for the CITE Collection GetObject request.")
+            p("It is included here because it could be a useful function to modify for one-off applications.")
+
+
+            h2("Visual aggregate")
+
+            p("In a collection with an image property, you can use this method to get a list of values to map onto image RoIs.")
+
+            p("Supply a URN identifying a collection; returns the URN identifying the first object in the collection.")
+            form(action : "imgmap", method : "GET")  {
+                input(name : "coll", value : "urn:cite:op:greek")
+                input(name: "img", value : "urn:cite:fufolioimg:AthPol.131_3v_1_col_13")
+                input(name: "map", value: "Description")
+                input(name: "imgProp", value: "ImageUrn")
+                input (type: "submit", value : "Submit")
+            }
+
+        }
+    }
+}
+
+println writer.toString()
