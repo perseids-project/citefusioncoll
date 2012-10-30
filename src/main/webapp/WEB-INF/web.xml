@@ -43,6 +43,11 @@
         <url-pattern>/testPage</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>GroovyServlet</servlet-name>
+        <url-pattern>/testQuery</url-pattern>
+    </servlet-mapping>
+
 
     <welcome-file-list>
         <welcome-file>home</welcome-file>

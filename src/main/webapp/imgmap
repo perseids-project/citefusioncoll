@@ -99,17 +99,28 @@ if ((check.size() > 0)) {
         CiteUrn collUrn = new CiteUrn(params['coll'])
         CiteUrn imgUrn = new CiteUrn(params['img'])
         
-        def agg = q.getVisualAggregate(collUrn, imgUrn, params['map'], params['imgProp'])
+        // should derive this by default if only one image property in Collection
+        String imgProperty = params['imgProp']
+
+        def agg = q.getVisualAggregate(collUrn, imgUrn, params['map'], imgProperty)
         
         StringWriter writer = new StringWriter()
         MarkupBuilder xml = new MarkupBuilder(writer)
-        xml.VisAgg {
-            agg.each { pr ->
-                def val =  pr[0]
-                def roi = pr[1]
-                pair {
-                    value ("${val}")
-                    image ("${roi}")
+        xml.imgmap(xmlns: "http://shot.holycross.edu/xmlns/citequery") {
+            request {
+                img ("${imgUrn}")
+                coll ("${collUrn}")
+                map("${params['map']}")
+                imgProp("${imgProperty}")
+            }
+            reply {
+                agg.each { pr ->
+                    def val =  pr[0]
+                    def roi = pr[1]
+                    pair {
+                        img ("${val}")
+                        property ("${roi}")
+                    }
                 }
             }
         }
