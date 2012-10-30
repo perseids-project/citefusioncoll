@@ -292,6 +292,37 @@ class CollectionService {
     }
 
 
+
+
+    def getPropLabelList(CiteUrn collectionUrn) {
+        return getPropLabelList(collectionUrn.getCollection())
+    }
+
+    def getPropLabelList(String collectionName) {
+        def config =  this.citeConfig[collectionName]
+        def propList = []
+        config['properties'].each { p ->
+            propList.add(p['label'])
+        }
+        return propList
+    }
+
+
+
+    def getPropTypeList(CiteUrn collectionUrn) {
+        return getPropTypeList(collectionUrn.getCollection())
+    }
+
+    def getPropTypeList(String collectionName) {
+        def config =  this.citeConfig[collectionName]
+        def propList = []
+        config['properties'].each { p ->
+            propList.add(p['type'])
+        }
+        return propList
+    }
+
+
     String getValue(String collectionName, String prop, Object rowList) {
         int idx = -1
         getPropNameList(collectionName).eachWithIndex { p, i ->

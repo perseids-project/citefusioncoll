@@ -1,6 +1,8 @@
 // HORRIFIC error in groovy:  parameter named 'request'
 // is lost!
 
+
+import edu.holycross.shot.citecoll.CollectionService
 import edu.holycross.shot.citequery.Query
 import edu.harvard.chs.cite.CiteUrn
 import groovy.xml.MarkupBuilder
@@ -34,7 +36,7 @@ boolean urnSyntaxOk(String urnStr) {
         return false
     }
 }
-
+/*
 def errorMsg =  { msg ->
     StringWriter writer = new StringWriter()
     MarkupBuilder xml = new MarkupBuilder(writer)
@@ -44,38 +46,96 @@ def errorMsg =  { msg ->
     }
     println writer.toString()    
 }
-
+*/
 
 String checkRequest() {
-    if (!params['urn']) {
-        return  "No 'urn' parameter given."
-    }
-    String urn =   params['urn']
-    if (urnSyntaxOk(urn)) {
-        return "OK"
-    } else {
-        return "Bad URN syntax:  ${params['urn']}"
-    }
+    return "OK" // ....
 }
 
 
 // SCRIPT:
 // 1. Validate request form.
-def checkReq = checkRequest()
-if (!(checkReq == "OK")) {
-    errorMsg(checkReq)
-} else {
-    // CHECK FOR caps file apram
-    // 
+// def checkReq = checkRequest()
+//if (!(checkReq == "OK")) {
+//    errorMsg(checkReq)
+//} else {
+
+if ( 1 + 1 == 2) {
     File caps = getCapsFile()
     if (! caps) { 
         errorMsg("Could not find capabilities file ${params['config']}")
     } else {
-        Query q = new Query(caps,apiKey)
-        println "<reply>Succeeded in making query object ${q}</reply>"
+        CollectionService svc = new CollectionService(caps,apiKey)
+        Query q = new Query(svc)
+        
+        CiteUrn collUrn = new CiteUrn(params['coll'])
 
+        def msg
+        // get all props...
+        def propList = []
+        def triples = []
+        if (params['prop'] instanceof java.lang.String) {
+            pName = params["prop"]
+            propList.add(pName)
+            String rawVal = params[pName]
+            def valParts = rawVal.split(":")
+            def triple
+            if (valParts.size() == 2) {
+                triple = [pName, valParts[0], valParts[1]]
+            } else  {
+                triple = [pName, valParts[0]]
+            }
+            triples.add(triple)
 
-    } 
+        } else {
+            params['prop'].each { pName ->
+                propList.add(pName)
+                String rawVal = params[pName]
+                def valParts = rawVal.split(":")
+                msg = "${rawVal} -> ${valParts}"
+                def triple
+                if (valParts.size() == 2) {
+                    triple = [pName, valParts[0], valParts[1]]
+                } else  {
+                    triple = [pName, valParts[0]]
+                }
+                triples.add(triple)
+            }
+        }
+        // get metadta about collection
+        String canonicalId = q.svc.getCanonicalIdProperty(collUrn)
+        def propertyNames = q.svc.getPropNameList(collUrn)
+        def propertyTypes = q.svc.getPropTypeList(collUrn)
+        def propertyLabels = q.svc.getPropLabelList(collUrn)
+
+        StringWriter writer = new StringWriter()
+        MarkupBuilder xml = new MarkupBuilder(writer)
+        xml.list(xmlns: "http://shot.holycross.edu/xmlns/citequery") {
+            request {
+                p("inject request info here...")
+                trips(triples)
+                valsplit(msg)
+            }
+            reply {
+                def config = q.svc.citeConfig[collUrn.getCollection()]
+                def resultList = q.getResults(collUrn,triples)
+                //count ("${resultList.size()}")
+                resultList.each { r ->
+                    def urnVal = q.svc.getValue(collUrn.getCollection(),canonicalId,r)
+                    citeObject(urn: urnVal) {
+                        r.eachWithIndex { rec, idx ->
+                            if (propertyNames[idx] != canonicalId) {
+                                citeProperty (name : propertyNames[idx], label : propertyLabels[idx],  type: propertyTypes[idx], "${rec}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        println writer.toString()    
+
+    }
     // if capsfile
-} 
+//} 
 // if request ok
+}
