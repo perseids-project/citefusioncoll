@@ -268,7 +268,29 @@ class CollectionService {
     // end getCount
 
 
+    /* utils */
 
+    /* get ordered list of prop names */
+    def getPropNameList(CiteUrn collectionUrn) {
+        return getPropNameList(collectionUrn.getCollection())
+    }
+    def getPropNameList(String collectionName) {
+        def config =  this.citeConfig[collectionName]
+        def propList = []
+        config['properties'].each { p ->
+            propList.add(p['name'])
+        }
+        return propList
+    }
+
+
+    String getValue(String collectionName, String prop, Object rowList) {
+
+        getPropNameList(collectionName).eachWithIndex { p, i ->
+            println "${i}:  ${p}"
+        }
+
+    }
 
 
 
