@@ -1,0 +1,81 @@
+// HORRIFIC error in groovy:  parameter named 'request'
+// is lost!
+
+import edu.holycross.shot.citequery.Query
+import edu.harvard.chs.cite.CiteUrn
+import groovy.xml.MarkupBuilder
+
+response.setContentType("text/xml; charset=UTF-8")
+request.setCharacterEncoding("UTF-8")
+response.setHeader( "Access-Control-Allow-Origin", "*")
+
+String apiKey = "@apiKey@"
+
+
+def getCapsFile = {
+    File capsFile
+    String capsFileName = "capabilities.xml"
+    if (params['config']) {
+        capsFileName = params['config']
+    }
+    try {
+        capsFile = new File(context.getRealPath("/configs") + "/" + capsFileName )
+        capsFile
+    } catch (Exception e) {
+        null
+    }
+}
+
+boolean urnSyntaxOk(String urnStr) {
+    try {
+        CiteUrn urn = new CiteUrn (urnStr)
+        return true
+    } catch (Exception e) {
+        return false
+    }
+}
+
+def errorMsg =  { msg ->
+    StringWriter writer = new StringWriter()
+    MarkupBuilder xml = new MarkupBuilder(writer)
+    xml.CiteQueryError {
+        errorCode("1")
+        description("${msg}")
+    }
+    println writer.toString()    
+}
+
+
+String checkRequest() {
+    if (!params['urn']) {
+        return  "No 'urn' parameter given."
+    }
+    String urn =   params['urn']
+    if (urnSyntaxOk(urn)) {
+        return "OK"
+    } else {
+        return "Bad URN syntax:  ${params['urn']}"
+    }
+}
+
+
+// SCRIPT:
+// 1. Validate request form.
+def checkReq = checkRequest()
+if (!(checkReq == "OK")) {
+    errorMsg(checkReq)
+} else {
+    // CHECK FOR caps file apram
+    // 
+    File caps = getCapsFile()
+    if (! caps) { 
+        errorMsg("Could not find capabilities file ${params['config']}")
+    } else {
+        Query q = new Query(caps,apiKey)
+        println "<reply>Succeeded in making query object ${q}</reply>"
+
+
+    } 
+    // if capsfile
+} 
+// if request ok
