@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="CiteCollection.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+
+<collectionService
+    xmlns="http://chs.harvard.edu/xmlns/cite"
+    xmlns:cite="http://chs.harvard.edu/xmlns/cite">
+        <citeCollection
+            canonicalId="URN"
+            class="1Yt3tSWh2C5-t9y5-3I9SauZhljUgmmzoPa_6xQI"
+            name="greek"
+            description="Open Paleography project:  Greek paleography">
+            <namespaceMapping
+                abbr="op"
+                fullValue="http://shot.holycross.edu/datans/openpaleography"/>
+            <citeProperty
+                label="URN"
+                name="URN"
+                type="citeurn"/>
+            <citeProperty
+                label="Image citation"
+                name="ImageUrn"
+                type="citeimg"/>
+            <citeProperty name="PhysicalArtifact"
+               label="Physical artifact"
+                 type="citeurn"/>
+            <citeProperty name="TextUrn"
+                 label="Text URN"
+                 type="ctsurn"></citeProperty>
+
+            <citeProperty
+                label="Description"
+                name="Description"
+                type="string"/>
+            <citeProperty
+                label="Type of feature"
+                name="RepertoryType"
+                type="string">
+                <valueList>
+                    <value>letter</value>
+                    <value>number</value>
+                    <value>abbreviation</value>
+                    <value>ligature</value>
+                    <value>punctuation</value>
+                </valueList>
+            </citeProperty>
+
+            <citeProperty
+                label="Visual class"
+                name="VisualClass"
+                type="string">
+                <valueList>
+		  <value>uncial</value>
+		  <value>cursive</value>
+                  <value>suspension</value>
+                  <value>horizontal</value>
+                  <value>vertical</value>
+                  <value>slanting</value>
+                  <value>sinusoid</value>
+                  <value>superscription</value>
+                  <value>discontinuous</value>
+                  <value>monograms</value>
+                  <value>symbols</value>
+                  <value>brachigraphy</value>
+                </valueList>
+            </citeProperty>
+            
+            <citeProperty name="Contributor"
+                 label="Contributor"
+                 type="string"></citeProperty>
+
+        </citeCollection>
+
+
+
+        <citeCollection
+            canonicalId="URN"
+            class="1KDP3qD9bdstrGT2LGY7-W6Qm0Y7ts1g3gERw5jA"
+            name="latin"
+            description="Open Paleography project:  Latin paleography">
+            <namespaceMapping
+                abbr="op"
+                fullValue="http://shot.holycross.edu/datans/openpaleography"/>
+            <citeProperty
+                label="URN"
+                name="URN"
+                type="citeurn"/>
+            <citeProperty
+                label="Image citation"
+                name="ImageUrn"
+                type="citeimg"/>
+            <citeProperty name="PhysicalArtifact"
+               label="Physical artifact"
+                 type="citeurn"/>
+            <citeProperty name="TextUrn"
+                 label="Text URN"
+                 type="ctsurn"></citeProperty>
+
+            <citeProperty
+                label="Description"
+                name="Description"
+                type="string"/>
+            <citeProperty
+                label="Type of feature"
+                name="RepertoryType"
+                type="string">
+                <valueList>
+                    <value>letter</value>
+                    <value>number</value>
+                    <value>abbreviation</value>
+                    <value>ligature</value>
+                    <value>punctuation</value>
+                </valueList>
+            </citeProperty>
+
+            <citeProperty
+                label="Visual class"
+                name="VisualClass"
+                type="string">
+                <valueList>
+		  <value>uncial</value>
+		  <value>cursive</value>
+                  <value>suspension</value>
+                  <value>horizontal</value>
+                  <value>vertical</value>
+                  <value>slanting</value>
+                  <value>sinusoid</value>
+                  <value>superscription</value>
+                  <value>discontinuous</value>
+                  <value>monograms</value>
+                  <value>symbols</value>
+                  <value>brachigraphy</value>
+                </valueList>
+            </citeProperty>
+            
+            <citeProperty name="Contributor"
+                 label="Contributor"
+                 type="string"></citeProperty>
+
+        </citeCollection>
+    </collectionService>

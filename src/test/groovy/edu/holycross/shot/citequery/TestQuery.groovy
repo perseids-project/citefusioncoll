@@ -93,36 +93,33 @@ class TestQuery extends GroovyTestCase {
         def explicitOp = [prop, val, "="]
         def triples = []
         triples.add(explicitOp)
-        
-        //println "${q.getResults(coll,triples)}"
+        assert q.getResults(collUrn,triples).size() == 1
+
+        // There are 50 states:
         assert q.getResults(collUrn, []).size() == 50
-
-
-        //print "A's starting: " +   q.getResults(coll,[[ 'State', 'A', ' STARTS WITH '], ['Population, 2000 census', '2000000', '>']])
+        // 4 have names starting with 'A'
+        assert  q.getResults(collUrn,[[ 'State', 'A', ' STARTS WITH ']]).size() == 4
+        // But 1 of those is very tiny in population
+        assert  q.getResults(collUrn,[[ 'State', 'A', ' STARTS WITH '], ['Population, 2000 census', '2000000', '>']]).size() == 3
 
 
     }
-/*
+
 
     @Test public void testForImgMap() {
-        Query q = new Query(opCaps, apiKey)
-        String img = "urn:cite:fufolioimg:AthPol.131_3v_1_col_13"
+        CollectionService svc = new CollectionService(opCaps, apiKey)
+        Query q = new Query(svc)
+
+        CiteUrn collUrn = new CiteUrn("urn:cite:op:greek")
+        CiteUrn imgUrn = new CiteUrn("urn:cite:fufolioimg:AthPol.131_3v_1_col_13")
+        // add test for urn with roi
         String prop = "Description"
         String imgProp = "ImageUrn"
-        String collName = "greek"
 
+        println "Vis agg = " +    q.getVisualAggregate(collUrn,imgUrn,prop,imgProp)
 
-        
-        def tList = []
-        def imgTriple = [imgProp, img]
-        tList.add(imgTriple)
-
-        
-//        def resultList = q.getResults(collName, tList)
-
-        //println q.getValue(collName,prop,resultList[0])
     }
-*/
+
 
 //    @Test public void testMatchQuery() {
 
