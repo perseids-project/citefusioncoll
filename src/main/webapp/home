@@ -13,7 +13,7 @@ home.html {
         div(id : "header") 
         div {
             h1("CITE Collections interface to data in Google Fusion Tables")
-            p("Supply your own home page here.")
+            p("(Supply your own home page here.)")
             
             p {
                 mkp.yield     "Quick README including "
@@ -24,9 +24,20 @@ home.html {
                 mkp.yield "License: "
                 a(href : "gpl-3.0.txt","GPL 3")
             }
+
+            h2("The CITE Collection API")
+            p ("This service implements the CITE Collection API.")
             p {
-                mkp.yield "Page of forms to test the "
-                a (href : "testPage", "CITE Collections API")
+                mkp.yield "You can use the forms on "
+                a (href : "testPage", "this page")
+                mkp.yield " to test API requests."
+            }
+            h2("CITE Query Extension")
+            p("This service includes an experimental extension to CITE Collections for querying collections in a variety of ways.")
+            p {
+                mkp.yield "Use the forms on "
+                a (href : "testQuery", "this page")
+                mkp.yield " to test the CITE Query Extension requests."
             }
         }
     }
