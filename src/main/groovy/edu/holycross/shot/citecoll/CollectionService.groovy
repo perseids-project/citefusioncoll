@@ -34,13 +34,19 @@ class CollectionService {
 
 
     /** Constructor parses capabilities file */
-    CollectionService(File capsFile, String googleKey) {
+    CollectionService(File capsFile, String googleKey) 
+    throws Exception
+    {
         this.capabilitiesFile = capsFile
         this.apiKey = googleKey
         
         this.citeConfig = configureFromFile(this.capabilitiesFile)
         // Should parse caps file against rng schema, and
         // throw exception if could not parse caps file...
+
+        if (citeConfig.keySet().size() == 0) {
+            throw new Exception("CollectionService: could not configure any collections from capabilties file ${capsFile}")
+        }
     }
 
 
@@ -65,7 +71,9 @@ class CollectionService {
 
 
         def configuredCollections = [:]
+
         root[citens.citeCollection].each { c ->
+
             def propertyList = []
             c[citens.citeProperty].each { cp ->
                 def prop = [:]
@@ -285,11 +293,17 @@ class CollectionService {
 
 
     String getValue(String collectionName, String prop, Object rowList) {
-
+        int idx = -1
         getPropNameList(collectionName).eachWithIndex { p, i ->
-            println "${i}:  ${p}"
+            if (p == prop) {
+                idx = i
+            }
         }
-
+        if (idx >= 0) {
+            return rowList[idx]
+        } else {
+            //throw exception
+        }
     }
 
 

@@ -9,6 +9,7 @@ optional param naming image property
 */
 
 import edu.holycross.shot.citecoll.CollectionService
+import edu.holycross.shot.citequery.Query
 import edu.harvard.chs.cite.CiteUrn
 import groovy.xml.MarkupBuilder
 
@@ -53,58 +54,37 @@ def errorMsg =  { msg ->
 }
 
 
-String checkRequest() {
-    params.keySet().each { paramKey ->
-        def paramList = params[paramKey]
-        if (paramList.size() > 1) {
-            return "Bad parameter set:  duplicated parameter ${paramKey}"
-        }
+def checkRequest() {
+    // Must include a 'collection' urn,
+    // an image urn, and a property to map.
+    // Also an image property if more than one image
+    // type proeprty in the collection
+    def missing = []
+    
+    if (!params['coll']) {
+        missing.add("'coll' : a Cite Collection URN")
     }
 
-    // Must include a 'req' parameter:
-    if (!params['req']) {
-        return  "No 'req' parameter given."
-    }
-    if (params['req'] == "GetCapabilities") {
-        // no other params needed
-        return "OK"
+    if (!params['img']) {
+        missing.add("'img' : a Cite URN for an image")
     }
 
-    switch (params['req']) {
-
-        // All requests require a URN parameter:
-        // Metadata requests:
-        case "GetCollectionSize":
-        case "GetValidReff":
-        // Retrieval requests:
-        case "GetObject":
-        case "GetObjectPlus":
-        // Navigation of ordered collections:
-        case "GetPrev":
-        case "GetNext":
-        case "GetPrevNextUrn":
-        case "GetLast":
-        case "GetFirst":
-
-                if (params['urn']) {
-                if (!urnSyntaxOk(params['urn'])) {
-                    return "Invalid urn syntax '" + params['urn'] + "'."
-                }
-                return "OK"
-        }
-        break
-
-        default:
-            return "Unrecognized or unimplemented request '" +  params['req'] + "'"
-        break
+    if (!params['map']) {
+        missing.add("'map' : name of a property to map")
     }
+
+    if (!params['imgProp']) {
+        missing.add("'imgProp' : name of the property with image URNs (with RoIs)")
+    }
+    return missing
 }
 
 // SCRIPT:
 // 1. Validate request form.
-def checkReq = checkRequest()
-if (!(checkReq == "OK")) {
-    errorMsg(checkReq)
+def check = checkRequest()
+
+if ((check.size() > 0)) {
+    errorMsg(check)
 } else {
     // CHECK FOR caps file apram
     // 
@@ -113,128 +93,28 @@ if (!(checkReq == "OK")) {
         errorMsg("Could not find capabilities file ${params['config']}")
     } else {
         CollectionService cs = new CollectionService(getCapsFile(), apiKey)
+        Query q = new Query(cs)
 
 
-        def citeReq = params['req']
-        switch (citeReq) {
-            case 'GetCapabilities':
-                String xslt = "citecaps.xsl"
-            if (params['withXslt']) {
-                xslt = params['withXslt']
+        CiteUrn collUrn = new CiteUrn(params['coll'])
+        CiteUrn imgUrn = new CiteUrn(params['img'])
+        
+        def agg = q.getVisualAggregate(collUrn, imgUrn, params['map'], params['imgProp'])
+        
+        StringWriter writer = new StringWriter()
+        MarkupBuilder xml = new MarkupBuilder(writer)
+        xml.VisAgg {
+            agg.each { pr ->
+                def val =  pr[0]
+                def roi = pr[1]
+                pair {
+                    value ("${val}")
+                    image ("${roi}")
+                }
             }
-            if (xslt != 'none') {
-                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            }
-            println cs.getCapsReply()
-            break
-
-            case 'GetObjectPlus':
-                String xslt = "citegop.xsl"
-            if (params['withXslt']) {
-                xslt = params['withXslt']
-            }
-            if (xslt != 'none') {
-                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            }
-            println cs.getObjectPlusReply(params['urn']) 
-            break
-
-            case 'GetObject':
-                String xslt = "citegop.xsl"
-            if (params['withXslt']) {
-                xslt = params['withXslt']
-            }
-            if (xslt != 'none') {
-                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            }
-            println cs.getObjReply(params['urn']) 
-            break
-
-            case 'GetFirst':
-                String xslt = "citegop.xsl"
-            if (params['withXslt']) {
-                xslt = params['withXslt']
-            }
-            if (xslt != 'none') {
-                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            }
-            println cs.getFirstReply(params['urn'])
-            break
+        }
+        println writer.toString()    
+    }
 
 
-            case 'GetLast':
-                String xslt = "citegop.xsl"
-            if (params['withXslt']) {
-                xslt = params['withXslt']
-            }
-            if (xslt != 'none') {
-                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            }
-            println cs.getLastReply(params['urn'])
-            break
-
-            case 'GetCollectionSize':
-                String xslt = "citecaps.xsl"
-            if (params['withXslt']) {
-                xslt = params['withXslt']
-            }
-            if (xslt != 'none') {
-                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            }
-            println cs.getCollSizeReply(params['urn'])
-            break
-
-
-            case 'GetNext':
-                String xslt = "citegop.xsl"
-            if (params['withXslt']) {
-                xslt = params['withXslt']
-            }
-            if (xslt != 'none') {
-                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            }
-            println cs.getNextReply(params['urn'])
-            break
-
-            case 'GetPrev':
-                String xslt = "citegop.xsl"
-            if (params['withXslt']) {
-                xslt = params['withXslt']
-            }
-            if (xslt != 'none') {
-                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            }
-            println cs.getPrevReply(params['urn'])
-            break
-
-
-            case 'GetPrevNextUrn':
-                String xslt = "citenavurns.xsl"
-            if (params['withXslt']) {
-                xslt = params['withXslt']
-            }
-            if (xslt != 'none') {
-                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            }
-            println cs.getPrevNextReply(params['urn'])
-            break
-
-            case 'GetValidReff':
-                String xslt = "citegvr.xsl"
-            if (params['withXslt']) {
-                xslt = params['withXslt']
-            }
-            if (xslt != 'none') {
-                println  "<?xml-stylesheet type='text/xsl' href='xslt/" + xslt + "'?>"
-            }
-            println cs.getValidReffReply(params['urn'])
-            break
-
-            default:
-                break
-        } 
-        // switch
-    } 
-    // if capsfile
-} 
-// if request ok
+}

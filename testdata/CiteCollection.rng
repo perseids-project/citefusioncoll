@@ -3,11 +3,12 @@
     datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes"
     xmlns="http://relaxng.org/ns/structure/1.0"
     xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"
-    xmlns:cite="http://chs.harvard.edu/xmlns/cite/capabilities"
+    xmlns:cite="http://chs.harvard.edu/xmlns/cite"
     xmlns:dc="http://purl.org/dc/elements/1.1">
     <start>
         <element
             name="cite:collectionService">
+            
             <oneOrMore>
                 <element
                     name="cite:citeCollection">
@@ -26,14 +27,14 @@
                             <text/>
                         </element>
                     </optional>
-                    <oneOrMore>
+                 <optional>   <oneOrMore>
                         <element
                             name="dc:creator">
                             <text/>
                         </element>
                     </oneOrMore>
                     
-                    <optional>
+                  </optional>  <optional>
                         <element
                             name="dc:coverage">
                             <text/>

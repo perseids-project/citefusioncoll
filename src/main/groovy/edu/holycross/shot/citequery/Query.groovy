@@ -57,6 +57,34 @@ class Query {
 
 
 
+
+    def getCount(CiteUrn collectionUrn, Object triples, String groupBy) {
+        return "NOT YET IMPLEMETNED"
+    }
+    def getAggregate(CiteUrn collectionUrn, Object triples, String countBy) {
+        return "NOT YET IMPLEMETNED"
+    }
+
+
+    /** 
+    * gets a list of pairs in the form value-imgroi
+    */
+    def getVisualAggregate(CiteUrn collectionUrn, CiteUrn imgUrn, String mapProperty, String imgProperty ) {
+        def results = []
+
+        def triples = []
+        def imgTriple = [imgProperty, imgUrn.toString(),  ' STARTS WITH ']
+        triples.add(imgTriple)
+        println "Use triples " + triples
+        String collName = collectionUrn.getCollection()
+        getResults(collectionUrn, triples).each { r ->
+            def mapping = [svc.getValue(collName,mapProperty,r),  svc.getValue(collName,imgProperty,r) ]
+            results.add(mapping)
+        }
+        return results
+    }
+
+
     // MODIFY TO CONSULT INFO ON TYPE IN ORDER TO QUOTE VALUE OR NOT APPROPRIATELY
 //    def getResults(String collectionName, String propName, String propValue, String op) {
 

@@ -49,6 +49,13 @@ class TestCollectionSvc extends GroovyTestCase {
     @Test void testGetCaps() {
         File caps = new File("testdata/unittests-capabilities.xml")
         CollectionService svc = new CollectionService(caps, apiKey)
+
+
+        File opCaps = new File("testdata/op-caps.xml")
+        CollectionService opSvc = new CollectionService(opCaps, apiKey)
+        assert opSvc.citeConfig.keySet().size() == 2
+
+
         //System.err.println svc.getCapsReply()
         // set up a canned Caps file to XML compare to reply ...
 
@@ -72,10 +79,10 @@ class TestCollectionSvc extends GroovyTestCase {
         assert (caps.exists())
         CollectionService svc = new CollectionService(caps, apiKey)
         assert svc
-        System.err.println "TEST COLL LIST:  CONFIG IS " + svc.citeConfig
+       // System.err.println "TEST COLL LIST:  CONFIG IS " + svc.citeConfig
 
         svc.citeConfig.keySet().each  {  k ->
-            System.err.println "\tkey: " + k + "-> " + svc.citeConfig[k]
+//            System.err.println "\tkey: " + k + "-> " + svc.citeConfig[k]
         }
     }
 
