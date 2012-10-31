@@ -3,9 +3,13 @@
 
 
 /*
-required urn param
-required prop param
-optional param naming image property
+Four required parameters:
+required collection urn param
+required img urn param
+required prop param for property to map
+param naming image property to be made optional for Collections with only
+one image-type property, but for now is required
+
 */
 
 import edu.holycross.shot.citecoll.CollectionService
@@ -104,9 +108,15 @@ if ((check.size() > 0)) {
 
         def agg = q.getVisualAggregate(collUrn, imgUrn, params['map'], imgProperty)
         
-        StringWriter writer = new StringWriter()
-        MarkupBuilder xml = new MarkupBuilder(writer)
-        xml.imgmap(xmlns: "http://shot.holycross.edu/xmlns/citequery") {
+//        StringWriter writer = new StringWriter()
+//        MarkupBuilder xml = new MarkupBuilder(writer)
+        def bldr = new groovy.xml.StreamingMarkupBuilder().bind {
+        //BAD:  xml.yieldUnescaped("<?xml-stylesheet type='text/xsl' href='xslt/imgmap.xsl'?>")
+//        xml.imgmap(xmlns: "http://shot.holycross.edu/xmlns/citequery") {
+
+                mkp.pi("xml-stylesheet":[type : "text/xsl", href : "xslt/imgmap.xsl"])
+
+                imgmap(xmlns: "http://shot.holycross.edu/xmlns/citequery") {
             request {
                 img ("${imgUrn}")
                 coll ("${collUrn}")
@@ -124,7 +134,9 @@ if ((check.size() > 0)) {
                 }
             }
         }
-        println writer.toString()    
+    }
+//        println writer.toString()    
+        println bldr
     }
 
 

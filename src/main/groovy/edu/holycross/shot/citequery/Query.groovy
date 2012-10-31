@@ -75,7 +75,7 @@ class Query {
         def triples = []
         def imgTriple = [imgProperty, imgUrn.toString(),  ' STARTS WITH ']
         triples.add(imgTriple)
-        println "Use triples " + triples
+        //println "Use triples " + triples
         String collName = collectionUrn.getCollection()
         getResults(collectionUrn, triples).each { r ->
             def mapping = [svc.getValue(collName,mapProperty,r),  svc.getValue(collName,imgProperty,r) ]
