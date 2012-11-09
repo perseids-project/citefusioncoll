@@ -6,14 +6,19 @@ MarkupBuilder home = new MarkupBuilder(writer)
 home.html {
     head {
         title("CITE Collections Query Extension")
-        link(type : "text/css", rel : "stylesheet", href : "cts.css", title : "CSS stylesheet")
+        link(type : "text/css", rel : "stylesheet", href : "html-ctskit/ctskit/css/normalize.css", title : "CSS stylesheet")
+        link(type : "text/css", rel : "stylesheet", href : "html-ctskit/ctskit/css/simple.css", title : "CSS stylesheet")
+        link(type : "text/css", rel : "stylesheet", href : "html-ctskit/ctskit/css/citeCollection.css", title : "CSS stylesheet")
+        link(type : "text/css", rel : "stylesheet", href : "html-ctskit/ctskit/css/tei.css", title : "CSS stylesheet")
         p('class' : "menu") {
               mkp.yield "CITE Collections service: "
               a (href : "home", "home")
           }
     }
     body {
-        div(id : "header") 
+        div('id' : "header") { 
+        	p(" ")
+        }
         div {
             h1("CITE Collections Query Extension")
             p("Currently in development: ")
@@ -32,9 +37,9 @@ home.html {
             p("See accompanying notes on query syntax to make sense of this. ")
         
             form(action : "list", method : "GET")  {
-                input(name : "coll", value : "urn:cite:op:greek")
-                input(name : "prop", value : "Description")
-                input(name : "Description", value : "alpha")
+                input(name : "coll", value : "urn:cite:fgr21:jacoby")
+                input(name : "prop", value : "attributed_to")
+                input(name : "attributed_to", value : "Istros")
                 input (type: "submit", value : "Submit")
             }
             
@@ -50,10 +55,10 @@ home.html {
 
             p("Supply a URN identifying a collection; returns the URN identifying the first object in the collection.")
             form(action : "imgmap", method : "GET")  {
-                input(name : "coll", value : "urn:cite:op:greek")
-                input(name: "img", value : "urn:cite:fufolioimg:AthPol.131_3v_1_col_13")
-                input(name: "map", value: "Description")
-                input(name: "imgProp", value: "ImageUrn")
+                input(name : "coll", value : "urn:cite:botcar:sloane")
+                input(name: "img", value : "urn:cite:fufolioimg:Caroliniana.Catesby_HS212_007_0504")
+                input(name: "map", value: "scientificName")
+                input(name: "imgProp", value: "folioImageROI")
                 input (type: "submit", value : "Submit")
             }
 
