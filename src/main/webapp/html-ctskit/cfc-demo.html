@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>CITE/CTS Demo (Using Local Files)</title>
+	
+	<!-- COPY FROM HERE... -->
+		
+	<!-- CHS css -->
+	<link href="ctskit/css/normalize.css" media="screen" rel="stylesheet" type="text/css" ></link>
+	<link href="ctskit/css/simple.css" media="screen" rel="stylesheet" type="text/css"></link>
+	<link href="ctskit/css/tei.css" media="screen" rel="stylesheet" type="text/css"></link>
+	<link href="ctskit/css/citeCollection.css" media="screen" rel="stylesheet" type="text/css"></link>
+	
+	<!-- Everyone uses JQuery -->
+	<script src="ctskit/js/jquery-1.7.2.min.js" type="text/javascript" ></script>
+
+	<!-- Sarissa Javascript (for doing xslt stuff) -->	
+	<script src="ctskit/js/sarissa/sarissa-compressed.js" type="text/javascript"></script>
+	<script src="ctskit/js/sarissa/sarissa_ieemu_xpath-compressed.js" type="text/javascript"></script>
+	
+	<!-- CHS Javascript -->
+	<script src="ctskit/js/cite-cts-kit.js" type="text/javascript" ></script>
+	
+	<!-- User-defined variables -->
+    <script type="text/javascript">
+    
+	    /* If a URI is in http://... format, the scripts will happily use that; if you have a 
+    	   "bare" URN, the variable below will be used to construct a service-request. One consequence
+    		of this: with http-uri's you can mix and match data from different services of the same type; 
+    		with URNs, all URNs must be served from the services specified below.
+    	*/
+    
+    	/* Text Things */
+    	var textElementClass = "cts-text";
+    	// var pathToXSLT = "http://folio.furman.edu/html-ctskit/ctskit/xsl/chs-gp.xsl";
+    	var pathToXSLT = "ctskit/xsl/chs-gp.xsl";
+    	var urlOfCTS = "http://hmt-cts.appspot.com/CTS?request=GetPassagePlus&urn=";
+
+		/* Image Things */
+    	var imgElementClass = "cite-img";
+    	var imgSize = 2000;
+    	var urlOfImgService = "http://amphoreus.hpcc.uh.edu/tomcat/chsimg/Img?urn=";
+    	// var pathToImgXSLT = "http://folio.furman.edu/html-ctskit/ctskit/xsl/gip.xsl";
+    	var pathToImgXSLT = "ctskit/xsl/gip.xsl";
+
+		/* Collection Things */
+		var urlOfCite = "http://folio.furman.edu/cfc/api?req=GetObjectPlus&urn=";
+    	var collectionElementClass = "cite-collection";
+    	// var pathToCiteXSLT = "http://folio.furman.edu/html-ctskit/ctskit/xsl/citeCollection.xsl";
+    	var pathToCiteXSLT = "ctskit/xsl/citeCollection.xsl";
+
+
+    </script>
+    
+    <!-- ...TO HERE -->
+    
+</head>
+<body>
+
+	<header>
+		<p>Botanica Caroliniana · Amy Hackney Blackwell &amp; Christopher Blackwell, edd.</p>
+	</header>
+
+<nav>
+	<ul>
+		<li><a href="http://folio.furman.edu/projects/botanicacaroliniana">Project Home</a></li>
+		<li><a href="http://www.homermultitext.org/hmt-doc/">CITE/CTS documentation</a></li>
+	</ul>
+		
+</nav>
+
+
+<article>
+
+	<h1>Notes on this page</h1>
+	
+	<p>This page of examples uses local Javascript, XSLT, and CSS files. These files are in the “ctskit” directory.</p>
+
+	<ul>
+		
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.133">urn:cite:botcar:sloane.133</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.360">urn:cite:botcar:sloane.360</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.149">urn:cite:botcar:sloane.149</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.245">urn:cite:botcar:sloane.245</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.274">urn:cite:botcar:sloane.274</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.293">urn:cite:botcar:sloane.293</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.3">urn:cite:botcar:sloane.3</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.37">urn:cite:botcar:sloane.37</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.19">urn:cite:botcar:sloane.19</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.243">urn:cite:botcar:sloane.243</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.246">urn:cite:botcar:sloane.246</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.386">urn:cite:botcar:sloane.386</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.96">urn:cite:botcar:sloane.96</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.41">urn:cite:botcar:sloane.41</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.337">urn:cite:botcar:sloane.337</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.284">urn:cite:botcar:sloane.284</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.414">urn:cite:botcar:sloane.414</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.343">urn:cite:botcar:sloane.343</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.288">urn:cite:botcar:sloane.288</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.138">urn:cite:botcar:sloane.138</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.24">urn:cite:botcar:sloane.24</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.313">urn:cite:botcar:sloane.313</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.70">urn:cite:botcar:sloane.70</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.66">urn:cite:botcar:sloane.66</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.87">urn:cite:botcar:sloane.87</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.287">urn:cite:botcar:sloane.287</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.286">urn:cite:botcar:sloane.286</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.331">urn:cite:botcar:sloane.331</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.266">urn:cite:botcar:sloane.266</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.408">urn:cite:botcar:sloane.408</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.256">urn:cite:botcar:sloane.256</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.159">urn:cite:botcar:sloane.159</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.324">urn:cite:botcar:sloane.324</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.222">urn:cite:botcar:sloane.222</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.69">urn:cite:botcar:sloane.69</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.33">urn:cite:botcar:sloane.33</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.305">urn:cite:botcar:sloane.305</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.32">urn:cite:botcar:sloane.32</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.363">urn:cite:botcar:sloane.363</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.378">urn:cite:botcar:sloane.378</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.317">urn:cite:botcar:sloane.317</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.5">urn:cite:botcar:sloane.5</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.393">urn:cite:botcar:sloane.393</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.398">urn:cite:botcar:sloane.398</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.325">urn:cite:botcar:sloane.325</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.44">urn:cite:botcar:sloane.44</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.56">urn:cite:botcar:sloane.56</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.123">urn:cite:botcar:sloane.123</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.128">urn:cite:botcar:sloane.128</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.272">urn:cite:botcar:sloane.272</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.425">urn:cite:botcar:sloane.425</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.199">urn:cite:botcar:sloane.199</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.110">urn:cite:botcar:sloane.110</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.395">urn:cite:botcar:sloane.395</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.307">urn:cite:botcar:sloane.307</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.346">urn:cite:botcar:sloane.346</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.134">urn:cite:botcar:sloane.134</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.367">urn:cite:botcar:sloane.367</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.23">urn:cite:botcar:sloane.23</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.25">urn:cite:botcar:sloane.25</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.20">urn:cite:botcar:sloane.20</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.404">urn:cite:botcar:sloane.404</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.423">urn:cite:botcar:sloane.423</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.210">urn:cite:botcar:sloane.210</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.181">urn:cite:botcar:sloane.181</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.427">urn:cite:botcar:sloane.427</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.58">urn:cite:botcar:sloane.58</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.64">urn:cite:botcar:sloane.64</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.179">urn:cite:botcar:sloane.179</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.93">urn:cite:botcar:sloane.93</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.338">urn:cite:botcar:sloane.338</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.257">urn:cite:botcar:sloane.257</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.173">urn:cite:botcar:sloane.173</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.344">urn:cite:botcar:sloane.344</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.176">urn:cite:botcar:sloane.176</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.104">urn:cite:botcar:sloane.104</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.129">urn:cite:botcar:sloane.129</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.140">urn:cite:botcar:sloane.140</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.291">urn:cite:botcar:sloane.291</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.154">urn:cite:botcar:sloane.154</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.333">urn:cite:botcar:sloane.333</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.204">urn:cite:botcar:sloane.204</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.190">urn:cite:botcar:sloane.190</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.387">urn:cite:botcar:sloane.387</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.290">urn:cite:botcar:sloane.290</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.381">urn:cite:botcar:sloane.381</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.158">urn:cite:botcar:sloane.158</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.185">urn:cite:botcar:sloane.185</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.186">urn:cite:botcar:sloane.186</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.215">urn:cite:botcar:sloane.215</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.379">urn:cite:botcar:sloane.379</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.183">urn:cite:botcar:sloane.183</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.167">urn:cite:botcar:sloane.167</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.356">urn:cite:botcar:sloane.356</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.83">urn:cite:botcar:sloane.83</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.409">urn:cite:botcar:sloane.409</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.102">urn:cite:botcar:sloane.102</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.298">urn:cite:botcar:sloane.298</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.374">urn:cite:botcar:sloane.374</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.390">urn:cite:botcar:sloane.390</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.267">urn:cite:botcar:sloane.267</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.27">urn:cite:botcar:sloane.27</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.429">urn:cite:botcar:sloane.429</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.314">urn:cite:botcar:sloane.314</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.79">urn:cite:botcar:sloane.79</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.428">urn:cite:botcar:sloane.428</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.178">urn:cite:botcar:sloane.178</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.142">urn:cite:botcar:sloane.142</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.219">urn:cite:botcar:sloane.219</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.399">urn:cite:botcar:sloane.399</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.264">urn:cite:botcar:sloane.264</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.216">urn:cite:botcar:sloane.216</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.220">urn:cite:botcar:sloane.220</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.213">urn:cite:botcar:sloane.213</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.370">urn:cite:botcar:sloane.370</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.368">urn:cite:botcar:sloane.368</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.385">urn:cite:botcar:sloane.385</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.416">urn:cite:botcar:sloane.416</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.217">urn:cite:botcar:sloane.217</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.323">urn:cite:botcar:sloane.323</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.326">urn:cite:botcar:sloane.326</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.347">urn:cite:botcar:sloane.347</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.306">urn:cite:botcar:sloane.306</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.62">urn:cite:botcar:sloane.62</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.285">urn:cite:botcar:sloane.285</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.80">urn:cite:botcar:sloane.80</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.431">urn:cite:botcar:sloane.431</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.229">urn:cite:botcar:sloane.229</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.45">urn:cite:botcar:sloane.45</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.319">urn:cite:botcar:sloane.319</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.54">urn:cite:botcar:sloane.54</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.47">urn:cite:botcar:sloane.47</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.82">urn:cite:botcar:sloane.82</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.71">urn:cite:botcar:sloane.71</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.327">urn:cite:botcar:sloane.327</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.211">urn:cite:botcar:sloane.211</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.160">urn:cite:botcar:sloane.160</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.365">urn:cite:botcar:sloane.365</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.419">urn:cite:botcar:sloane.419</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.259">urn:cite:botcar:sloane.259</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.13">urn:cite:botcar:sloane.13</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.192">urn:cite:botcar:sloane.192</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.281">urn:cite:botcar:sloane.281</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.115">urn:cite:botcar:sloane.115</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.380">urn:cite:botcar:sloane.380</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.198">urn:cite:botcar:sloane.198</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.231">urn:cite:botcar:sloane.231</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.412">urn:cite:botcar:sloane.412</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.341">urn:cite:botcar:sloane.341</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.316">urn:cite:botcar:sloane.316</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.49">urn:cite:botcar:sloane.49</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.234">urn:cite:botcar:sloane.234</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.57">urn:cite:botcar:sloane.57</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.312">urn:cite:botcar:sloane.312</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.112">urn:cite:botcar:sloane.112</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.361">urn:cite:botcar:sloane.361</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.168">urn:cite:botcar:sloane.168</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.353">urn:cite:botcar:sloane.353</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.334">urn:cite:botcar:sloane.334</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.241">urn:cite:botcar:sloane.241</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.103">urn:cite:botcar:sloane.103</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.91">urn:cite:botcar:sloane.91</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.61">urn:cite:botcar:sloane.61</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.254">urn:cite:botcar:sloane.254</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.403">urn:cite:botcar:sloane.403</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.100">urn:cite:botcar:sloane.100</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.84">urn:cite:botcar:sloane.84</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.109">urn:cite:botcar:sloane.109</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.81">urn:cite:botcar:sloane.81</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.377">urn:cite:botcar:sloane.377</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.99">urn:cite:botcar:sloane.99</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.227">urn:cite:botcar:sloane.227</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.2">urn:cite:botcar:sloane.2</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.278">urn:cite:botcar:sloane.278</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.369">urn:cite:botcar:sloane.369</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.170">urn:cite:botcar:sloane.170</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.384">urn:cite:botcar:sloane.384</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.232">urn:cite:botcar:sloane.232</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.271">urn:cite:botcar:sloane.271</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.189">urn:cite:botcar:sloane.189</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.309">urn:cite:botcar:sloane.309</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.350">urn:cite:botcar:sloane.350</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.22">urn:cite:botcar:sloane.22</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.282">urn:cite:botcar:sloane.282</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.228">urn:cite:botcar:sloane.228</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.252">urn:cite:botcar:sloane.252</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.250">urn:cite:botcar:sloane.250</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.394">urn:cite:botcar:sloane.394</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.351">urn:cite:botcar:sloane.351</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.295">urn:cite:botcar:sloane.295</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.242">urn:cite:botcar:sloane.242</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.108">urn:cite:botcar:sloane.108</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.280">urn:cite:botcar:sloane.280</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.328">urn:cite:botcar:sloane.328</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.335">urn:cite:botcar:sloane.335</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.405">urn:cite:botcar:sloane.405</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.311">urn:cite:botcar:sloane.311</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.304">urn:cite:botcar:sloane.304</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.28">urn:cite:botcar:sloane.28</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.193">urn:cite:botcar:sloane.193</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.88">urn:cite:botcar:sloane.88</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.292">urn:cite:botcar:sloane.292</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.157">urn:cite:botcar:sloane.157</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.407">urn:cite:botcar:sloane.407</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.18">urn:cite:botcar:sloane.18</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.38">urn:cite:botcar:sloane.38</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.201">urn:cite:botcar:sloane.201</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.12">urn:cite:botcar:sloane.12</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.223">urn:cite:botcar:sloane.223</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.329">urn:cite:botcar:sloane.329</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.206">urn:cite:botcar:sloane.206</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.299">urn:cite:botcar:sloane.299</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.145">urn:cite:botcar:sloane.145</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.39">urn:cite:botcar:sloane.39</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.320">urn:cite:botcar:sloane.320</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.86">urn:cite:botcar:sloane.86</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.321">urn:cite:botcar:sloane.321</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.10">urn:cite:botcar:sloane.10</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.424">urn:cite:botcar:sloane.424</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.124">urn:cite:botcar:sloane.124</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.116">urn:cite:botcar:sloane.116</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.141">urn:cite:botcar:sloane.141</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.188">urn:cite:botcar:sloane.188</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.194">urn:cite:botcar:sloane.194</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.413">urn:cite:botcar:sloane.413</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.202">urn:cite:botcar:sloane.202</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.244">urn:cite:botcar:sloane.244</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.225">urn:cite:botcar:sloane.225</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.155">urn:cite:botcar:sloane.155</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.364">urn:cite:botcar:sloane.364</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.366">urn:cite:botcar:sloane.366</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.8">urn:cite:botcar:sloane.8</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.21">urn:cite:botcar:sloane.21</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.391">urn:cite:botcar:sloane.391</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.342">urn:cite:botcar:sloane.342</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.383">urn:cite:botcar:sloane.383</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.4">urn:cite:botcar:sloane.4</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.175">urn:cite:botcar:sloane.175</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.268">urn:cite:botcar:sloane.268</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.233">urn:cite:botcar:sloane.233</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.239">urn:cite:botcar:sloane.239</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.420">urn:cite:botcar:sloane.420</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.55">urn:cite:botcar:sloane.55</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.373">urn:cite:botcar:sloane.373</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.125">urn:cite:botcar:sloane.125</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.388">urn:cite:botcar:sloane.388</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.355">urn:cite:botcar:sloane.355</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.97">urn:cite:botcar:sloane.97</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.238">urn:cite:botcar:sloane.238</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.63">urn:cite:botcar:sloane.63</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.15">urn:cite:botcar:sloane.15</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.65">urn:cite:botcar:sloane.65</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.177">urn:cite:botcar:sloane.177</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.197">urn:cite:botcar:sloane.197</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.417">urn:cite:botcar:sloane.417</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.376">urn:cite:botcar:sloane.376</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.117">urn:cite:botcar:sloane.117</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.105">urn:cite:botcar:sloane.105</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.180">urn:cite:botcar:sloane.180</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.11">urn:cite:botcar:sloane.11</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.411">urn:cite:botcar:sloane.411</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.26">urn:cite:botcar:sloane.26</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.31">urn:cite:botcar:sloane.31</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.249">urn:cite:botcar:sloane.249</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.43">urn:cite:botcar:sloane.43</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.318">urn:cite:botcar:sloane.318</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.85">urn:cite:botcar:sloane.85</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.207">urn:cite:botcar:sloane.207</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.375">urn:cite:botcar:sloane.375</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.92">urn:cite:botcar:sloane.92</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.209">urn:cite:botcar:sloane.209</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.17">urn:cite:botcar:sloane.17</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.35">urn:cite:botcar:sloane.35</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.235">urn:cite:botcar:sloane.235</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.42">urn:cite:botcar:sloane.42</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.162">urn:cite:botcar:sloane.162</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.126">urn:cite:botcar:sloane.126</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.146">urn:cite:botcar:sloane.146</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.52">urn:cite:botcar:sloane.52</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.310">urn:cite:botcar:sloane.310</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.315">urn:cite:botcar:sloane.315</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.14">urn:cite:botcar:sloane.14</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.113">urn:cite:botcar:sloane.113</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.296">urn:cite:botcar:sloane.296</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.182">urn:cite:botcar:sloane.182</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.48">urn:cite:botcar:sloane.48</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.263">urn:cite:botcar:sloane.263</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.224">urn:cite:botcar:sloane.224</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.389">urn:cite:botcar:sloane.389</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.50">urn:cite:botcar:sloane.50</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.352">urn:cite:botcar:sloane.352</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.184">urn:cite:botcar:sloane.184</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.127">urn:cite:botcar:sloane.127</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.362">urn:cite:botcar:sloane.362</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.255">urn:cite:botcar:sloane.255</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.270">urn:cite:botcar:sloane.270</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.283">urn:cite:botcar:sloane.283</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.348">urn:cite:botcar:sloane.348</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.94">urn:cite:botcar:sloane.94</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.397">urn:cite:botcar:sloane.397</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.258">urn:cite:botcar:sloane.258</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.164">urn:cite:botcar:sloane.164</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.73">urn:cite:botcar:sloane.73</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.150">urn:cite:botcar:sloane.150</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.237">urn:cite:botcar:sloane.237</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.308">urn:cite:botcar:sloane.308</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.289">urn:cite:botcar:sloane.289</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.76">urn:cite:botcar:sloane.76</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.122">urn:cite:botcar:sloane.122</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.169">urn:cite:botcar:sloane.169</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.130">urn:cite:botcar:sloane.130</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.111">urn:cite:botcar:sloane.111</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.68">urn:cite:botcar:sloane.68</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.260">urn:cite:botcar:sloane.260</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.34">urn:cite:botcar:sloane.34</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.152">urn:cite:botcar:sloane.152</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.275">urn:cite:botcar:sloane.275</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.171">urn:cite:botcar:sloane.171</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.301">urn:cite:botcar:sloane.301</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.30">urn:cite:botcar:sloane.30</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.77">urn:cite:botcar:sloane.77</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.46">urn:cite:botcar:sloane.46</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.277">urn:cite:botcar:sloane.277</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.107">urn:cite:botcar:sloane.107</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.359">urn:cite:botcar:sloane.359</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.392">urn:cite:botcar:sloane.392</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.143">urn:cite:botcar:sloane.143</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.187">urn:cite:botcar:sloane.187</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.230">urn:cite:botcar:sloane.230</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.269">urn:cite:botcar:sloane.269</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.148">urn:cite:botcar:sloane.148</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.236">urn:cite:botcar:sloane.236</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.208">urn:cite:botcar:sloane.208</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.421">urn:cite:botcar:sloane.421</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.336">urn:cite:botcar:sloane.336</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.78">urn:cite:botcar:sloane.78</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.90">urn:cite:botcar:sloane.90</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.36">urn:cite:botcar:sloane.36</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.205">urn:cite:botcar:sloane.205</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.51">urn:cite:botcar:sloane.51</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.240">urn:cite:botcar:sloane.240</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.247">urn:cite:botcar:sloane.247</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.218">urn:cite:botcar:sloane.218</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.357">urn:cite:botcar:sloane.357</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.303">urn:cite:botcar:sloane.303</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.340">urn:cite:botcar:sloane.340</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.330">urn:cite:botcar:sloane.330</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.248">urn:cite:botcar:sloane.248</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.156">urn:cite:botcar:sloane.156</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.60">urn:cite:botcar:sloane.60</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.382">urn:cite:botcar:sloane.382</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.400">urn:cite:botcar:sloane.400</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.279">urn:cite:botcar:sloane.279</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.106">urn:cite:botcar:sloane.106</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.1">urn:cite:botcar:sloane.1</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.401">urn:cite:botcar:sloane.401</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.332">urn:cite:botcar:sloane.332</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.300">urn:cite:botcar:sloane.300</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.195">urn:cite:botcar:sloane.195</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.153">urn:cite:botcar:sloane.153</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.53">urn:cite:botcar:sloane.53</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.74">urn:cite:botcar:sloane.74</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.6">urn:cite:botcar:sloane.6</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.294">urn:cite:botcar:sloane.294</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.200">urn:cite:botcar:sloane.200</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.339">urn:cite:botcar:sloane.339</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.121">urn:cite:botcar:sloane.121</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.371">urn:cite:botcar:sloane.371</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.166">urn:cite:botcar:sloane.166</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.131">urn:cite:botcar:sloane.131</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.67">urn:cite:botcar:sloane.67</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.59">urn:cite:botcar:sloane.59</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.406">urn:cite:botcar:sloane.406</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.151">urn:cite:botcar:sloane.151</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.98">urn:cite:botcar:sloane.98</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.147">urn:cite:botcar:sloane.147</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.144">urn:cite:botcar:sloane.144</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.29">urn:cite:botcar:sloane.29</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.40">urn:cite:botcar:sloane.40</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.136">urn:cite:botcar:sloane.136</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.430">urn:cite:botcar:sloane.430</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.196">urn:cite:botcar:sloane.196</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.221">urn:cite:botcar:sloane.221</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.265">urn:cite:botcar:sloane.265</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.214">urn:cite:botcar:sloane.214</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.349">urn:cite:botcar:sloane.349</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.165">urn:cite:botcar:sloane.165</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.261">urn:cite:botcar:sloane.261</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.354">urn:cite:botcar:sloane.354</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.402">urn:cite:botcar:sloane.402</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.163">urn:cite:botcar:sloane.163</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.276">urn:cite:botcar:sloane.276</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.139">urn:cite:botcar:sloane.139</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.297">urn:cite:botcar:sloane.297</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.118">urn:cite:botcar:sloane.118</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.426">urn:cite:botcar:sloane.426</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.415">urn:cite:botcar:sloane.415</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.174">urn:cite:botcar:sloane.174</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.120">urn:cite:botcar:sloane.120</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.302">urn:cite:botcar:sloane.302</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.172">urn:cite:botcar:sloane.172</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.422">urn:cite:botcar:sloane.422</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.372">urn:cite:botcar:sloane.372</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.345">urn:cite:botcar:sloane.345</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.72">urn:cite:botcar:sloane.72</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.75">urn:cite:botcar:sloane.75</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.253">urn:cite:botcar:sloane.253</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.89">urn:cite:botcar:sloane.89</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.396">urn:cite:botcar:sloane.396</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.410">urn:cite:botcar:sloane.410</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.114">urn:cite:botcar:sloane.114</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.16">urn:cite:botcar:sloane.16</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.251">urn:cite:botcar:sloane.251</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.101">urn:cite:botcar:sloane.101</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.161">urn:cite:botcar:sloane.161</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.262">urn:cite:botcar:sloane.262</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.95">urn:cite:botcar:sloane.95</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.119">urn:cite:botcar:sloane.119</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.212">urn:cite:botcar:sloane.212</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.7">urn:cite:botcar:sloane.7</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.322">urn:cite:botcar:sloane.322</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.137">urn:cite:botcar:sloane.137</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.203">urn:cite:botcar:sloane.203</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.191">urn:cite:botcar:sloane.191</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.358">urn:cite:botcar:sloane.358</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.9">urn:cite:botcar:sloane.9</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.132">urn:cite:botcar:sloane.132</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.432">urn:cite:botcar:sloane.432</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.135">urn:cite:botcar:sloane.135</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.226">urn:cite:botcar:sloane.226</blockquote></li>
+        <li><blockquote class="cite-collection" cite="urn:cite:botcar:sloane.418">urn:cite:botcar:sloane.418</blockquote></li>
+
+	
+	</ul>
+	
+</article>
+
+
+	<footer>
+		<p>Copyright 2012. C. Blackwell, D.N. Smith. Licensed under the GPL 3.0 License. http://www.gnu.org/licenses/gpl-3.0.txt. Contact: christopher.blackwell@furman.edu. This project received support from the Andrew W. Mellon Foundatiion.</p>
+	</footer>
+
+</body>
+</html>

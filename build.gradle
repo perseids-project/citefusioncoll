@@ -11,7 +11,7 @@ group = "edu.holycross.shot"
 version = "0.2.0"
 
 // for jettyRunWar:
-httpPort = 8080
+httpPort = 4040
 stopPort = 9451
 stopKey = 'foo'
 
