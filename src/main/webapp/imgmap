@@ -111,10 +111,10 @@ if ((check.size() > 0)) {
 //        StringWriter writer = new StringWriter()
 //        MarkupBuilder xml = new MarkupBuilder(writer)
         def bldr = new groovy.xml.StreamingMarkupBuilder().bind {
-        //BAD:  xml.yieldUnescaped("<?xml-stylesheet type='text/xsl' href='xslt/imgmap.xsl'?>")
+        //BAD:  xml.yieldUnescaped("<?xml-stylesheet type='text/xsl' href='html-ctskit/ctskit/xsl/imgmap.xsl'?>")
 //        xml.imgmap(xmlns: "http://shot.holycross.edu/xmlns/citequery") {
 
-                mkp.pi("xml-stylesheet":[type : "text/xsl", href : "xslt/imgmap.xsl"])
+                mkp.pi("xml-stylesheet":[type : "text/xsl", href : "html-ctskit/ctskit/xsl/imgmap.xsl"])
 
                 imgmap(xmlns: "http://shot.holycross.edu/xmlns/citequery") {
             request {
@@ -128,8 +128,8 @@ if ((check.size() > 0)) {
                     def val =  pr[0]
                     def roi = pr[1]
                     pair {
-                        img ("${val}")
-                        property ("${roi}")
+                        property ("${val}")
+                        img ("${roi}")
                     }
                 }
             }
