@@ -42,10 +42,10 @@
     	var pathToImgXSLT = "ctskit/xsl/gip.xsl";
 
 		/* Collection Things */
-//		var urlOfCite = "http://folio.furman.edu/cfc/api?req=GetObjectPlus&urn=";
-		var urlOfCite = "http://localhost:4040/citefusioncoll/api?req=GetObjectPlus&urn=";
+		var urlOfCite = "http://folio.furman.edu/cfc/api?req=GetObjectPlus&urn=";
+//		var urlOfCite = "http://localhost:4040/citefusioncoll/api?req=GetObjectPlus&urn=";
     	var collectionElementClass = "cite-collection";
-    	var pathToCiteXSLT = "ctskit/xsl/citeCollection.xsl";
+    	var pathToCiteXSLT = "ctskit/xsl/citecollection.xsl";
 
 
     </script>
@@ -63,10 +63,8 @@
 	<ul>
 		<li><a href="index.html">CTS Kit Home</a></li>
 		<li><a href="cite_demo.html">A Concise Demo File</a></li>
-		<li><a href="http://www.homermultitext.org/hmt-doc/">CITE/CTS documentation</a></li>
-		
+		<li><a href="http://www.homermultitext.org/hmt-doc/">CITE/CTS documentation</a></li>	
 	</ul>
-		
 </nav>
 
 <article id="article">
@@ -121,7 +119,7 @@
 
 	<blockquote class="cite-collection" cite="urn:cite:botcar:sloane.414"/>Collection Object here [If you are seeing this, the object has not loaded yet.]</blockquote>
 	
-	<p>And another (this object has two fields that include <a href="">Markdown</a> formatting):</p>
+	<p>And another (this object has two fields that include <a href="http://daringfireball.net/projects/markdown/">Markdown</a> formatting):</p>
 	
 	<blockquote class="cite-collection" cite="urn:cite:fgr21:muellermd.alexandros_polyhistor_10.1"/>Collection Object here [If you are seeing this, the object has not loaded yet.]</blockquote>
 	
@@ -139,7 +137,7 @@
 	<h2>Some notes:</h2>
 	
 	<ul>
-		<li class="md">Here’s some _Markdown_!</li>
+		<li class="md">Because the CITE Collection protocol allows Objects to have fields of type “markdown”, this kit can transform [Markdown](http://daringfireball.net/projects/markdown/) on the fly. Here’s some _Markdown_!</li>
 		<li>The scripts that resolve citations to texts will not work if the HTML files are loaded directly from the filesystem; they <em>must</em> be served over HTTP by Apache or some other web-server.</li>
 		<li>The files in the archive include XSLT and CSS for styling the XML results of the CTS query. These can be modified to suit.</li>
 	

@@ -50,7 +50,7 @@
                 	var urlOfImgService = "http://amphoreus.hpcc.uh.edu/tomcat/chsimg/Img?urn=";
     	           var pathToImgXSLT = "html-ctskit/ctskit/xsl/gip.xsl";
 
-            		var urlOfCite = "http://localhost:4040/citefusioncoll/api?req=GetObjectPlus&amp;urn=";
+            		var urlOfCite = "http://folio.furman.edu/cfc/api?req=GetObjectPlus&amp;urn=";
     	           var collectionElementClass = "cite-collection";
     	           var pathToCiteXSLT = "html-ctskit/ctskit/xsl/citeCollection.xsl";
        
