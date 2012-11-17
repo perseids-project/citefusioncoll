@@ -51,7 +51,8 @@ function putTextOntoPage(htmlText, elemId){
 }
 
 function processMarkdown(elemId){
-    $(".md").each( function(i) {
+
+	$(".md").each( function(i) {
 		var mdText = $(this).html().trim();
 		$(this).html(markdown.toHTML(mdText));
 		//Remove class, so this doesn't get double-processed
@@ -59,11 +60,8 @@ function processMarkdown(elemId){
 
 	});
 	
-	
-	
-// 	
-// 	if ( $("#" + elemId).find(".md").html() != null ) {
-// 		console.log("not null");
+
+	// if ( $("#" + elemId).find(".md").html() != null ) {
 // 		var mdText = $("#" + elemId).find(".md").html().trim();
 // 		console.log(mdText);
 // 		$("#" + elemId).find(".md").html(markdown.toHTML(mdText));

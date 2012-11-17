@@ -169,7 +169,8 @@
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-	
+   
+    
 	<!-- quotations -->
 	<xsl:template match="tei:q">“<xsl:apply-templates/>”</xsl:template>
 	<!-- "speech" and "speaker" (used for Platonic dialogues -->
@@ -188,6 +189,12 @@
 			<xsl:apply-templates/>
 		</div>
 	</xsl:template>
+    <xsl:template match="tei:div1[@type='book']">
+        <div class="tei_book">
+            <span class="tei_bookNumber">Book <xsl:value-of select="@n"/></span>
+            <xsl:apply-templates/>
+        </div>
+    </xsl:template>
     <xsl:template match="tei:div[@type='chapter']">
         <div class="tei_book">
             <span class="tei_bookNumber">Chapter <xsl:value-of select="@n"/></span>
