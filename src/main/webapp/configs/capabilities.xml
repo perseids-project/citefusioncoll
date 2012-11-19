@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Uncomment the following if you want to validate against a local copy of CiteCollection.rng in oXygen: -->
+
 <?xml-model href="CiteCollection.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
-<collectionService xmlns="http://chs.harvard.edu/xmlns/cite"
+
+<collectionService
+    xmlns="http://chs.harvard.edu/xmlns/cite"
     xmlns:cite="http://chs.harvard.edu/xmlns/cite">
-    
-    <!-- Fragmentary Historians -->
-    <citeCollection canonicalId="URN"
-        class="1XbBoTL0DbtQWDdfF6t3tdbsvV9BfQSTkZEEs7UU" name="berti"
-        description="Berti Fragmentary Historians">
-        <namespaceMapping abbr="fgr21" fullValue="http://folio.furman.edu/datans"></namespaceMapping>
-        <citeProperty label="URN" name="URN" type="citeurn"></citeProperty>
-        <citeProperty label="Historian" name="Historian" type="string"></citeProperty>
-        <citeProperty label="Type" name="Type" type="string"></citeProperty>
-        <citeProperty name="TextUrn" label="Text URN" type="ctsurn"></citeProperty>
-        <citeProperty name="RangeUrns" label="Range URNs" type="string"></citeProperty>
-        <citeProperty label="Text" name="Text" type="markdown"></citeProperty>
-        <citeProperty label="Translation" name="Translation" type="markdown"></citeProperty>
-        <citeProperty label="Bibliography" name="Bibliography" type="markdown"></citeProperty>
-        <citeProperty label="Note" name="Note" type="markdown"></citeProperty>
-        <citeProperty label="Contributer" name="Contributer" type="string"></citeProperty>
-        <citeProperty label="Date" name="Date" type="datetime"></citeProperty>
+
+
+
+    <citeCollection
+        canonicalId="URN"
+        class="1GC4S75Vz9GI6sYcLXGWTvgrK7-usKB_eU9MGoGQ"
+        description="Mapping of Pleiades project IDs to RAGE project URNs"
+        name="ptolgeo">
+        <namespaceMapping
+            abbr="rage"
+            fullValue="http://shot.holycross.edu/datans/rage"/>
+        <citeProperty
+            label="URN"
+            name="URN"
+            type="citeurn"/>
+        <citeProperty name="label" label="Label" type="string"/>
+        <citeProperty type="number" label="Pleiades ID" name="PleiadesId"></citeProperty>
     </citeCollection>
     <citeCollection canonicalId="urn"
         class="1MwTByk9ApM4yU7hl5L18rvNYqh6OpGvdYqopTIo"
