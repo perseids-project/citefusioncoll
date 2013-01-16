@@ -49,9 +49,19 @@ def errorMsg =  { msg ->
 */
 
 String checkRequest() {
-    return "OK" // ....
+    return "OK"
 }
 
+ArrayList formTriple(String propertyName, String rawVal) {
+            def valParts = rawVal.split(":")
+            def triple = []
+            if (valParts.size() == 2) {
+                triple = [propertyName, valParts[0], valParts[1]]
+            } else  {
+                triple = [propertyName, valParts[0]]
+            }
+return triple
+}
 
 // SCRIPT:
 // 1. Validate request form.
@@ -65,48 +75,66 @@ if ( 1 + 1 == 2) {
     if (! caps) { 
         errorMsg("Could not find capabilities file ${params['config']}")
     } else {
-        CollectionService svc = new CollectionService(caps,apiKey)
-        Query q = new Query(svc)
-        
         CiteUrn collUrn = new CiteUrn(params['coll'])
 
-        def msg
-        // get all props...
-        def propList = []
-        def triples = []
-        if (params['prop'] instanceof java.lang.String) {
-            pName = params["prop"]
-            propList.add(pName)
-            String rawVal = params[pName]
-            def valParts = rawVal.split(":")
-            def triple
-            if (valParts.size() == 2) {
-                triple = [pName, valParts[0], valParts[1]]
-            } else  {
-                triple = [pName, valParts[0]]
-            }
-            triples.add(triple)
 
-        } else {
-            params['prop'].each { pName ->
-                propList.add(pName)
-                String rawVal = params[pName]
-                def valParts = rawVal.split(":")
-                msg = "${rawVal} -> ${valParts}"
-                def triple
-                if (valParts.size() == 2) {
-                    triple = [pName, valParts[0], valParts[1]]
-                } else  {
-                    triple = [pName, valParts[0]]
-                }
-                triples.add(triple)
-            }
-        }
-        // get metadta about collection
+        CollectionService svc = new CollectionService(caps,apiKey)
+        Query q = new Query(svc)
+        // get metadata about collection
         String canonicalId = q.svc.getCanonicalIdProperty(collUrn)
         def propertyNames = q.svc.getPropNameList(collUrn)
         def propertyTypes = q.svc.getPropTypeList(collUrn)
         def propertyLabels = q.svc.getPropLabelList(collUrn)
+
+        def msg
+
+        def propList = []
+        def triples = []
+        if (params['prop'] instanceof java.lang.String) {
+            // single value submitted:
+            pName = params["prop"]
+            int pIndex = -1
+            propertyNames.eachWithIndex { n,i ->
+                if (pName == n) {
+                    pIndex = i
+                }
+            } 
+
+            switch(propertyTypes[pIndex]) {
+                case "ctsurn":
+                case "citeurn":
+                    triples.add([pName,params[pName]])
+                    break
+                default:
+                    triples.add(formTriple(pName, params[pName]))
+                    break
+            }
+            propList.add(pName)
+
+        } else {
+            // cycle instances
+            params['prop'].each { pName ->
+
+                pName = params["prop"]
+                int pIndex = -1
+                propertyNames.eachWithIndex { n,i ->
+                    if (pName == n) {
+                        pIndex = i
+                    }
+                } 
+
+                switch(propertyTypes[pIndex]) {
+                    case "ctsurn":
+                        case "citeurn":
+                        triples.add([pName,params[pName]])
+                    break
+                    default:
+                        triples.add(formTriple(pName, params[pName]))
+                    break
+                }
+                propList.add(pName)
+            }
+        }
 
         StringWriter writer = new StringWriter()
         MarkupBuilder xml = new MarkupBuilder(writer)
@@ -133,9 +161,7 @@ if ( 1 + 1 == 2) {
             }
         }
         println writer.toString()    
-
     }
     // if capsfile
-//} 
-// if request ok
+    // if request ok
 }

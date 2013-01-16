@@ -35,6 +35,7 @@ class Query {
 
 
     void showCPs(String s) {
+        System.err.println "showCPs: " + s
     }
 
 
