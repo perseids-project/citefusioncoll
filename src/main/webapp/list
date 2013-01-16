@@ -138,7 +138,8 @@ if ( 1 + 1 == 2) {
 
         StringWriter writer = new StringWriter()
         MarkupBuilder xml = new MarkupBuilder(writer)
-        xml.list(xmlns: "http://shot.holycross.edu/xmlns/citequery") {
+        xml.list(xmlns: "http://shot.holycross.edu/xmlns/citequery",
+                 'xmlns:cite': "http://shot.holycross.edu/xmlns/cite") {
             request {
                 p("inject request info here...")
                 trips(triples)
@@ -150,10 +151,10 @@ if ( 1 + 1 == 2) {
                 //count ("${resultList.size()}")
                 resultList.each { r ->
                     def urnVal = q.svc.getValue(collUrn.getCollection(),canonicalId,r)
-                    citeObject(urn: urnVal) {
+                    'cite:citeObject'(urn: urnVal) {
                         r.eachWithIndex { rec, idx ->
                             if (propertyNames[idx] != canonicalId) {
-                                citeProperty (name : propertyNames[idx], label : propertyLabels[idx],  type: propertyTypes[idx], "${rec}")
+                                'cite:citeProperty' (name : propertyNames[idx], label : propertyLabels[idx],  type: propertyTypes[idx], "${rec}")
                             }
                         }
                     }
