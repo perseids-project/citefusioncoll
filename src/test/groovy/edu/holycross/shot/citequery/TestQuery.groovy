@@ -6,7 +6,7 @@ import edu.holycross.shot.citecoll.CollectionService
 import static org.junit.Assert.*
 import org.junit.Test
 
-/** Class to test cite collection service class. 
+/** Class to test cite collection querying
 */
 class TestQuery extends GroovyTestCase {
     String apiKey =  System.properties['apiKey']
@@ -16,6 +16,7 @@ class TestQuery extends GroovyTestCase {
     File testCapsFile = new File("testdata/capabilities.xml")
     File statesCaps = new File("testdata/states-test-caps.xml")
     File opCaps = new File("testdata/op-caps.xml")
+    File normalsCaps = new File("testdata/normalized-caps.xml")
 
     @Test public void testPropertyPassing() {
         /* Test that configuration of your installation includes
@@ -81,6 +82,34 @@ class TestQuery extends GroovyTestCase {
 
     }
 
+/*
+    @Test public void testUtf8() {
+        File debugFile = new File("testdata/debug.txt")
+        OutputStreamWriter dbstream = new OutputStreamWriter(debugFile, "UTF-8")
+        File src = new File("testdata/utf8data.txt")
+        CollectionService svc = new CollectionService(normalsCaps, apiKey)
+        Query q = new Query(svc)
+
+        // File contains a list of values to try on Token property
+        CiteUrn collUrn = new CiteUrn("urn:cite:hmt:normalized")
+        String prop = "Token"
+        String srcText = src.getText("UTF-8")
+        srcText.eachLine { l ->
+            dbstream.write "Token #${l}#\n"
+            def triples = []
+            def defaultOp = [prop, l]
+            triples.add(defaultOp)
+            def resList = q.getResults(collUrn, triples)
+            def propNames = q.svc.getPropNameList(collUrn)
+            assert propNames[1] == prop
+            // I think URL encoder is messing utf8 values.
+  //          def res = resList[0]
+//            assert res[0] == l
+        }
+        dbstream.close()
+        
+    }
+*/
 
     @Test public void testStates() {
         CollectionService svc = new CollectionService(statesCaps, apiKey)

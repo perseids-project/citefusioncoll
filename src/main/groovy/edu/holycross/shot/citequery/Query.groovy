@@ -9,7 +9,11 @@ import groovy.xml.MarkupBuilder
 
 
 class Query {
-    
+    boolean debug = true
+
+
+
+
     /** End point for Google Tables API v1. */
     static String endPoint = "https://www.googleapis.com/fusiontables/v1/"
 
@@ -26,6 +30,13 @@ class Query {
 
     /** Default property name for ordering query results */
     String orderProperty = null
+
+
+
+
+    void showCPs(String s) {
+    }
+
 
     Query(CollectionService citeService) {
         this.svc = citeService
@@ -103,6 +114,12 @@ class Query {
             //System.err.println "triple "  + t
             propName = t[0]
             propValue = t[1]
+
+
+            if (debug) {
+                showCPs(propValue)
+            }
+
 
             if (t.size() == 2) {
                 op = "="

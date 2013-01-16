@@ -37,9 +37,9 @@ home.html {
             p("See accompanying notes on query syntax to make sense of this. ")
         
             form(action : "list", method : "GET")  {
-                input(name : "coll", value : "urn:cite:fgr21:jacoby")
-                input(name : "prop", value : "attributed_to")
-                input(name : "attributed_to", value : "Istros")
+                input(name : "coll", value : "urn:cite:hmt:scholiaset")
+                input(name : "prop", value : "Sequence")
+                input(name : "Sequence", value : "1")
                 input (type: "submit", value : "Submit")
             }
             
@@ -55,9 +55,13 @@ home.html {
 
             p("Supply a URN identifying a collection; returns the URN identifying the first object in the collection.")
             form(action : "imgmap", method : "GET")  {
+                label(for: "coll", "Collection to plot")
                 input(name : "coll", value : "urn:cite:botcar:sloane")
+                label(for: "img", "Image to plot on")
                 input(name: "img", value : "urn:cite:fufolioimg:Caroliniana.Catesby_HS212_007_0504")
+                label(for: "map", "Property to illustrate")
                 input(name: "map", value: "scientificName")
+                label(for: "imgProp", "Property with image map data")
                 input(name: "imgProp", value: "folioImageROI")
                 input (type: "submit", value : "Submit")
             }

@@ -5,7 +5,9 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template
         name="header">
-        <p>Available <a
+
+      <p> <a href="../citefusioncoll/">Home</a> |
+Available <a
                 href="api?req=GetCapabilities">collections</a> | <a
                 href="http://www.homermultitext.org/hmt-doc/">CITE Documentation</a></p>
     </xsl:template>
