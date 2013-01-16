@@ -11,7 +11,7 @@ If no other parameters are given, this lists all objects in the Collection.
 Optionally, may specify a set of one or more query triplets comprised of a property name, a value, and an operator.
 
 - one or more `prop` parameters. These give names of properties to query on.  If you supply more than one `prop` parameter, the criteria will be `AND`ed together.
-- for each `prop` parameter, you must include one parameter giving the value to query for.  The name of this parameter must match the value of one of the  `prop` parameters.  E.g., if you have `prop=Description` then you must include a parameter named `Descreiption` giving the value to query for.
+- for each `prop` parameter, you must include one parameter giving the value to query for.  The name of this parameter must match the value of one of the  `prop` parameters.  E.g., if you have `prop=Description` then you must include a parameter named `Description` giving the value to query for.
 - The default operator is "=".  If you want to specify a different operator, append it to the property value separated by a colon.  E.g., to ask for objects with a Description property beginning with the string `alph`, you could use `prop=Description&Description=alph:+STARTS+WITH+`
 
 
