@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="CiteCollection.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="CiteCollectionService.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
 <collectionService
     xmlns="http://chs.harvard.edu/xmlns/cite"
     xmlns:cite="http://chs.harvard.edu/xmlns/cite">
     <citeCollection
+        name="msA"
         canonicalId="URN"
         class="1PMaa_kAegdo8sZ9QqjeN79lnL9zFXXlnxFHwRZ8"
-        description="Homer Multitext project: the Venetus A manuscript"
-        name="msA">
+       >
+        <description
+            xmlns="http://purl.org/dc/elements/1.1">Homer Multitext project: the Venetus A
+            manuscript</description>
         <namespaceMapping
             abbr="hmt"
             fullValue="http://www.homermultitext.org/datans"/>
@@ -30,14 +33,21 @@
                 <value>verso</value>
             </valueList>
         </citeProperty>
-        <citeProperty name="Label" label="Label" type="string"></citeProperty>
-        <citeProperty name="CodexURN" label="Codex" type="citeurn"></citeProperty>
+        <citeProperty
+            label="Label"
+            name="Label"
+            type="string"/>
+        <citeProperty
+            label="Codex"
+            name="CodexURN"
+            type="citeurn"/>
     </citeCollection>
     <citeCollection
         canonicalId="URN"
         class="1tFhVfSS_u5zokh3EcIhjEwPEKjTfAwnHkEMPQD8"
-        description="The Drei Männer Kommentar to the Iliad"
         name="DMK">
+        <description
+            xmlns="http://purl.org/dc/elements/1.1">The Dreimänner Commentary</description>
         <namespaceMapping
             abbr="hmt"
             fullValue="http://www.homermultitext.org/datans"/>
@@ -67,8 +77,10 @@
     <citeCollection
         canonicalId="URN"
         class="1iElXI_3c0owUsTBw5Ao0xv8FZ7nf6MsHbwX_B9E"
-        description="Homer Multitext project at Holy Cross:  work log"
         name="hmtWorkLog">
+        <description
+            xmlns="http://purl.org/dc/elements/1.1">Homer Multitext project at Holy Cross: work
+            log</description>
         <namespaceMapping
             abbr="hmt"
             fullValue="http://www.homermultitext.org/datans"/>
@@ -98,8 +110,10 @@
     <citeCollection
         canonicalId="URN"
         class="1Yt3tSWh2C5-t9y5-3I9SauZhljUgmmzoPa_6xQI"
-        description="Open Paleography project:  Greek paleography"
         name="greek">
+        <description
+            xmlns="http://purl.org/dc/elements/1.1">Open Paleography project: Greek
+            paleography</description>
         <namespaceMapping
             abbr="paleog"
             fullValue="http://shot.holycross.edu/datans/paleography"/>

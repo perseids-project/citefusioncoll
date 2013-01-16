@@ -6,10 +6,7 @@
     xmlns:cite="http://chs.harvard.edu/xmlns/cite"
     xmlns:dc="http://purl.org/dc/elements/1.1">
     <start>
-        <element
-            name="cite:collectionService">
-            
-            <oneOrMore>
+        
                 <element
                     name="cite:citeCollection">
                     <attribute
@@ -18,8 +15,7 @@
                         name="class"/>
                     <attribute
                         name="name"/>
-                    <attribute
-                        name="description"/>
+                    
                    
                     <optional>
                         <element
@@ -27,14 +23,13 @@
                             <text/>
                         </element>
                     </optional>
-                 <optional>   <oneOrMore>
-                        <element
+                   
+                        <zeroOrMore><element
                             name="dc:creator">
                             <text/>
-                        </element>
-                    </oneOrMore>
+                        </element></zeroOrMore>
                     
-                  </optional>  <optional>
+                    <optional>
                         <element
                             name="dc:coverage">
                             <text/>
@@ -107,7 +102,6 @@
                         </element>
                     </oneOrMore>
                 </element>
-            </oneOrMore>
-        </element>
+           
     </start>
 </grammar>

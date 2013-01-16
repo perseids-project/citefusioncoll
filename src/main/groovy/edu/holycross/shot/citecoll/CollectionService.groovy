@@ -218,7 +218,15 @@ class CollectionService {
         String q = endPoint + "query?sql=" + URLEncoder.encode(query.toString()) + "&key=${apiKey}"
 
         URL queryUrl = new URL(q)
-        String raw = queryUrl.getText("UTF-8")
+        String raw
+        def conn = queryUrl.openConnection()
+        if (conn.responseCode == 200) {
+            raw = conn.content.text
+        } else {
+            return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
+        }
+
+
 
         JsonSlurper jslurp = new JsonSlurper()
         def rows = jslurp.parseText(raw).rows
@@ -259,7 +267,15 @@ class CollectionService {
 
         String q = endPoint + "query?sql=" + URLEncoder.encode(qBuff.toString()) + "&key=${apiKey}"
         URL queryUrl = new URL(q)
-        String raw = queryUrl.getText("UTF-8")
+
+        String raw //= queryUrl.getText("UTF-8")
+        def conn = queryUrl.openConnection()
+        if (conn.responseCode == 200) {
+            raw = conn.content.text
+        } else {
+            return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
+        }
+
 
         JsonSlurper jslurp = new JsonSlurper()
         def rows = jslurp.parseText(raw).rows
@@ -399,7 +415,14 @@ class CollectionService {
         def collConf = this.citeConfig[urn.getCollection()]
         String q = endPoint + "query?sql=" + URLEncoder.encode(objQuery) + "&key=${apiKey}"
         URL queryUrl = new URL(q)
-        String raw = queryUrl.getText("UTF-8")
+        String raw //= queryUrl.getText("UTF-8")
+        def conn = queryUrl.openConnection()
+        if (conn.responseCode == 200) {
+            raw = conn.content.text
+        } else {
+            return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
+        }
+
 
         JsonSlurper jslurp = new JsonSlurper()
         def rows = jslurp.parseText(raw).rows 
@@ -662,7 +685,14 @@ class CollectionService {
 
         String q = endPoint + "query?sql=" + URLEncoder.encode(qBuff.toString()) + "&key=${apiKey}"
         URL queryUrl = new URL(q)
-        String raw = queryUrl.getText("UTF-8")
+        String raw //= queryUrl.getText("UTF-8")
+        def conn = queryUrl.openConnection()
+        if (conn.responseCode == 200) {
+            raw = conn.content.text
+        } else {
+            return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
+        }
+
 
         JsonSlurper jslurp = new JsonSlurper()
         def rows = jslurp.parseText(raw).rows
@@ -683,7 +713,14 @@ class CollectionService {
                 StringBuffer proxBuff = new StringBuffer("SELECT ${canonicalProp}, ${orderingProp} FROM ${className} WHERE ${orderingProp} = ${proxVal}")        
                 String proxQuery = endPoint + "query?sql=" + URLEncoder.encode(proxBuff.toString()) + "&key=${apiKey}"
                 URL proxUrl = new URL(proxQuery)
-                String proxRaw = proxUrl.getText("UTF-8")
+                String proxRaw //= proxUrl.getText("UTF-8")
+        def proxConn = proxUrl.openConnection()
+        if (proxConn.responseCode == 200) {
+            raw = proxConn.content.text
+        } else {
+            return ("<error>Received response code ${proxConn.responseCode} for url ${queryUrl}</error>")
+        }
+
 
                 JsonSlurper proxSlurp = new JsonSlurper()
                 def proxRows = proxSlurp.parseText(proxRaw).rows
@@ -722,7 +759,14 @@ class CollectionService {
 
         String q = endPoint + "query?sql=" + URLEncoder.encode(qBuff.toString()) + "&key=${apiKey}"
         URL queryUrl = new URL(q)
-        String raw = queryUrl.getText("UTF-8")
+        String raw //= queryUrl.getText("UTF-8")
+        def conn = queryUrl.openConnection()
+        if (conn.responseCode == 200) {
+            raw = conn.content.text
+        } else {
+            return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
+        }
+
 
         JsonSlurper jslurp = new JsonSlurper()
         def rows = jslurp.parseText(raw).rows
@@ -743,7 +787,14 @@ class CollectionService {
                 StringBuffer proxBuff = new StringBuffer("SELECT ${canonicalProp}, ${orderingProp} FROM ${className} WHERE ${orderingProp} = ${proxVal}")        
                 String proxQuery = endPoint + "query?sql=" + URLEncoder.encode(proxBuff.toString()) + "&key=${apiKey}"
                 URL proxUrl = new URL(proxQuery)
-                String proxRaw = proxUrl.getText("UTF-8")
+                String proxRaw //= proxUrl.getText("UTF-8")
+        def proxConn = proxUrl.openConnection()
+        if (proxConn.responseCode == 200) {
+            raw = proxConn.content.text
+        } else {
+            return ("<error>Received response code ${proxConn.responseCode} for url ${queryUrl}</error>")
+        }
+
 
                 JsonSlurper proxSlurp = new JsonSlurper()
                 def proxRows = proxSlurp.parseText(proxRaw).rows
@@ -876,12 +927,16 @@ class CollectionService {
     * or null if it is not a configured, ordered collection.
     */
     String getFirstObject(CiteUrn requestUrn) {
+        System.err.println "GETFIRST: URN IS " + requestUrn
         return getExtremeObject(requestUrn, "MINIMUM")
     }
 
     String getExtremeObject(CiteUrn requestUrn, String extreme) {
         def collectionId = requestUrn.getCollection()
         def collConf = this.citeConfig[collectionId]
+
+        System.err.println "GET EXTREME ${collConf['orderedBy']} for ${requestUrn}"
+
         if (!collConf['orderedBy']) {
             return null
         }
@@ -897,7 +952,18 @@ class CollectionService {
 
         String q = endPoint + "query?sql=" + URLEncoder.encode(qBuff.toString()) + "&key=${apiKey}"
         URL queryUrl = new URL(q)
-        String raw = queryUrl.getText("UTF-8")
+
+
+        System.err.println "EXTREME url : " + q
+
+        String raw //= queryUrl.getText("UTF-8")
+        def conn = queryUrl.openConnection()
+        if (conn.responseCode == 200) {
+            raw = conn.content.text
+        } else {
+            return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
+        }
+
 
         JsonSlurper jslurp = new JsonSlurper()
         def rows = jslurp.parseText(raw).rows
@@ -919,7 +985,14 @@ class CollectionService {
         
         String fullq = endPoint + "query?sql=" + URLEncoder.encode(objQuery) + "&key=${apiKey}"
         URL fullQueryUrl = new URL(fullq)
-        String fullRaw = fullQueryUrl.getText("UTF-8")
+        String fullRaw //= fullQueryUrl.getText("UTF-8")
+        def fullConn = fullQueryUrl.openConnection()
+        if (fullConn.responseCode == 200) {
+            raw = fullConn.content.text
+        } else {
+            return ("<error>Received response code ${fullConn.responseCode} for url ${queryUrl}</error>")
+        }
+
 
         JsonSlurper fullslurp = new JsonSlurper()
         def objectRows = fullslurp.parseText(fullRaw).rows
