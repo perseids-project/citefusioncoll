@@ -6,10 +6,10 @@ MarkupBuilder home = new MarkupBuilder(writer)
 home.html {
     head {
         title("CITE Collections service")
-        link(type : "text/css", rel : "stylesheet", href : "html-ctskit/ctskit/css/normalize.css", title : "CSS stylesheet")
-        link(type : "text/css", rel : "stylesheet", href : "html-ctskit/ctskit/css/simple.css", title : "CSS stylesheet")
-        link(type : "text/css", rel : "stylesheet", href : "html-ctskit/ctskit/css/citeCollection.css", title : "CSS stylesheet")
-        link(type : "text/css", rel : "stylesheet", href : "html-ctskit/ctskit/css/tei.css", title : "CSS stylesheet")
+        link(type : "text/css", rel : "stylesheet", href : "ctskit/css/normalize.css", title : "CSS stylesheet")
+        link(type : "text/css", rel : "stylesheet", href : "ctskit/css/simple.css", title : "CSS stylesheet")
+        link(type : "text/css", rel : "stylesheet", href : "ctskit/css/citeCollection.css", title : "CSS stylesheet")
+        link(type : "text/css", rel : "stylesheet", href : "ctskit/css/tei.css", title : "CSS stylesheet")
         p('class' : "menu", "CITE Collections: home")
     }
     body {
