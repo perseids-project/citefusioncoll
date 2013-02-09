@@ -10,14 +10,14 @@
             
             <title>ImageMap Test</title>
             
-            <link rel="stylesheet" href="html-ctskit/ctskit/css/citeCollection.css"></link>
-                <link rel="stylesheet" href="html-ctskit/ctskit/css/normalize.css"></link>
-                    <link rel="stylesheet" href="html-ctskit/ctskit/css/simple.css"></link>
-                        <link rel="stylesheet" href="html-ctskit/ctskit/css/tei.css"></link>
-                            <link rel="stylesheet" href="html-ctskit/ctskit/css/vi.css"></link>
+            <link rel="stylesheet" href="ctskit/css/citeCollection.css"></link>
+                <link rel="stylesheet" href="ctskit/css/normalize.css"></link>
+                    <link rel="stylesheet" href="ctskit/css/simple.css"></link>
+                        <link rel="stylesheet" href="ctskit/css/tei.css"></link>
+                            <link rel="stylesheet" href="ctskit/css/vi.css"></link>
                                 
-                                <script src="html-ctskit/ctskit/js/jquery-1.7.2.min.js" type="text/javascript" ></script>
-                                <script type="text/javascript" src="html-ctskit/ctskit/js/visualinventory.js"></script>
+                                <script src="ctskit/js/jquery-1.7.2.min.js" type="text/javascript" ></script>
+                                <script type="text/javascript" src="ctskit/js/visualinventory.js"></script>
                                 
                                 <script type="text/javascript">
 		var	img_source = "http://amphoreus.hpcc.uh.edu/tomcat/chsimg/Img?request=GetBinaryImage&amp;w=600&amp;urn=urn:cite:fufolioimg:Caroliniana.Catesby_HS212_007_0504";

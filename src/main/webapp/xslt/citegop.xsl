@@ -15,10 +15,10 @@
         <html>
             <head>
                 <meta charset="utf-8"></meta>
-                <link rel="stylesheet" href="html-ctskit/ctskit/css/citeCollection.css"></link>
-                <link rel="stylesheet" href="html-ctskit/ctskit/css/normalize.css"></link>
-                <link rel="stylesheet" href="html-ctskit/ctskit/css/simple.css"></link>
-                <link rel="stylesheet" href="html-ctskit/ctskit/css/tei.css"></link>
+                <link rel="stylesheet" href="ctskit/css/citeCollection.css"></link>
+                <link rel="stylesheet" href="ctskit/css/normalize.css"></link>
+                <link rel="stylesheet" href="ctskit/css/simple.css"></link>
+                <link rel="stylesheet" href="ctskit/css/tei.css"></link>
 <!--                
                 <link rel="stylesheet" href="css/normalize.css"></link>
                 <link rel="stylesheet" href="css/simple.css"></link>
@@ -27,32 +27,32 @@
                 <link rel="stylesheet" href="css/citeCollection.css"></link>
                 
                 <!-- Everyone uses JQuery -->
-                <script src="html-ctskit/ctskit/js/jquery-1.7.2.min.js" type="text/javascript" ></script>
+                <script src="ctskit/js/jquery-1.7.2.min.js" type="text/javascript" ></script>
               
                 <!-- Sarissa Javascript (for doing xslt stuff) -->	
-                <script src="html-ctskit/ctskit/js/sarissa/sarissa-compressed.js" type="text/javascript"></script>
-                <script src="html-ctskit/ctskit/js/sarissa/sarissa_ieemu_xpath-compressed.js" type="text/javascript"></script>
+                <script src="ctskit/js/sarissa/sarissa-compressed.js" type="text/javascript"></script>
+                <script src="ctskit/js/sarissa/sarissa_ieemu_xpath-compressed.js" type="text/javascript"></script>
                 
                 <!-- Markdown -->
-                <script src="html-ctskit/ctskit/js/markdown.js" type="text/javascript"></script>
+                <script src="ctskit/js/markdown.js" type="text/javascript"></script>
                 
                 <!-- CHS Javascript -->
-                <script src="html-ctskit/ctskit/js/cite-cts-kit.js" type="text/javascript" ></script>
+                <script src="ctskit/js/cite-cts-kit.js" type="text/javascript" ></script>
                 <!-- User-defined variables -->
                 <script type="text/javascript">
                    
     	           var textElementClass = "cts-text";
-    	           var pathToXSLT = "html-ctskit/ctskit/xsl/chs-gp.xsl";
+    	           var pathToXSLT = "ctskit/xsl/chs-gp.xsl";
     	           var urlOfCTS = "http://furman-folio.appspot.com/CTS?request=GetPassagePlus&amp;urn=";
     
                 	var imgElementClass = "cite-img";
                   	var imgSize = 2000;
                 	var urlOfImgService = "http://amphoreus.hpcc.uh.edu/tomcat/chsimg/Img?urn=";
-    	           var pathToImgXSLT = "html-ctskit/ctskit/xsl/gip.xsl";
+    	           var pathToImgXSLT = "ctskit/xsl/gip.xsl";
 
             		var urlOfCite = "http://folio.furman.edu/cfc/api?req=GetObjectPlus&amp;urn=";
     	           var collectionElementClass = "cite-collection";
-    	           var pathToCiteXSLT = "html-ctskit/ctskit/xsl/citeCollection.xsl";
+    	           var pathToCiteXSLT = "ctskit/xsl/citeCollection.xsl";
        
 
     </script>

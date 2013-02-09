@@ -1,6 +1,9 @@
 
 import org.apache.tools.ant.filters.*
 
+// 
+// Need to add an external dependency on CITE Collection schemas.
+//
 
 apply plugin: 'war'
 apply plugin: 'jetty'
@@ -79,10 +82,8 @@ test {
 }
 
 
-
-
 task installCtsKit {
-    description = "Installs externally supplied html-ctskit in build location."
+    description = "Installs externally supplied html-ctskit in build area."
     doLast {
         // There is only one file in the ctskit configuration:  
         // the zipped package with css, js and xsl.  
@@ -100,16 +101,14 @@ task installCtsKit {
     }
 }
 
-
-
 task setUpWar(type: Copy, dependsOn : installCtsKit) {
-    description = "Assembles all material for war file in build directory."
+    description = "Assembles all material for war file in build area."
     from "src/main/webapp"
     into "${buildDir}/warsrc"
 }
 
+// Customize defaults for gradle's war task:
 war.dependsOn setUpWar
-
 war {
     from "${buildDir}/warsrc"
     filter(ReplaceTokens, tokens: ['apiKey': apiKey])
