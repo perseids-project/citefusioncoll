@@ -23,6 +23,14 @@ repositories {
     }
 }
 
+configurations {
+    ctskit {
+        description = 'Manage external ctskit material'
+        transitive = true
+    }
+}
+
+
 dependencies {
     compile group: 'commons-io', name: 'commons-io', version: commonsioversion
     compile group: 'log4j', name: 'log4j', version: log4jversion, ext: 'jar'
@@ -31,6 +39,9 @@ dependencies {
     groovy group: 'edu.harvard.chs', name: 'cite', version: citeversion
 
     testCompile group: 'junit', name: 'junit', version: junitversion
+
+    ctskit group: 'org.homermultitext', name: 'hmt-html-ctskit', version: ctskitversion, ext: 'zip'
+
 }
 
 
@@ -68,7 +79,38 @@ test {
 }
 
 
-war {
+
+
+task installCtsKit {
+    description = "Installs externally supplied html-ctskit in build location."
+    doLast {
+        // There is only one file in the ctskit configuration:  
+        // the zipped package with css, js and xsl.  
+        def fileList = configurations.ctskit.getAsFileTree().getFiles().toArray()
+        def zipFile = fileList[0]
+        // Use gradle FileTree to copy zip contents to build area:
+        FileTree kitFiles = zipTree(zipFile)
+        copy {
+            from  kitFiles
+            into "${buildDir}/warsrc/ctskit"
+            include "**/**.css"
+            include "**/**.js"
+            include "**/**.xsl"
+        }
+    }
+}
+
+
+
+task setUpWar(type: Copy, dependsOn : installCtsKit) {
+    description = "Assembles all material for war file in build directory."
     from "src/main/webapp"
+    into "${buildDir}/warsrc"
+}
+
+war.dependsOn setUpWar
+
+war {
+    from "${buildDir}/warsrc"
     filter(ReplaceTokens, tokens: ['apiKey': apiKey])
 }
