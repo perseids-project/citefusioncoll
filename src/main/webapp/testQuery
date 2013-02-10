@@ -3,6 +3,8 @@ StringWriter writer = new StringWriter()
 MarkupBuilder home = new MarkupBuilder(writer)
 
 
+
+
 home.html {
     head {
         title("CITE Collections Query Extension")
@@ -27,6 +29,8 @@ home.html {
                 li("aggregate")
             }
 
+
+/*
             p {
                 mkp.yield("The examples below use the Greek paleography collection of the Open Paleography project, with URN ")
                 code("urn:cite:op:greek")
@@ -66,6 +70,9 @@ home.html {
                 input (type: "submit", value : "Submit")
             }
 
+        }
+    }
+*/
         }
     }
 }

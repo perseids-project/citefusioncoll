@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="CiteCollectionService.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<collectionService
+    xmlns="http://chs.harvard.edu/xmlns/cite"
+    xmlns:cite="http://chs.harvard.edu/xmlns/cite">
+   
+   
+   
+    <citeCollection
+        canonicalId="codex"
+        class="1vlcTCWA9tNYKeTBAEGYPcqhfklQzqf2KR3thWr0"
+        name="codices">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, codices
+            collection</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Three manuscripts in Venice, Biblioteca
+            Marciana, and two in the Escorial Monastery</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Digital models of manuscript codices edited
+            as part of the Homer Multitext project</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Codex URN"
+            name="codex"
+            type="citeurn"/>
+        <citeProperty
+            label="description"
+            name="description"
+            type="string"/>
+    </citeCollection>
+</collectionService>
