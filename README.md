@@ -1,13 +1,13 @@
-# Overview
-An implementation of the CITE Collections API for data stored in 
-one or more Google fusion table(s). 
+# Overview #
+
+An implementation of the CITE Collections API for data stored in one or more Google fusion table(s). It also includes an initial implementation of a proposed CITE Collections Query API.  See QuerySyntax.md for details.
 
 Source code is laid out following gradle build conventions.
 
 `src/main/webapp` is a groovlet (a servlet written in Groovy) that fields CITE Collections requests.  It's a wrapper for the real work that is done by the `edu.holycross.shot.citecoll.CollectionService` class. For details of that class, see the groovydocs (which you can build with `gradle groovydoc`).
 
 # License
-All source code in this project is (c) 2011-2012 Neel Smith and is made
+All source code in this project is (c) 2011-2013 Neel Smith and is made
 available under the terms of the GNU General Public License, version 3.
 See the included file `gpl-3.0.txt` for details.
 
