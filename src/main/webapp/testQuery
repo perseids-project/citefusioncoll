@@ -101,21 +101,6 @@ if (! caps) {
                     }
                 }
 /*
-            p {
-                mkp.yield("The examples below use the Greek paleography collection of the Open Paleography project, with URN ")
-                code("urn:cite:op:greek")
-            }
-            p("Available for testing:")
-            
-            h2("List objects")
-            p("See accompanying notes on query syntax to make sense of this. ")
-        
-            form(action : "list", method : "GET")  {
-                input(name : "coll", value : "urn:cite:hmt:scholiaset")
-                input(name : "prop", value : "Sequence")
-                input(name : "Sequence", value : "1")
-                input (type: "submit", value : "Submit")
-            }
             
 
             h2("Show object")
