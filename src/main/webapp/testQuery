@@ -56,30 +56,34 @@ if (! caps) {
                 }
 
 
-                h2("Test Query API")
-                h3("List request")
+
+                h2("List request")
                 p("Lists objects matching conditions.")
 
                 ul {
                     def count = 0
                     cs.citeConfig.keySet().each { k ->
-                        h4("Collection ${k}")
-                        //if (count == 0) {
                         def conf = cs.citeConfig[k] 
+                        p "${conf['title']}"
                         def collUrnStr = "urn:cite:${conf['nsabbr']}:${k}"
                         try {
                             CiteUrn collUrn = new CiteUrn(collUrnStr)
                             form(action : "list", method : "GET")  {
                                 input(name : "coll", value : collUrnStr, type : "hidden")
-                                cs.getPropNameList(collUrn).each { p ->
-                                    input(name : "prop", value : p, type : "hidden")
+                                fieldset {
+                                    cs.getPropNameList(collUrn).each { p ->
+
+
+
+                                        input(name : "prop", value : p, type : "hidden")
                                     
-                                    label ('for' : count, "${p}")
-                                    input (name: p, value : "", id : count)
-                                    
+                                        label ('for' : count, "${p}")
+                                        input (name: p, value : "", id : count)
+                                        
+                                    }
                                 }
-                                
-                                input (type: "submit", value : "Submit")
+                                                                
+                                input (type: "submit", value : "Search")
                             }
                         } catch (Exception e) {
                             System.err.println "Failed on ${collUrnStr}: ${e}"

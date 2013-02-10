@@ -39,6 +39,15 @@ home.html {
                 mkp.yield "See "
                 a (href: "http://www.homermultitext.org/hmt-doc/", "documentation for the CITE architecture.")
             }
+
+	    h2("A CITE Collection Query API")
+	    p("This service also supports an initial version of an API for querying CITE Collections.")
+	    p("Provisional documentation comes with the source for this service.")
+	    p {
+                mkp.yield "Use the forms on "
+                a(href : "testQuery", "this page")
+                mkp.yield " to test the Query API."
+            }	      
         }
     }
 }

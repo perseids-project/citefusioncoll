@@ -4,7 +4,62 @@
     xmlns="http://chs.harvard.edu/xmlns/cite"
     xmlns:cite="http://chs.harvard.edu/xmlns/cite">
    
-   
+    <citeCollection
+        canonicalId="FolioUrn"
+        class="1kzR8twL3C-qVtRo8Oh2pui_U6qf7TWMxBmgWy1M"
+        name="msAgathers">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, organization of
+            Venetus A manuscript in quires</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All folio sides of the Venetus A
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> An ordered collection of pages (folio sides)
+            of the Venetus A manuscript. The CodexUrn property can be used to merge this Collection
+            with the HMT Codices Collection.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Folio URN"
+            name="FolioUrn"
+            type="string"/>
+        <citeProperty
+            label="Quire"
+            name="Quire"
+            type="number"/>
+        <citeProperty
+            label="Skin or hair side"
+            name="SmoothHairy"
+            type="string">
+            <valueList>
+                <value> smooth</value>
+                <value> hairy</value>
+            </valueList>
+        </citeProperty>
+        <citeProperty
+            label="Forms bifolio with"
+            name="BifolioWith"
+            type="citeurn"/>
+        <citeProperty
+            label="Folio replaced"
+            name="ReplacementPage"
+            type="string">
+            <valueList>
+                <value> yes</value>
+                <value> no</value>
+            </valueList>
+        </citeProperty>
+    </citeCollection>
    
     <citeCollection
         canonicalId="codex"
