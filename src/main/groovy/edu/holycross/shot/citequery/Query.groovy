@@ -13,7 +13,6 @@ class Query {
 
 
 
-
     /** End point for Google Tables API v1. */
     static String endPoint = "https://www.googleapis.com/fusiontables/v1/"
 
@@ -31,24 +30,10 @@ class Query {
     /** Default property name for ordering query results */
     String orderProperty = null
 
-
-
-
-    void showCPs(String s) {
-        System.err.println "showCPs: " + s
-    }
-
-
     Query(CollectionService citeService) {
         this.svc = citeService
     }
 
-
-    //def getResults(String collectionName, String propName, String propValue) {
-        //String op = "="
-        //return getResults(collectionName, propName, propValue, op)
-    //}
-    // throw excpetion if collectionName is null
     String listPropNames(String collectionName) 
     throws Exception {
         def config =  svc.citeConfig[collectionName]
@@ -98,8 +83,6 @@ class Query {
 
 
     // MODIFY TO CONSULT INFO ON TYPE IN ORDER TO QUOTE VALUE OR NOT APPROPRIATELY
-//    def getResults(String collectionName, String propName, String propValue, String op) {
-
     def getResults(CiteUrn collectionUrn, Object triples) {
         String propList = listPropNames(collectionUrn.getCollection())
         StringBuffer qBuff = new StringBuffer("SELECT ${propList} FROM ${svc.getClassName(collectionUrn)} ")
@@ -117,9 +100,10 @@ class Query {
             propValue = t[1]
 
 
-            if (debug) {
+/*            if (debug) {
                 showCPs(propValue)
             }
+*/
 
 
             if (t.size() == 2) {

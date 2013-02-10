@@ -25,9 +25,14 @@ class CollectionService {
     /** XML namespace for all CITE Collection replies. */
     static String CITE_NS = "http://chs.harvard.edu/xmlns/cite"
 
+    /** XML namespace for Dublin Core content. */
+    static String DC_NS = "http://purl.org/dc/elements/1.1"
 
     /** Groovy Namespace object for use in parsing capabilities document. */
     groovy.xml.Namespace citens = new groovy.xml.Namespace(CITE_NS)
+
+    /** Groovy Namespace object for Dublin Core material. */
+    groovy.xml.Namespace dc = new groovy.xml.Namespace(DC_NS)
 
     /** A map representing the data in the capabilities file */
     LinkedHashMap citeConfig
@@ -73,13 +78,24 @@ class CollectionService {
         def configuredCollections = [:]
 
         root[citens.citeCollection].each { c ->
+            def title = c.'@name'
+            c[dc.title].each {
+                title = it.text()
+            }
 
+            
             def propertyList = []
             c[citens.citeProperty].each { cp ->
                 def prop = [:]
                 prop['name'] = "${cp.'@name'}"
                 prop['label'] = "${cp.'@label'}"
                 prop['type'] = "${cp.'@type'}"
+
+                def valList = []
+                cp[citens.valueList][citens.value].each {
+                    valList.add("${it.text()}")
+                }
+                prop['valueList'] = valList
                 propertyList.add(prop)
             } 
 
@@ -97,6 +113,7 @@ class CollectionService {
             }
 
             def collData = [
+                "title" : title,
                 "className" : "${c.'@class'}",
                 "canonicalId" : "${c.'@canonicalId'}",
                 "groupProperty" : groupProp,
@@ -113,6 +130,22 @@ class CollectionService {
 
         return configuredCollections
     }
+
+
+
+    ArrayList getValueList(CiteUrn urn, String propertyName) {
+        def config =  this.citeConfig[urn.getCollection()]
+        def vals = []
+        if (config) {
+            config['properties'].each { p ->
+                if (p['name'] == propertyName) {
+                    vals = p['valueList']
+                }
+            }
+        }
+        return vals
+    }
+
 
     String getCanonicalIdProperty(CiteUrn urn) {
         def config =  this.citeConfig[urn.getCollection()]

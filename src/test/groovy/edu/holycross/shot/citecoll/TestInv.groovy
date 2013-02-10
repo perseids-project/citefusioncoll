@@ -18,7 +18,7 @@ class TestInv extends GroovyTestCase {
 
     @Test void testGetCaps() {
         CollectionService svc = new CollectionService(caps, apiKey)
-        assert svc.citeConfig.keySet().size() == 1
+        assert svc.citeConfig.keySet().size() == 2
     }
 
 
@@ -37,6 +37,20 @@ class TestInv extends GroovyTestCase {
 
     }
 
+
+    @Test void testPropValList() {
+        CollectionService svc = new CollectionService(caps, apiKey)
+        assert svc
+        CiteUrn collUrn = new CiteUrn("urn:cite:hmt:msAgathers")
+        String propName = "ReplacementPage"
+        def expectedList = ['yes', 'no']
+
+
+        def valList = svc.getValueList(collUrn, propName)
+        assert valList.size() == 2
+        assert valList == expectedList
+
+    }
 
     @Test void testPropMetadata() {
         CollectionService svc = new CollectionService(caps, apiKey)
