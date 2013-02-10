@@ -88,34 +88,20 @@ if ( 1 + 1 == 2) {
 
         def msg
 
+        System.err.println "Fully configured Query"
+
         def propList = []
         def triples = []
+        System.err.println "Test ${params['prop']}"
         if (params['prop'] instanceof java.lang.String) {
-            // single value submitted:
-            pName = params["prop"]
-            int pIndex = -1
-            propertyNames.eachWithIndex { n,i ->
-                if (pName == n) {
-                    pIndex = i
-                }
-            } 
+            /*
+          // single value submitted:
+            pName = params["prop"]            
+            System.err.println "SINGLE VAL: pName ${pName}"
+            if (params[pName].getValue().size() > 0) {
+                System.err.println "SINGLE VAL: value ${params[pName]}"
 
-            switch(propertyTypes[pIndex]) {
-                case "ctsurn":
-                case "citeurn":
-                    triples.add([pName,params[pName]])
-                    break
-                default:
-                    triples.add(formTriple(pName, params[pName]))
-                    break
-            }
-            propList.add(pName)
 
-        } else {
-            // cycle instances
-            params['prop'].each { pName ->
-
-                pName = params["prop"]
                 int pIndex = -1
                 propertyNames.eachWithIndex { n,i ->
                     if (pName == n) {
@@ -133,6 +119,35 @@ if ( 1 + 1 == 2) {
                     break
                 }
                 propList.add(pName)
+*/
+
+
+        } else {
+            // cycle instances
+            params['prop'].each { pName ->
+                System.err.println "MULTIS PROP: pName ${pName}"
+                def pVal = params[pName]
+                if (pVal.size() > 0) {
+                    System.err.println "Query for ${pName} equals ${pVal}"
+                    int pIndex = -1
+                    propertyNames.eachWithIndex { n,i ->
+                        if (pName == n) {
+                            pIndex = i
+                        }
+                    } 
+                    switch(propertyTypes[pIndex]) {
+                        case "ctsurn":
+                            case "citeurn":
+                            triples.add([pName,params[pName]])
+                        break
+                        default:
+                            triples.add(formTriple(pName, params[pName]))
+                        break
+                    }
+                    propList.add(pName)
+                }
+
+                
             }
         }
 
@@ -142,6 +157,7 @@ if ( 1 + 1 == 2) {
                  'xmlns:cite': "http://shot.holycross.edu/xmlns/cite") {
             request {
                 p("inject request info here...")
+                collection(collUrn)
                 trips(triples)
                 valsplit(msg)
             }
@@ -158,8 +174,11 @@ if ( 1 + 1 == 2) {
                             }
                         }
                     }
+
                 }
             }
+
+
         }
         println writer.toString()    
     }

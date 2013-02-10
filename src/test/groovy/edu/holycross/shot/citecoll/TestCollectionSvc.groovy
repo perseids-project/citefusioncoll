@@ -82,7 +82,7 @@ class TestCollectionSvc extends GroovyTestCase {
        // System.err.println "TEST COLL LIST:  CONFIG IS " + svc.citeConfig
 
         svc.citeConfig.keySet().each  {  k ->
-//            System.err.println "\tkey: " + k + "-> " + svc.citeConfig[k]
+            System.err.println "\tkey: " + k + "-> " + svc.citeConfig[k]
         }
     }
 
