@@ -72,13 +72,21 @@ if (! caps) {
                                 input(name : "coll", value : collUrnStr, type : "hidden")
                                 fieldset {
                                     cs.getPropNameList(collUrn).each { p ->
-
-
-
                                         input(name : "prop", value : p, type : "hidden")
-                                    
                                         label ('for' : count, "${p}")
-                                        input (name: p, value : "", id : count)
+
+                                        def vals = cs.getValueList(collUrn, p)
+                                        if (vals.size() > 0) {
+                                            System.err.println "For ${p}, ${vals}, size ${vals.size()}"
+                                            select {
+                                                option(selected : "selected", "")
+                                                vals.each {
+                                                    option("${it}")
+                                                }
+                                            }
+                                        } else {
+                                            input (name: p, value : "", id : count)
+                                        }
                                         
                                     }
                                 }
