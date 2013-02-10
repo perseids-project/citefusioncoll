@@ -301,8 +301,11 @@ class CollectionService {
     def getPropNameList(String collectionName) {
         def config =  this.citeConfig[collectionName]
         def propList = []
-        config['properties'].each { p ->
-            propList.add(p['name'])
+
+        if (config) {
+            config['properties'].each { p ->
+                propList.add(p['name'])
+            }
         }
         return propList
     }

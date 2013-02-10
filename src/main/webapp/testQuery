@@ -2,34 +2,92 @@ import groovy.xml.MarkupBuilder
 StringWriter writer = new StringWriter()
 MarkupBuilder home = new MarkupBuilder(writer)
 
+import edu.holycross.shot.citecoll.CollectionService
+import edu.harvard.chs.cite.CiteUrn
 
 
+request.setCharacterEncoding("UTF-8")
+response.setHeader( "Access-Control-Allow-Origin", "*")
 
-home.html {
-    head {
-        title("CITE Collections Query Extension")
-        link(type : "text/css", rel : "stylesheet", href : "ctskit/css/normalize.css", title : "CSS stylesheet")
-        link(type : "text/css", rel : "stylesheet", href : "ctskit/css/simple.css", title : "CSS stylesheet")
-        link(type : "text/css", rel : "stylesheet", href : "ctskit/css/citeCollection.css", title : "CSS stylesheet")
-        link(type : "text/css", rel : "stylesheet", href : "ctskit/css/tei.css", title : "CSS stylesheet")
-        p('class' : "menu") {
-              mkp.yield "CITE Collections service: "
-              a (href : "home", "home")
-          }
+String apiKey = "@apiKey@"
+
+def getCapsFile = {
+    File capsFile
+    String capsFileName = "capabilities.xml"
+    if (params['config']) {
+        capsFileName = params['config']
     }
-    body {
-        div('id' : "header") { 
-        	p(" ")
-        }
-        div {
-            h1("CITE Collections Query Extension")
-            p("Currently in development: ")
-            ul {
-                li("count")
-                li("aggregate")
+    try {
+        capsFile = new File(context.getRealPath("/configs") + "/" + capsFileName )
+        capsFile
+    } catch (Exception e) {
+        null
+    }
+}
+
+File caps = getCapsFile()
+if (! caps) { 
+    errorMsg("Could not find capabilities file ${params['config']}")
+} else {
+    CollectionService cs = new CollectionService(getCapsFile(), apiKey)
+    
+    home.html {
+        head {
+            title("CITE Collections Query Extension")
+            link(type : "text/css", rel : "stylesheet", href : "ctskit/css/normalize.css", title : "CSS stylesheet")
+            link(type : "text/css", rel : "stylesheet", href : "ctskit/css/simple.css", title : "CSS stylesheet")
+            link(type : "text/css", rel : "stylesheet", href : "ctskit/css/citeCollection.css", title : "CSS stylesheet")
+            link(type : "text/css", rel : "stylesheet", href : "ctskit/css/tei.css", title : "CSS stylesheet")
+            p('class' : "menu") {
+                mkp.yield "CITE Collections service: "
+                a (href : "home", "home")
             }
+        }
+        body {
+            div('id' : "header") { 
+        	p(" ")
+            }
+            div {
+                h1("CITE Collections Query Extension")
+                p("Currently in development: ")
+                ul {
+                    li("count")
+                    li("aggregate")
+                }
 
 
+                h2("Test Query API")
+                h3("List request")
+                p("Lists objects matching conditions.")
+
+                ul {
+                    def count = 0
+                    cs.citeConfig.keySet().each { k ->
+                        h4("Collection ${k}")
+                        //if (count == 0) {
+                        def conf = cs.citeConfig[k] 
+                        def collUrnStr = "urn:cite:${conf['nsabbr']}:${k}"
+                        try {
+                            CiteUrn collUrn = new CiteUrn(collUrnStr)
+                            form(action : "list", method : "GET")  {
+                                input(name : "coll", value : collUrnStr, type : "hidden")
+                                cs.getPropNameList(collUrn).each { p ->
+                                    input(name : "prop", value : p, type : "hidden")
+                                    
+                                    label ('for' : count, "${p}")
+                                    input (name: p, value : "", id : count)
+                                    
+                                }
+                                
+                                input (type: "submit", value : "Submit")
+                            }
+                        } catch (Exception e) {
+                            System.err.println "Failed on ${collUrnStr}: ${e}"
+                        }
+                        count++
+                    //}
+                    }
+                }
 /*
             p {
                 mkp.yield("The examples below use the Greek paleography collection of the Open Paleography project, with URN ")
@@ -78,3 +136,4 @@ home.html {
 }
 
 println writer.toString()
+}
