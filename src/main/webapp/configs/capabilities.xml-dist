@@ -66,19 +66,19 @@
             type="citeurn"/>
         <citeProperty
             label="English name"
-            name="English name"
+            name="EnglishName"
             type="string"/>
         <citeProperty
             label="Greek name"
-            name="Greek name"
+            name="GreekName"
             type="string"/>
         <citeProperty
             label="Unicode hex codepoint"
-            name="Unicode hex codepoint"
+            name="UnicodeCodepoint"
             type="string"/>
         <citeProperty
             label="Unicode notes"
-            name="Unicode notes"
+            name="UnicodeNotes"
             type="string"/>
     </citeCollection>
     <citeCollection
@@ -153,8 +153,8 @@
             name="Siglum"
             type="string"/>
         <citeProperty
-            label="description"
-            name="Label"
+            label="MS"
+            name="MS"
             type="string"/>
     </citeCollection>
     <citeCollection
