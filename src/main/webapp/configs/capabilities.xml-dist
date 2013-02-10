@@ -1,274 +1,626 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GetCapabilities
-    xmlns="http://chs.harvard.edu/xmlns/cite"
-    xmlns:cite="http://chs.harvard.edu/xmlns/cite">
-    <collectionService>
-
-
-      <citeCollection
-	  canonicalId="URN"
-	  class="4436843"
-	  name="CodexE3">
-	<namespaceMapping
-	    abbr="hmt"
-	    fullValue="http://www.homermultitext.org/datans"/>
-
-            <citeProperty
-                label="URN"
-                name="URN"
-                type="string"/>
-
-
-            <citeProperty
-                label="Siglum"
-                name="Siglum"
-                type="string"/>
-
-            <citeProperty
-                label="Sequence number"
-                name="Sequence"
-                type="number"/>
-
-            <citeProperty
-                label="recto/verso"
-                name="RV"
-                type="string"/>
-
-            <citeProperty
-                label="Assigned to"
-                name="who"
-                type="string"/>
-
-
-            <citeProperty
-                label="Label"
-                name="Label"
-                type="string"/>
-
-            <citeProperty
-                label="Codex"
-                name="CodexURN"
-                type="string"/>
-
-      </citeCollection>
-
-
-
-
-
-      <citeCollection
-	  canonicalId="taskId"
-	  class="1362933"
-	  name="venAscoreboard">
-	<namespaceMapping
-	    abbr="hmt"
-	    fullValue="http://www.homermultitext.org/datans"/>
-
-            <citeProperty
-                label="Record ID"
-                name="taskId"
-                type="string"/>
-
-
-            <citeProperty
-                label="Folio URN"
-                name="target"
-                type="string"/>
-
-            <citeProperty
-                label="Task category"
-                name="category"
-                type="string"/>
-
-            <citeProperty
-                label="Institution"
-                name="institution"
-                type="string"/>
-
-            <citeProperty
-                label="Assigned to"
-                name="who"
-                type="string"/>
-
-
-            <citeProperty
-                label="Status"
-                name="status"
-                type="string"/>
-
-      </citeCollection>
-
-
-        <citeCollection
-            canonicalId="objectId"
-            class="1199112"
-            name="catalogships">
-            <namespaceMapping
-                abbr="hmt"
-                fullValue="http://www.homermultitext.org/datans"/>
-            <orderedBy
-                property="seqNum"/>
-            <citeProperty
-                label="Object ID"
-                name="objectId"
-                type="string"/>
-            
-            <citeProperty
-                label="Sequence number"
-                name="seqNum"
-                type="number"/>
-            <citeProperty
-                label="Description"
-                name="description"
-                type="string"/>
-            <citeProperty
-                label="Test passage"
-                name="textURN"
-                type="string"/>
-            <citeProperty
-                label="Image citation"
-                name="imageURN"
-                type="string"/>
-        </citeCollection>
-        <citeCollection
-            canonicalId="URN"
-            class="835352"
-            name="codex">
-            <namespaceMapping
-                abbr="hmt"
-                fullValue="http://www.homermultitext.org/datans"/>
-            <citeProperty
-                label="Folio ID"
-                name="URN"
-                type="string"/>
-            <citeProperty
-                label="Siglum"
-                name="Siglum"
-                type="string"/>
-            <citeProperty
-                label="description"
-                name="MS"
-                type="string"/>
-        </citeCollection>
-        <citeCollection
-            canonicalId="URN"
-            class="1001673"
-            groupProperty="Siglum"
-            name="msA">
-            <namespaceMapping
-                abbr="hmt"
-                fullValue="http://www.homermultitext.org/datans"/>
-            <orderedBy
-                property="Sequence"/>
-            <citeProperty
-                label="Page ID"
-                name="URN"
-                type="string"/>
-            <citeProperty
-                label="Recto or verso"
-                name="RV"
-                type="string"/>
-            <citeProperty
-                label="MS label"
-                name="MS"
-                type="string"/>
-            <citeProperty
-                label="MS siglum"
-                name="Siglum"
-                type="string"/>
-            <citeProperty
-                label="Internal sequence number"
-                name="Sequence"
-                type="number"/>
-        </citeCollection>
-        <citeCollection
-            canonicalId="URN"
-            class="1001673"
-            groupProperty="Siglum"
-            name="msB">
-            <namespaceMapping
-                abbr="hmt"
-                fullValue="http://www.homermultitext.org/datans"/>
-            <orderedBy
-                property="Sequence"/>
-            <citeProperty
-                label="Page ID"
-                name="URN"
-                type="string"/>
-            <citeProperty
-                label="MS label"
-                name="MS"
-                type="string"/>
-            <citeProperty
-                label="MS siglum"
-                name="Siglum"
-                type="string"/>
-            <citeProperty
-                label="Internal sequence number"
-                name="Sequence"
-                type="number"/>
-        </citeCollection>
-        <citeCollection
-            canonicalId="URN"
-            class="1001673"
-            groupProperty="Siglum"
-            name="u4">
-            <namespaceMapping
-                abbr="hmt"
-                fullValue="http://www.homermultitext.org/datans"/>
-            <orderedBy
-                property="Sequence"/>
-            <citeProperty
-                label="Page ID"
-                name="URN"
-                type="string"/>
-            <citeProperty
-                label="Recto or verso"
-                name="RV"
-                type="string"/>
-            <citeProperty
-                label="MS label"
-                name="MS"
-                type="string"/>
-            <citeProperty
-                label="MS siglum"
-                name="Siglum"
-                type="string"/>
-            <citeProperty
-                label="Internal sequence number"
-                name="Sequence"
-                type="number"/>
-        </citeCollection>
-        <citeCollection
-            canonicalId="URN"
-            class="1001673"
-            groupProperty="Siglum"
-            name="e3">
-            <namespaceMapping
-                abbr="hmt"
-                fullValue="http://www.homermultitext.org/datans"/>
-            <orderedBy
-                property="Sequence"/>
-            <citeProperty
-                label="Page ID"
-                name="URN"
-                type="string"/>
-            <citeProperty
-                label="Recto or verso"
-                name="RV"
-                type="string"/>
-            <citeProperty
-                label="MS label"
-                name="MS"
-                type="string"/>
-            <citeProperty
-                label="MS siglum"
-                name="Siglum"
-                type="string"/>
-            <citeProperty
-                label="Internal sequence number"
-                name="Sequence"
-                type="number"/>
-        </citeCollection>
-    </collectionService>
-</GetCapabilities>
+<?xml-model href="CiteCollectionService.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<collectionService
+    xmlns="http://chs.harvard.edu/xmlns/cite">
+    <citeCollection
+        canonicalId="codex"
+        class="1vlcTCWA9tNYKeTBAEGYPcqhfklQzqf2KR3thWr0"
+        name="codices">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, codices
+            collection</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Three manuscripts in Venice, Biblioteca
+            Marciana, and two in the Escorial Monastery</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Digital models of manuscript codices edited
+            as part of the Homer Multitext project</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Codex URN"
+            name="codex"
+            type="citeurn"/>
+        <citeProperty
+            label="description"
+            name="description"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="1105_jihS7bDO4hlMsVe02gdWGWdqC1SvGqNUfsk"
+        name="critsigns">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, Aristarchan
+            critical signs</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Aristarchan critical signs occurring in the
+            Venetus A manuscript more than once.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> This collection includes URN values for
+            uniquely identifying an Aristarchan critical sign, and information about Unicode
+            representation of the sign identified by that URN value.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Critical sign"
+            name="URN"
+            type="citeurn"/>
+        <citeProperty
+            label="English name"
+            name="English name"
+            type="string"/>
+        <citeProperty
+            label="Greek name"
+            name="Greek name"
+            type="string"/>
+        <citeProperty
+            label="Unicode hex codepoint"
+            name="Unicode hex codepoint"
+            type="string"/>
+        <citeProperty
+            label="Unicode notes"
+            name="Unicode notes"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="17ZZdJxWOrwWDizIryXRqTiqCaEcEGBowtXu1Suw"
+        name="e3">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, Escorial Υ.1.1
+            pages</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All folio sides of the Escorial Υ.1.1
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> An ordered collection of pages (folio sides)
+            of the Escorial Υ.1.1 manuscript. The CodexUrn property can be used to merge this
+            Collection with the HMT Codices Collection.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Folio ID"
+            name="URN"
+            type="string"/>
+        <citeProperty
+            label="Siglum"
+            name="Siglum"
+            type="string"/>
+        <citeProperty
+            label="description"
+            name="Label"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="13nD_PStSddiAcv08LVNOV4sUyz0KgnYL2wWCmQ0"
+        name="e4">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, Escorial Ω.1.12
+            pages</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All folio sides of the Escorial Ω.1.12
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> An ordered collection of pages (folio sides)
+            of the Escorial Ω.1.12 manuscript. The CodexUrn property can be used to merge this
+            Collection with the HMT Codices Collection.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Folio ID"
+            name="URN"
+            type="string"/>
+        <citeProperty
+            label="Siglum"
+            name="Siglum"
+            type="string"/>
+        <citeProperty
+            label="description"
+            name="Label"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="PersonUrn"
+        class="1fcfeXQWcChl-EiSt9vNHMfXYGSM3ETn5ZwTKF0Y"
+        name="pers">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project: personal
+            names.</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All folio sides of the Escorial Ω.1.12
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project: personal
+            names.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Urn for person"
+            name="PersonUrn"
+            type="citeurn"/>
+        <citeProperty
+            label="Label"
+            name="Label"
+            type="string"/>
+        <citeProperty
+            label="Description"
+            name="Description"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="1M7FKJjXaK4WQVL85zhi30TsWHeF-XSMVfQ3bYz8"
+        name="place">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project: geographic
+            entities.</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All folio sides of the Escorial Ω.1.12
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project: geographic
+            entities.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="URN"
+            name="URN"
+            type="citeurn"/>
+        <citeProperty
+            label="Label"
+            name="Label"
+            type="string"/>
+        <citeProperty
+            label="Description"
+            name="Description"
+            type="string"/>
+        <citeProperty
+            label="Pleiades identifier"
+            name="Pleiades"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="1cKVuQ_lysqMAqGdO0PJRuuACBmGVUBHRkHrf3uI"
+        name="chsimg">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, digital image
+            collection</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Includes all digital photography produced by
+            HMT project of manuscripts in Venice and the Escorial monastery</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Digital image collection, including
+            properties with rights and caption information required by the CHS Image Extension to
+            CITE Collection Services</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Unless otherwise indicated, data about this
+            collection and binary data of all images in this collection are available under the
+            terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Image URN"
+            name="URN"
+            type="string"/>
+        <citeProperty
+            label="Rights"
+            name="Rights"
+            type="string"/>
+        <citeProperty
+            label="Caption"
+            name="Caption"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="1UmjABeydPObM_LI7FbFsoHGGo7qk0ECvwD4yJLM"
+        name="normalized">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, normalized lexical
+            tokens</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Includes all lexical tokens not
+            automatically analyzed by the Perseus morphological system in folios that have been
+            verified by the HMT-MOM system.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Lexical tokens appearing in diplomatic
+            editions of the HMT, together with equivalent form normalized to orthographic
+            conventions of modern print editions. All normalized forms should produce a successful
+            morpholgical analysis when submitted to the Perseus morphological
+            parser.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="URN"
+            name="URN"
+            type="string"/>
+        <citeProperty
+            label="Token in diplomatic edition"
+            name="Token"
+            type="string"/>
+        <citeProperty
+            label="Normalized to modern orthography"
+            name="Normalized"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="1w6BBcvVDFNahE33Bkf9skPSzkAVnQQ9Zsy7b_cQ"
+        name="scholia">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, inventory of
+            scholia edited</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Growing with progress of proejct. Currently,
+            Venetus A, books 1-7.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> An inventory of scholia with visual evidence
+            and citation of physical artifact where the scholion is found.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="URN"
+            name="URN"
+            type="citeurn"/>
+        <citeProperty
+            label="CtsUrn"
+            name="CtsUrn"
+            type="ctsurn"/>
+        <citeProperty
+            label="Notes and comments"
+            name="Comments"
+            type="string"/>
+        <citeProperty
+            label="Visual evidence"
+            name="VisualEvidence"
+            type="citeimg"/>
+        <citeProperty
+            label="Folio ID"
+            name="FolioUrn"
+            type="citeurn"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="1Pgo3Y30lKmej3W4Odnq9LaVzG3ODXXk_DJtma_k"
+        name="u4">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, Marciana 841
+            pages</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All folio sides of the Marciana 841
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> An ordered collection of pages (folio sides)
+            of the Marciana 841 manuscript. The CodexUrn property can be used to merge this
+            Collection with the HMT Codices Collection.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Folio ID"
+            name="URN"
+            type="string"/>
+        <citeProperty
+            label="Siglum"
+            name="Siglum"
+            type="string"/>
+        <citeProperty
+            label="description"
+            name="Label"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="15tSTV-BbqHfGzEC1uyKsbthB8YLOdETLWr6UgNc"
+        name="dingbats">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, inventory of
+            dingbat characters in the Venetus B manuscript</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Inventories all non-numeric characters used
+            as markers tying scholia to points in the text of the Venetus B
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, inventory of
+            dingbat characters in the Venetus B manuscript</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Unless otherwise indicated, data about this
+            collection and binary data of all images in this collection are available under the
+            terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="URN"
+            name="URN"
+            type="citeurn"/>
+        <citeProperty
+            label="Example"
+            name="VisualExample"
+            type="citeimg"/>
+        <citeProperty
+            label="Description"
+            name="Description"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="1PMaa_kAegdo8sZ9QqjeN79lnL9zFXXlnxFHwRZ8"
+        name="msA">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, Venetus A
+            pages</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All folio sides of the Venetus A
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> An ordered collection of pages (folio sides)
+            of the Venetus A manuscript. The CodexUrn property can be used to merge this Collection
+            with the HMT Codices Collection.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <orderedBy
+            property="Sequence"/>
+        <citeProperty
+            label="Siglum"
+            name="Siglum"
+            type="string"/>
+        <citeProperty
+            label="Sequence"
+            name="Sequence"
+            type="number"/>
+        <citeProperty
+            label="Folio ID"
+            name="URN"
+            type="string"/>
+        <citeProperty
+            label="Recto or verso"
+            name="RV"
+            type="string"/>
+        <citeProperty
+            label="description"
+            name="Label"
+            type="string"/>
+        <citeProperty
+            label="Codex URN"
+            name="CodexURN"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="1V1EQsPl6vbMMaACiE0dzs8RMdgFIdcoUVOfKtjI"
+        name="msAkalavrezou">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, reconstruction of
+            Venetus A pages by Ioli Kalavrezou</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Folios 1-9 of the Venetus A
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> An ordered collection of the first 9 folios
+            (as currently bound) of the Venetus A manuscript, in the reconstruction of the original
+            order published by Ioli Kalavrezou in *Recapturing a Homer Legacy*. The CodexUrn
+            property can be used to merge this Collection with the HMT Codices
+            Collection.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Folio ID"
+            name="URN"
+            type="string"/>
+        <citeProperty
+            label="Siglum"
+            name="Siglum"
+            type="string"/>
+        <citeProperty
+            label="description"
+            name="Label"
+            type="string"/>
+    </citeCollection>
+    <citeCollection
+        canonicalId="FolioUrn"
+        class="1kzR8twL3C-qVtRo8Oh2pui_U6qf7TWMxBmgWy1M"
+        name="msAgathers">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, organization of
+            Venetus A manuscript in quires</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All folio sides of the Venetus A
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> An ordered collection of pages (folio sides)
+            of the Venetus A manuscript. The CodexUrn property can be used to merge this Collection
+            with the HMT Codices Collection.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Folio URN"
+            name="FolioUrn"
+            type="string"/>
+        <citeProperty
+            label="Quire"
+            name="Quire"
+            type="number"/>
+        <citeProperty
+            label="Skin or hair side"
+            name="SmoothHairy"
+            type="string">
+            <valueList>
+                <value> smooth</value>
+                <value> hairy</value>
+            </valueList>
+        </citeProperty>
+        <citeProperty
+            label="Forms bifolio with"
+            name="BifolioWith"
+            type="citeurn"/>
+        <citeProperty
+            label="Folio replaced"
+            name="ReplacementPage"
+            type="string">
+            <valueList>
+                <value> yes</value>
+                <value> no</value>
+            </valueList>
+        </citeProperty>
+    </citeCollection>
+    <citeCollection
+        canonicalId="URN"
+        class="1pLPXP04XnQXOp8hCfNG56sblVK2RSACxZtd9Q8M"
+        name="msB">
+        <dc:title
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Homer Multitext project, Venetus B
+            pages</dc:title>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Christopher Blackwell</dc:creator>
+        <dc:creator
+            xmlns:dc="http://purl.org/dc/elements/1.1"> Neel Smith</dc:creator>
+        <dc:coverage
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All folio sides of the Venetus B
+            manuscript.</dc:coverage>
+        <dc:description
+            xmlns:dc="http://purl.org/dc/elements/1.1"> An ordered collection of pages (folio sides)
+            of the Venetus B manuscript. The CodexUrn property can be used to merge this Collection
+            with the HMT Codices Collection.</dc:description>
+        <dc:rights
+            xmlns:dc="http://purl.org/dc/elements/1.1"> All data in this collection are available
+            under the terms of the Creative Commons Attribution-Non-Commercial 3.0 Unported License,
+            http://creativecommons.org/licenses/by-nc/3.0/deed.en_US</dc:rights>
+        <namespaceMapping
+            abbr="hmt"
+            fullValue="http://www.homermultitext.org/datans"/>
+        <citeProperty
+            label="Folio ID"
+            name="URN"
+            type="string"/>
+        <citeProperty
+            label="Siglum"
+            name="Siglum"
+            type="string"/>
+        <citeProperty
+            label="description"
+            name="Label"
+            type="string"/>
+    </citeCollection>
+</collectionService>
