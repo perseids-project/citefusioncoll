@@ -116,7 +116,7 @@ if ( 1 + 1 == 2) {
             // cycle instances
             params['prop'].each { pName ->
                 def pVal = params[pName]
-                if (pVal.size() > 0) {
+                if (pVal?.size() > 0) {
                     int pIndex = -1
                     propertyNames.eachWithIndex { n,i ->
                         if (pName == n) {
