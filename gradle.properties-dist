@@ -1,7 +1,7 @@
 apiKey=YOURAPIKEY
 
 # Versions of dependencies:
-ctskitversion=1.3.2
+ctskitversion=1.3.3
 citeversion=0.10.2
 commonsioversion=1.4
 log4jversion=1.2.15
