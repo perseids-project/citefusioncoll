@@ -304,7 +304,7 @@ class CollectionService {
         String raw //= queryUrl.getText("UTF-8")
         def conn = queryUrl.openConnection()
         if (conn.responseCode == 200) {
-            raw = conn.content.text
+            raw = (new java.util.Scanner(conn.getInputStream(),"UTF-8").useDelimiter("\\A")).next()
         } else {
             return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
         }
@@ -454,7 +454,7 @@ class CollectionService {
         String raw //= queryUrl.getText("UTF-8")
         def conn = queryUrl.openConnection()
         if (conn.responseCode == 200) {
-            raw = conn.content.text
+            raw = (new java.util.Scanner(conn.getInputStream(),"UTF-8").useDelimiter("\\A")).next()
         } else {
             return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
         }
@@ -494,7 +494,7 @@ class CollectionService {
                 }
             }
         }
-        return writer.toString()     
+        return writer.toString()
     }
 
 
@@ -724,7 +724,7 @@ class CollectionService {
         String raw //= queryUrl.getText("UTF-8")
         def conn = queryUrl.openConnection()
         if (conn.responseCode == 200) {
-            raw = conn.content.text
+            raw = (new java.util.Scanner(conn.getInputStream(),"UTF-8").useDelimiter("\\A")).next()
         } else {
             return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
         }
@@ -752,7 +752,7 @@ class CollectionService {
                 String proxRaw //= proxUrl.getText("UTF-8")
         def proxConn = proxUrl.openConnection()
         if (proxConn.responseCode == 200) {
-            raw = proxConn.content.text
+            proxRaw = (new java.util.Scanner(proxConn.getInputStream(),"UTF-8").useDelimiter("\\A")).next()
         } else {
             return ("<error>Received response code ${proxConn.responseCode} for url ${queryUrl}</error>")
         }
@@ -798,7 +798,7 @@ class CollectionService {
         String raw //= queryUrl.getText("UTF-8")
         def conn = queryUrl.openConnection()
         if (conn.responseCode == 200) {
-            raw = conn.content.text
+            raw = (new java.util.Scanner(conn.getInputStream(),"UTF-8").useDelimiter("\\A")).next()
         } else {
             return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
         }
@@ -826,7 +826,7 @@ class CollectionService {
                 String proxRaw //= proxUrl.getText("UTF-8")
         def proxConn = proxUrl.openConnection()
         if (proxConn.responseCode == 200) {
-            raw = proxConn.content.text
+            proxRaw = (new java.util.Scanner(proxConn.getInputStream(),"UTF-8").useDelimiter("\\A")).next()
         } else {
             return ("<error>Received response code ${proxConn.responseCode} for url ${queryUrl}</error>")
         }
@@ -995,7 +995,7 @@ class CollectionService {
         String raw //= queryUrl.getText("UTF-8")
         def conn = queryUrl.openConnection()
         if (conn.responseCode == 200) {
-            raw = conn.content.text
+            raw = (new java.util.Scanner(conn.getInputStream(),"UTF-8").useDelimiter("\\A")).next()
         } else {
             return ("<error>Received response code ${conn.responseCode} for url ${queryUrl}</error>")
         }
@@ -1024,7 +1024,7 @@ class CollectionService {
         String fullRaw //= fullQueryUrl.getText("UTF-8")
         def fullConn = fullQueryUrl.openConnection()
         if (fullConn.responseCode == 200) {
-            raw = fullConn.content.text
+            fullRaw = (new java.util.Scanner(fullConn.getInputStream(),"UTF-8").useDelimiter("\\A")).next()
         } else {
             return ("<error>Received response code ${fullConn.responseCode} for url ${queryUrl}</error>")
         }
