@@ -23,7 +23,7 @@ class CollectionService {
     File capabilitiesFile
 
     /** XML namespace for all CITE Collection replies. */
-    static String CITE_NS = "http://chs.harvard.edu/xmlns/cite"
+    static String CITE_NS = "http://chs.harvard.edu/xmlns/cite/capabilities"
 
     /** XML namespace for Dublin Core content. */
     static String DC_NS = "http://purl.org/dc/elements/1.1"
