@@ -152,24 +152,12 @@
                 <xsl:otherwise>urn</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
-        <xsl:variable name="linkto">
-            <xsl:choose>
-                <!--  look up where we want to link the urns for this collection to -->
-                <xsl:when test="exsl:node-set($urn_link)/collection[@name=$this_coll]">
-                    <xsl:value-of select="exsl:node-set($urn_link)/collection[@name=$this_coll]/@link"/>
-                </xsl:when>
-                <xsl:otherwise><xsl:value-of select="exsl:node-set($urn_link)/collection[@name='default']/@link"/></xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
         <div class="canonicaluri"><span class="label">Object Canonical URI:</span>
             <a href="{concat($base_collection_url,$this_obj_urn_no_ver)}" 
                 title="Object Stable URI" alt="Object Stable URI" 
                 onclick="javascript:alert('Right click to copy link.');return false;">
                 <xsl:value-of select="concat($base_collection_url,$this_obj_urn_no_ver)"/></a>
         </div>
-        <xsl:if test="$linkto">
-            <div class="editlink"><span class="label"><xsl:value-of select="$urn"/></span> <a href="{concat($linkto, substring-after($this_coll,':'),'&amp;',$prop,'=',$urn)}">Edit</a></div>
-        </xsl:if>
     </xsl:template>
     
     <xsl:template name="split_cite_list">

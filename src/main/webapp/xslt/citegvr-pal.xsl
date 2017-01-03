@@ -66,24 +66,6 @@
 <xsl:template match="cite:request">
         <h2>Requested Collection</h2>
         <p><xsl:apply-templates select="./cite:urn"/></p>
-    <xsl:variable name="linkto">
-        <xsl:choose>
-            <!--  look up where we want to link the urns for this collection to -->
-            <xsl:when test="exsl:node-set($urn_link)/collection[@name=$this_coll]">
-                <xsl:value-of select="exsl:node-set($urn_link)/collection[@name=$this_coll]/@link"/>
-            </xsl:when>
-            <xsl:otherwise><xsl:value-of select="exsl:node-set($urn_link)/collection[@name='default']/@link"/></xsl:otherwise>
-        </xsl:choose>
-    </xsl:variable>
-    <xsl:if test="$linkto">
-        <p>
-            <xsl:element name="a">
-                <xsl:attribute name="href"><xsl:value-of select="concat($linkto,substring-after($this_coll,':'))"/></xsl:attribute> 
-                <xsl:attribute name="target">_blank</xsl:attribute>
-                <xsl:text>Add Item to Collection</xsl:text>
-            </xsl:element>
-        </p>
-    </xsl:if>
     <hr/>
 </xsl:template>
     
