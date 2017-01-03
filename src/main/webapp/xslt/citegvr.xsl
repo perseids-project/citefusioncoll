@@ -116,7 +116,7 @@
                     <xsl:choose>
                         <xsl:when test="exsl:node-set($cite_obj_class)/collection[@name=$this_coll]">
                             <div class="canonicaluri"><span class="label">Object Canonical URI:</span>
-                                <a href="{concat($base_collection_url,$this_obj_urn_no_ver)}" 
+                                <a href="{concat($base_collection_url,$target_for_annotation)}" 
                                     title="Object Canonical URI" alt="Object Stable URI"
                                     onclick="javascript:alert('Right click to copy link.');return false;">
                                     <xsl:value-of select="concat($base_collection_url,$target_for_annotation)"/></a>

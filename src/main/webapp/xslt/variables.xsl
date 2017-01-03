@@ -35,10 +35,7 @@
     <xsl:variable name="perseids_sosol_url">http://sosol.perseids.org/sosol/</xsl:variable>
     
     <!-- Per-Collection Config for links on the Object URN -->
-    <xsl:variable name="urn_link">
-        <!-- Default is to link the urls to the collection manager on Perseids -->
-        <collection name="default" link="http://sosol.perseids.org/ccm/#collection="/>                
-    </xsl:variable>
+    <!-- the Cite Collection  Manager is Deprecated so we won't use this -->
     
     <!-- Per-Collection Config for retrieval of cited text -->
     <xsl:variable name="cts_sources">
@@ -100,6 +97,10 @@
         
         <collection name="perseus:msimg" 
             base="http://services.perseus.tufts.edu/fcgi-bin/iipsrv.fcgi?FIF=/mnt/netapp/image-cite-colls/src/msimg/"
+            params_thumb="&amp;cnt=1&amp;WID=400&amp;CVT=JPEG" 
+            params_full="&amp;cnt=1&amp;sds=0,0&amp;jtl=0,0"/>
+        <collection name="perseus:epidoctraining" 
+            base="http://services.perseus.tufts.edu/fcgi-bin/iipsrv.fcgi?FIF=/mnt/netapp/image-cite-colls/src/epidoctraining/"
             params_thumb="&amp;cnt=1&amp;WID=400&amp;CVT=JPEG" 
             params_full="&amp;cnt=1&amp;sds=0,0&amp;jtl=0,0"/>
     </xsl:variable>
